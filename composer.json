@@ -1,0 +1,17 @@
+{
+    "name": "real-coder-pty-ltd/instant-digital-appraisal",
+    "description": "Create Digital Appraisals for users, generate suburb reports using data from Pricefinder.",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matt Neal",
+            "email": "matt.neal@realcoder.com.au"
+        },
+        {
+            "name": "Julius Genetia",
+            "email": "julius@realcoder.com.au"
+        }
+    ],
+    "require": {}
+}

@@ -7,7 +7,7 @@ Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Create Digital Appraisals for users, generate suburb reports using data from Pricefinder. Requires Gravityforms.
+Create Digital Appraisals for users, generate suburb reports using data from Pricefinder.
 
 == Description ==
 
