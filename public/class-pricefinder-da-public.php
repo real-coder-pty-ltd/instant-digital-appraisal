@@ -159,8 +159,6 @@ function curl_pricefinder_da()
             CURLOPT_HTTPHEADER => $headers,
         ];
 
-        var_dump(print_r($options, true), 0);
-
         curl_setopt_array($ch, $options);
 
         if (curl_errno($ch)) {
