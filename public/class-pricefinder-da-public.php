@@ -94,6 +94,11 @@ class Pricefinder_Da_Public
          * class.
          */
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__).'js/pricefinder-da-public.js', ['jquery'], $this->version, true);
+
+        /**
+         * Google Maps Script.
+         */
+        wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key='.get_option('pricefinder_da_google_maps_api_key').'&amp;libraries=places', [], $this->version, false);
     }
 }
 
@@ -154,7 +159,7 @@ function curl_pricefinder_da()
             CURLOPT_HTTPHEADER => $headers,
         ];
 
-        vd($options);
+        var_dump(print_r($options, true), 0);
 
         curl_setopt_array($ch, $options);
 
@@ -234,27 +239,29 @@ function build_image($image_content, $id)
     return $file_location;
 }
 
-// function pricefinder_da_render_scripts() {
-// 	global $post;
-// 	if (has_shortcode($post->post_content, 'pfda_address_form')) {
+// function pricefinder_da_render_scripts()
+// {
+//     global $post;
+//     if (has_shortcode($post->post_content, 'pfda_address_form')) {
 
-// 		add_action( 'wp_header', 'pricefinder_da_google_api_key', 10, 1 );
-// 	}
+//         add_action('wp_header', 'pricefinder_da_google_api_key', 10, 1);
+//     }
 // }
 
-//pricefinder_da_render_scripts();
+// pricefinder_da_render_scripts();
 
 /*
 * 	Adds the google maps scripts to the header.
 *
 */
-// function pricefinder_da_google_api_key() {
+// function pricefinder_da_google_api_key()
+// {
 
-// 	echo '<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+//     echo '<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 // 	<script src="https://maps.googleapis.com/maps/api/js?key='.get_option('pricefinder_da_google_maps_api_key').'&callback=initAutocomplete&libraries=places&v=weekly" defer></script>';
 // }
 
-// add_action( 'wp_enqueue_scripts', 'wpdocs_theme_name_scripts' );
+// add_action('wp_enqueue_scripts', 'wpdocs_theme_name_scripts');
 
 /*
 * 	Google Places Autocomplete shortcode form.
@@ -262,71 +269,15 @@ function build_image($image_content, $id)
 */
 function pricefinder_da_autocomplete_address_form()
 {
-    //echo '<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    //<script src="https://maps.googleapis.com/maps/api/js?key='.get_option('pricefinder_da_google_maps_api_key').'&callback=initAutocomplete&libraries=places&v=weekly" defer></script>';
-
-    $form = '
-	<form id="appraisal-search" method="GET" action="/digital-appraisal/">	
-
+    echo '<form id="appraisal-search" method="GET" action="/digital-appraisal/">	
 		<div id="locationField" class="input-group input-group-lg">
-	
-			<input id="autocomplete" placeholder="Enter your address"  name="address" type="text" class="form-control input-lg">		
-			
+			<input id="address" placeholder="Enter your address"  name="address" type="text" class="form-control input-lg">		
 			<span class="input-group-btn"><button name="submit" type="submit" class="btn btn-primary btn-lg">Submit</button></span>		
-	
 		</div>
-
 	</form>
 	<div id="loading-container">
-  		<img id="loading-image" src="/wp-content/plugins/pricefinder-da/public/images/loader.jpg" alt="Loading..." />
-	</div>
-	
-
-';
-    echo $form;
-
-    echo "<script>
-	'use strict';
-	(function($){
-	
-	
-    function initAutocomplete() {
-        // Create the autocomplete object
-        autocomplete = new google.maps.places.Autocomplete(
-        	document.getElementById('autocomplete'), { types: ['geocode']}
-        );
-
-    	autocomplete.setFields(['address_component']);
-		autocomplete.addListener('place_changed', fillInAddress);
-		autocomplete.setComponentRestrictions({ country: ['au']}); 
-	}
-	  
-    function fillInAddress() {
-    	const place = autocomplete.getPlace();
-    }
-
-    function geolocate() {
-        if (navigator.geolocation) {
-          	navigator.geolocation.getCurrentPosition(position => {
-            	const geolocation = {
-              		lat: position.coords.latitude,
-              		lng: position.coords.longitude
-            	};
-            	const circle = new google.maps.Circle({
-              		center: geolocation,
-              		radius: position.coords.accuracy
-            	});
-            	autocomplete.setBounds(circle.getBounds());
-          	});
-        }
-	}
-	$('#autocomplete').focus(function() {
-		geolocate();
-	});
-	google.maps.event.addDomListener(window, 'load', initAutocomplete);
-    let autocomplete;
-})(jQuery);
-	</script>";
+  		<img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
+	</div>';
 }
 add_shortcode('pfda_address_form', 'pricefinder_da_autocomplete_address_form');
 

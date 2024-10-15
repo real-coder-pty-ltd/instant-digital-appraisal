@@ -8,11 +8,12 @@
 *   Main Variables. Include a unique ID, the Base, etc.
 *   Anything that can be used across all API callls.
 */
-$path = preg_replace('/wp-content(?!.*wp-content).*/', '', __DIR__);
-require_once $path.'wp-load.php';
+// $path = preg_replace('/wp-content(?!.*wp-content).*/', '', __DIR__);
+// require_once $path.'wp-load.php';
+
 $base = 'https://api.pricefinder.com.au/v1/';
 $uniqueid = uniqid();
-
+require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/wp/wp-load.php';
 /*
 *   Exit if no address is sent. This code looks silly?
 */

@@ -1,37 +1,75 @@
-(function( $ ) {
-	'use strict';
+'use strict';
 
-	/**
-	 * All of the code for your public-facing JavaScript source
-	 * should reside in this file.
-	 *
-	 * Note: It has been assumed you will write jQuery code here, so the
-	 * $ function reference has been prepared for usage within the scope
-	 * of this function.
-	 *
-	 * This enables you to define handlers, for when the DOM is ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * When the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and/or other possibilities.
-	 *
-	 * Ideally, it is not considered best practise to attach more than a
-	 * single DOM-ready or window-load handler for a particular page.
-	 * Although scripts in the WordPress core, Plugins and Themes may be
-	 * practising this, we should strive to set a better example in our own work.
-	 */
+document.addEventListener('DOMContentLoaded', function() {
 
-	$("#appraisal-search").on("submit", function(){
-		$("#loading-container").addClass("visible");
-	
-	  })
+	let autocomplete; // Google Autocomplete object.
 
-})( jQuery );
+	// Prepare location info object.
+	var locationInfo = {
+		geo: null,
+		country: 'Australia',
+		state: null,
+		city: null,
+		postalCode: null,
+		street: null,
+		streetNumber: null,
+		reset: function() {
+			this.geo = null;
+			this.country = 'Australia';
+			this.state = null;
+			this.city = null;
+			this.postalCode = null;
+			this.street = null;
+			this.streetNumber = null;
+		}
+	};
+
+const googleAutocomplete = {
+	autocompleteField: function(fieldId) {
+
+	  	(autocomplete = new google.maps.places.Autocomplete( document.getElementById(fieldId))),
+		{ types: ["geocode"] };
+	  google.maps.event.addListener(autocomplete, "place_changed", function() {
+		// Segment results into usable parts.
+		var place = autocomplete.getPlace(),
+		  address = place.address_components,
+		  lat = place.geometry.location.lat(),
+		  lng = place.geometry.location.lng();
+  
+		// Reset location object.
+		locationInfo.reset();
+  
+		// Save the individual address components.
+		locationInfo.geo = [lat, lng];
+		for (var i = 0; i < address.length; i++) {
+		  var component = address[i].types[0];
+		  switch (component) {
+			case "country":
+			  locationInfo.country = address[i]["long_name"];
+			  break;
+			case "administrative_area_level_1":
+			  locationInfo.state = address[i]["long_name"];
+			  break;
+			case "locality":
+			  locationInfo.city = address[i]["long_name"];
+			  break;
+			case "postal_code":
+			  locationInfo.postalCode = address[i]["long_name"];
+			  break;
+			case "route":
+			  locationInfo.street = address[i]["long_name"];
+			  break;
+			case "street_number":
+			  locationInfo.streetNumber = address[i]["long_name"];
+			  break;
+			default:
+			  break;
+		  }
+		}
+  
+	  });
+	}
+  };
+  // Attach listener to address input field.
+  googleAutocomplete.autocompleteField("address");
+});
