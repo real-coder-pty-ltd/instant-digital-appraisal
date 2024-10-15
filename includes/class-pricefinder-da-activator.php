@@ -3,7 +3,7 @@
 /**
  * Fired during plugin activation
  *
- * @link       https://stafflink.com.au
+ * @link       https://realcoder.com.au
  * @since      1.0.0
  */
 
@@ -14,7 +14,7 @@
  *
  * @since      1.0.0
  *
- * @author     Matthew Neal <matt.neal@stafflink.com.au>
+ * @author     Matthew Neal <matt.neal@realcoder.com.au>
  */
 class Pricefinder_Da_Activator
 {

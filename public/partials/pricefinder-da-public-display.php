@@ -5,11 +5,8 @@
  *
  * This file is used to markup the public-facing aspects of the plugin.
  *
- * @link       https://stafflink.com.au
+ * @link       https://realcoder.com.au
  * @since      1.0.0
- *
- * @package    Pricefinder_Da
- * @subpackage Pricefinder_Da/public/partials
  */
 ?>
 
