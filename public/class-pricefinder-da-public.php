@@ -265,19 +265,155 @@ function build_image($image_content, $id)
 * 	Google Places Autocomplete shortcode form.
 *
 */
-function pricefinder_da_autocomplete_address_form()
+function pricefinder_da_autocomplete_address_form($atts)
 {
-    echo '<form id="appraisal-search" method="GET" action="/digital-appraisal/">	
-		<div id="locationField" class="input-group input-group-lg">
-			<input id="address" placeholder="Enter your address"  name="address" type="text" class="form-control input-lg">		
-			<span class="input-group-btn"><button name="submit" type="submit" class="btn btn-primary btn-lg">Submit</button></span>		
-		</div>
-	</form>
-	<div id="loading-container">
-  		<img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
-	</div>';
+    // Define default attributes
+    $atts = shortcode_atts(
+        array(
+            'engagement_tools' => '',
+            'url_slug' => 'instant-digital-appraisal',
+            'form_placeholder' => 'Enter your address',
+            'form_submit' => 'Submit'
+        ),
+        $atts,
+        'pricefinder_da_form'
+    );
+
+    // Extract attributes
+    $engagement_tools = explode(',', $atts['engagement_tools']);
+    $url_slug = $atts['url_slug'];
+    $form_placeholder = $atts['form_placeholder'];
+    $form_submit = $atts['form_submit'];
+
+    echo '
+    <form id="pricefinder-da-form" method="GET" action="/' . $url_slug . '/">';
+    
+    if (is_array($engagement_tools)) {
+        echo '<ul id="pricefinder-da-appraisal-type" class="nav nav-pills mb-3" id="pills-tab" role="tablist">';
+        $index = 0;
+        foreach ($engagement_tools as $tool) {
+            $active_class = $index === 0 ? ' active' : '';
+            $aria_selected = $index === 0 ? 'true' : 'false';
+            
+            echo '<div class="radio">';
+            echo '<input type="radio" class="d-none" name="appraisal-type" id="tool_' . esc_attr($tool) . '" value="' . esc_attr($tool) . '"' . ($index === 0 ? ' checked' : '') . '>';
+            echo '<label for="tool_' . esc_attr($tool) . '" class="nav-link text-capitalize' . $active_class . '" data-bs-toggle="pill" role="tab" aria-selected="' . $aria_selected . '">' . esc_html($tool) . '</label>';
+            echo '</div>';
+            
+            $index++;
+        }
+        echo '</ul>';
+    }
+    
+    echo '
+        <div class="d-flex flex-row">
+            <div class="position-relative w-100">
+                <input id="pricefinder-da-address" placeholder="' . $form_placeholder . '" name="address" type="text" required class="form-control input-l rounded h-100">
+                <div id="pricefinder-da-result" class="position-absolute start-0 top-100 w-100 small"></div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2">' . $form_submit . '</button>
+        </div>
+    </form>
+    <div id="loading-container">
+        <img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
+    </div>';
+
+
+    if (is_plugin_active('easy-property-listings/easy-property-listings.php')) {
+        foreach ($engagement_tools as $tool) {
+            pfda_fetch_addresses($tool);
+        }
+    }
+    
 }
 add_shortcode('pfda_address_form', 'pricefinder_da_autocomplete_address_form');
+
+/*
+* 	Fetch addresses from the listings.
+*
+*/
+function pfda_fetch_addresses($tool){
+
+    // Initialize variables for post type and property status
+    $post_type = '';
+    $property_status = '';
+
+    // Set post type and property status based on the tool parameter
+    if ($tool === 'buy') {
+        $post_type = 'property';
+        $property_status = 'current';
+    } elseif ($tool === 'rental') {
+        $post_type = 'rental';
+        $property_status = 'current';
+    }
+    
+    // Define the query arguments
+    $args = array(
+        'post_type' => $post_type,
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => 'property_status',
+                'value' => $property_status,
+                'compare' => '='
+            )
+        )
+    );
+
+    // Execute the query
+    $query = new WP_Query($args);
+
+    // Initialize an array to store addresses
+    $addresses = [
+        'buy' => [],
+        'rental' => []
+    ];
+    
+    // Check if the query has posts
+    if ($query->have_posts()) {
+
+        // Loop through the query results
+        while ($query->have_posts()) {
+            $query->the_post();
+
+            // Check if the address should be displayed
+            $display_address = get_post_meta(get_the_ID(), 'property_address_display', true);
+    
+            // Retrieve address components based on display flag
+            if ($display_address === 'yes') {
+                $street_number = get_post_meta(get_the_ID(), 'property_address_street_number', true);
+                $street_name = get_post_meta(get_the_ID(), 'property_address_street_name', true);
+                $sub_number = get_post_meta(get_the_ID(), 'property_address_sub_number', true);
+            } else {
+                $street_number = '';
+                $street_name = '';
+                $sub_number = '';
+            }
+    
+            // Retrieve other address components
+            $suburb = get_post_meta(get_the_ID(), 'property_address_suburb', true);
+            $state = get_post_meta(get_the_ID(), 'property_address_state', true);
+            $postcode = get_post_meta(get_the_ID(), 'property_address_postal_code', true);
+    
+            // Construct the full address
+            $full_address = trim($street_number . ' ' . $street_name . ' ' . $sub_number);
+            if (!empty($full_address)) {
+                $full_address .= ', ';
+            }
+            $full_address .= $suburb . ', ' . $state . ' ' . $postcode;
+    
+            // Add the full address to the addresses array
+            $addresses[$tool][] = $full_address;
+        }
+        
+        // Reset post data
+        wp_reset_postdata();
+        
+        // Convert addresses array to JSON and embed in a script tag
+        $json_addresses = json_encode($addresses);
+        echo "<script> var addresses = $json_addresses;</script>";
+    }
+}
 
 function pfda_set_featured_image($post_id, $image_filename)
 {
