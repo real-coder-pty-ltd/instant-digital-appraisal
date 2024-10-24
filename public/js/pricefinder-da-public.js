@@ -71,17 +71,28 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	};
 
+	var containerAddress = document.querySelector('.pricefinder-da-address .ginput_container_text');
+	var inputAddress = document.querySelector('.pricefinder-da-address input');
 	var result = document.querySelector('#pricefinder-da-result');
+	if (!result) {
+		containerAddress.classList.add('position-relative');
+		inputAddress.insertAdjacentHTML('afterend', '<div id="pricefinder-da-result" class="position-absolute start-0 top-100 w-100 small"></div>');
+		var result = document.querySelector('#pricefinder-da-result');
+	}
+	if (inputAddress) {
+		inputAddress.id = 'pricefinder-da-address';
+	}
+
 	var address = [];
 
 	// Attach listener to address input field.
-	document.querySelectorAll('input[name="appraisal-type"]').forEach(function (radio) {
+	document.querySelectorAll('.pricefinder-da-appraisal-type').forEach(function (radio) {
 		radio.addEventListener("change", function () {
-			document.querySelectorAll('input[name="appraisal-type"]').forEach(function (el) {
+			document.querySelectorAll('.pricefinder-da-appraisal-type').forEach(function (el) {
 				el.removeAttribute('checked');
 			});
 			this.setAttribute('checked', 'checked');
-			document.getElementById('pricefinder-da-address').value = '';
+			document.querySelector('.pricefinder-da-address input').value = '';
 			resetEventListeners();
 			checkEngagementToolValue();
 		});
@@ -89,7 +100,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Check the selected engagement tool value and set up the appropriate event listeners
 	function checkEngagementToolValue() {
-		const selectedValue = document.querySelector('input[name="appraisal-type"]:checked').value;
+
+		let selectedValue = '';
+
+		if (new URLSearchParams(window.location.search).has('appraisal-type')) {
+			selectedValue = new URLSearchParams(window.location.search).get('appraisal-type');
+		} else {
+			selectedValue = document.querySelector('.pricefinder-da-appraisal-type:checked')?.value || 'sell';
+		}
+
 		result.innerHTML = '';
 
 		if (selectedValue !== "buy" && selectedValue !== "rental") {
@@ -97,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			googleAutocomplete.autocompleteField("pricefinder-da-address");
 		} else {
 			// Add keyup event listener for custom autocomplete
-			document.querySelector('#pricefinder-da-address').addEventListener('keyup', function () {
+			document.querySelector('.pricefinder-da-address input').addEventListener('keyup', function () {
 				if (selectedValue == "buy") {
 					address = addresses.buy;
 				} else if (selectedValue == "rental") {
@@ -110,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Reset event listeners on the address input field
 	function resetEventListeners() {
-		const inputElement = document.getElementById('pricefinder-da-address');
+		const inputElement = document.querySelector('.pricefinder-da-address input');
 		const clonedElement = inputElement.cloneNode(true);
 		inputElement.parentNode.replaceChild(clonedElement, inputElement);
 	}
@@ -151,12 +170,16 @@ document.addEventListener('DOMContentLoaded', function () {
 		// Add click event listener to each list item
 		document.querySelectorAll('.list-group-item').forEach(function (item) {
 			item.addEventListener('click', function () {
-				document.querySelector('#pricefinder-da-address').value = this.textContent;
+				document.querySelector('.pricefinder-da-address input').value = this.textContent;
 				result.innerHTML = ''; // Clear the suggestions list
 			});
 		});
 	}
 
 	// Initial check of the engagement tool value
-	checkEngagementToolValue();
+	if (document.querySelector('.pricefinder-da-address input')) {
+		checkEngagementToolValue();
+	}
+
+
 });

@@ -127,6 +127,8 @@ function add_pricefinder_da_settings()
 			<h3>Google Maps Autocomplete API Key</h3>
 			<p>You'll need a google maps API key with Places enabled.</p>
             <input type="password" name="pricefinder_da_google_maps_api_key" size="50" value="<?php echo get_option('pricefinder_da_google_maps_api_key'); ?>">
+			<h3>Page URL Slug</h3>
+            <input type="text" name="pricefinder_da_page_url_slug" size="50" value="<?php echo get_option('pricefinder_da_page_url_slug'); ?>">
 			<input type="hidden" name="action" value="process_form">	<br><br>		 
             <input type="submit" name="submit" id="submit" class="update-button button button-primary" value="Update"  />
         </form> 		
@@ -183,6 +185,23 @@ function submit_pricefinder_da_key()
         } else {
 
             add_option('pricefinder_da_google_maps_api_key', $google_maps_api_key);
+
+        }
+
+    }
+
+    if (isset($_POST['pricefinder_da_page_url_slug'])) {
+
+        $pricefinder_da_page_url_slug = sanitize_text_field($_POST['pricefinder_da_page_url_slug']);
+        $pricefinder_da_page_url_slug_exists = get_option('pricefinder_da_page_url_slug');
+
+        if (! empty($pricefinder_da_page_url_slug_exists) && ! empty($pricefinder_da_page_url_slug_exists)) {
+
+            update_option('pricefinder_da_page_url_slugy', $pricefinder_da_page_url_slug);
+
+        } else {
+
+            add_option('pricefinder_da_page_url_slug', $pricefinder_da_page_url_slug);
 
         }
 

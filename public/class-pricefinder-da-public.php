@@ -270,8 +270,7 @@ function pricefinder_da_autocomplete_address_form($atts)
     // Define default attributes
     $atts = shortcode_atts(
         array(
-            'engagement_tools' => '',
-            'url_slug' => 'instant-digital-appraisal',
+            'engagement_tools' => 'sell',
             'form_placeholder' => 'Enter your address',
             'form_submit' => 'Submit'
         ),
@@ -281,7 +280,7 @@ function pricefinder_da_autocomplete_address_form($atts)
 
     // Extract attributes
     $engagement_tools = explode(',', $atts['engagement_tools']);
-    $url_slug = $atts['url_slug'];
+    $url_slug = get_option('pricefinder_da_page_url_slug') ? : 'instant-digital-appraisal';
     $form_placeholder = $atts['form_placeholder'];
     $form_submit = $atts['form_submit'];
 
@@ -289,17 +288,19 @@ function pricefinder_da_autocomplete_address_form($atts)
     <form id="pricefinder-da-form" method="GET" action="/' . $url_slug . '/">';
     
     if (is_array($engagement_tools)) {
-        echo '<ul id="pricefinder-da-appraisal-type" class="nav nav-pills mb-3" id="pills-tab" role="tablist">';
         $index = 0;
+        $ul_class = count($engagement_tools) === 1 ? 'd-none' : '';
+    
+        echo '<ul id="pricefinder-da-appraisal-type-wrapper" class="nav nav-pills mb-3 ' . $ul_class . '" id="pills-tab" role="tablist">';
         foreach ($engagement_tools as $tool) {
             $active_class = $index === 0 ? ' active' : '';
             $aria_selected = $index === 0 ? 'true' : 'false';
-            
+    
             echo '<div class="radio">';
-            echo '<input type="radio" class="d-none" name="appraisal-type" id="tool_' . esc_attr($tool) . '" value="' . esc_attr($tool) . '"' . ($index === 0 ? ' checked' : '') . '>';
+            echo '<input type="radio" class="pricefinder-da-appraisal-type d-none" name="appraisal-type" id="tool_' . esc_attr($tool) . '" value="' . esc_attr($tool) . '"' . ($index === 0 ? ' checked' : '') . '>';
             echo '<label for="tool_' . esc_attr($tool) . '" class="nav-link text-capitalize' . $active_class . '" data-bs-toggle="pill" role="tab" aria-selected="' . $aria_selected . '">' . esc_html($tool) . '</label>';
             echo '</div>';
-            
+    
             $index++;
         }
         echo '</ul>';
@@ -307,8 +308,8 @@ function pricefinder_da_autocomplete_address_form($atts)
     
     echo '
         <div class="d-flex flex-row">
-            <div class="position-relative w-100">
-                <input id="pricefinder-da-address" placeholder="' . $form_placeholder . '" name="address" type="text" required class="form-control input-l rounded h-100">
+            <div class="pricefinder-da-address position-relative w-100">
+                <input class="form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
                 <div id="pricefinder-da-result" class="position-absolute start-0 top-100 w-100 small"></div>
             </div>
             <button type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2">' . $form_submit . '</button>
@@ -405,7 +406,7 @@ function pfda_fetch_addresses($tool){
             // Add the full address to the addresses array
             $addresses[$tool][] = $full_address;
         }
-        
+
         // Reset post data
         wp_reset_postdata();
         
@@ -414,6 +415,17 @@ function pfda_fetch_addresses($tool){
         echo "<script> var addresses = $json_addresses;</script>";
     }
 }
+
+function pdfa_load_addreses(){
+    $url_slug = get_option('pricefinder_da_page_url_slug') ? : 'instant-digital-appraisal';
+    $tool = isset($_GET['appraisal-type']) ? $_GET['appraisal-type'] : 'sell';
+
+    if (is_page($url_slug)) {
+        pfda_fetch_addresses($tool);
+    }
+    
+}
+add_action('wp_footer', 'pdfa_load_addreses');
 
 function pfda_set_featured_image($post_id, $image_filename)
 {
