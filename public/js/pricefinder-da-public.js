@@ -76,8 +76,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	var result = document.querySelector('#pricefinder-da-result');
 	if (!result) {
 		containerAddress.classList.add('position-relative');
-		inputAddress.insertAdjacentHTML('afterend', '<div id="pricefinder-da-result" class="position-absolute start-0 top-100 w-100 small"></div>');
-		var result = document.querySelector('#pricefinder-da-result');
+		inputAddress.insertAdjacentHTML('afterend', '<div id="pricefinder-da-result" class="gform-theme__disable-reset position-absolute start-0 top-100 w-100 small"></div>');
+		result = document.querySelector('#pricefinder-da-result');
 	}
 	if (inputAddress) {
 		inputAddress.id = 'pricefinder-da-address';
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		if (new URLSearchParams(window.location.search).has('appraisal-type')) {
 			selectedValue = new URLSearchParams(window.location.search).get('appraisal-type');
 		} else {
-			selectedValue = document.querySelector('.pricefinder-da-appraisal-type:checked')?.value || 'sell';
+			selectedValue = document.querySelector('.pricefinder-da-appraisal-type:checked')?.value || 'general';
 		}
 
 		result.innerHTML = '';
@@ -168,10 +168,13 @@ document.addEventListener('DOMContentLoaded', function () {
 		result.innerHTML = res;
 
 		// Add click event listener to each list item
-		document.querySelectorAll('.list-group-item').forEach(function (item) {
+		document.querySelectorAll('#pricefinder-da-result .list-group-item').forEach(function (item) {
 			item.addEventListener('click', function () {
 				document.querySelector('.pricefinder-da-address input').value = this.textContent;
 				result.innerHTML = ''; // Clear the suggestions list
+
+				// Trigger the change event on the input field
+				document.querySelector('.pricefinder-da-address input').click();
 			});
 		});
 	}
@@ -181,5 +184,63 @@ document.addEventListener('DOMContentLoaded', function () {
 		checkEngagementToolValue();
 	}
 
+	// Google Maps API
+	let map;
+	let geocoder;
 
+	// Initialize the map
+	function initMap() {
+		// Set default location (optional)
+		const defaultLocation = { lat: -34.9406273, lng: 138.6179246 }; // San Francisco
+		map = new google.maps.Map(document.getElementById('pfda-appraisal-map'), {
+			center: defaultLocation,
+			zoom: 18
+		});
+		geocoder = new google.maps.Geocoder();
+	}
+
+	// Geocode the input address and render the 
+	function geocodeAddress() {
+		map
+		const address = document.querySelector('.pricefinder-da-address input').value;
+
+		// Geocode the address input
+		geocoder.geocode({ 'address': address }, function (results, status) {
+			if (status === 'OK') {
+				// Set the map center to the geocoded location
+				map.setCenter(results[0].geometry.location);
+
+				// Add a marker at the geocoded location
+				const marker = new google.maps.Marker({
+					map: map,
+					position: results[0].geometry.location
+				});
+			}
+		});
+	}
+
+	// Ensure initMap is called when the page loads
+	window.onload = function () {
+		const mapElement = document.getElementById('pfda-appraisal-map');
+		if (mapElement) {
+			initMap();
+			geocodeAddress();
+
+			// Add event listeners to the input field
+			const inputField = document.querySelector('.pricefinder-da-address input');
+			inputField.addEventListener('input', geocodeAddress);
+			inputField.addEventListener('change', geocodeAddress);
+			inputField.addEventListener('keyup', geocodeAddress);
+			inputField.addEventListener('click', geocodeAddress);
+
+			// Get the value of the 'appraisal-type' parameter
+			const appraisalType = new URLSearchParams(window.location.search).get('appraisal-type');
+
+			if (appraisalType !== 'buy' && appraisalType !== 'rental') {
+				autocomplete = new google.maps.places.Autocomplete(inputField);
+				autocomplete.addListener('place_changed', geocodeAddress);
+			}
+
+		}
+	};
 });

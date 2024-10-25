@@ -3,14 +3,14 @@
  * included in this file.
  */
 
- .single-appraisal .banner-wrapper {
-    background-color: #f8f8f8;
+.single-appraisal .banner-wrapper {
+   background-color: #f8f8f8;
 }
 
 .single-appraisal .flex-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
 }
 
 .single-appraisal #icon-list.features span {
@@ -19,9 +19,9 @@
 }
 
 .single-appraisal .flex-column header {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
 }
 
 .single-appraisal .flex-column header label {
@@ -57,7 +57,7 @@
 
 .single-appraisal #appraisal-summary {
    padding: 0;
-   min-height: calc(80vh - 200px)!important;
+   min-height: calc(80vh - 200px) !important;
    height: auto;
    padding: 20px;
    border-bottom: 1px solid #f1f1f1;
@@ -126,7 +126,7 @@
    margin: 0 auto;
 }
 
-.single-appraisal .pricing-confidence > div {
+.single-appraisal .pricing-confidence>div {
    display: flex;
    flex-direction: column;
    justify-content: center;
@@ -135,13 +135,13 @@
    font-size: 30px;
 }
 
-.single-appraisal .pricing-confidence > div label {
+.single-appraisal .pricing-confidence>div label {
    font-size: 18px;
    background-color: #f8f8f8;
    z-index: 1;
 }
 
-.single-appraisal .pricing-confidence > div.mid-range {
+.single-appraisal .pricing-confidence>div.mid-range {
    color: #000;
    font-weight: 300;
 }
@@ -155,12 +155,12 @@
 }
 
 .single-appraisal #appraisal-summary .btn:hover {
-   box-shadow: 0px 0px 13px rgba(0,0,0,0.1);
+   box-shadow: 0px 0px 13px rgba(0, 0, 0, 0.1);
 }
 
 .single-appraisal .featured-box {
    background-color: #f8f8f8;
-   padding:  40px;
+   padding: 40px;
    display: flex;
    justify-content: space-between;
    align-items: center;
@@ -190,7 +190,7 @@
    margin-bottom: 10px;
 }
 
-.single-appraisal #investment-potential > div.col h5 {
+.single-appraisal #investment-potential>div.col h5 {
    text-align: center;
    color: #f7941c;
    font-size: 41px;
@@ -199,12 +199,12 @@
    margin-bottom: 5px;
 }
 
-.single-appraisal #investment-potential > div.col h5 span {
+.single-appraisal #investment-potential>div.col h5 span {
    font-size: 13px;
    color: #121212;
 }
 
-.single-appraisal #investment-potential > div.col label {
+.single-appraisal #investment-potential>div.col label {
    text-align: center;
    font-size: 15px;
    max-width: 181px;
@@ -231,19 +231,19 @@
    position: absolute;
    width: 100%;
    height: 1px;
-   border-top:1px dashed #707070;
+   border-top: 1px dashed #707070;
    top: 56px;
    left: 0;
 }
 
-.single-appraisal #sales-history-graph li ul { 
+.single-appraisal #sales-history-graph li ul {
    list-style-type: none;
    padding: 0px;
 }
 
 .single-appraisal #sales-history-graph li ul li {
    text-align: center;
-} 
+}
 
 .single-appraisal #sales-history-graph .history-date {
    font-weight: 200;
@@ -284,14 +284,14 @@
 .single-appraisal #population,
 .single-appraisal #demographic,
 .single-appraisal #owner,
-.single-appraisal #on-market
-{
+.single-appraisal #on-market {
    font-size: 16px;
    text-transform: uppercase;
    font-weight: 400;
 }
 
-.single-appraisal .property-stats .stats-row .col h5, .single-appraisal .property-stats .stats-row .col-md-3 h5 {
+.single-appraisal .property-stats .stats-row .col h5,
+.single-appraisal .property-stats .stats-row .col-md-3 h5 {
    text-align: center;
    font-size: 41px;
    color: #f7941d;
@@ -299,21 +299,24 @@
    position: relative;
    line-height: inherit;
    display: inline-block;
-   margin:0 auto;
+   margin: 0 auto;
 }
 
-.single-appraisal .property-stats .stats-row .col, .single-appraisal .property-stats .stats-row .col-md-5 {
+.single-appraisal .property-stats .stats-row .col,
+.single-appraisal .property-stats .stats-row .col-md-5 {
    flex-direction: column;
    align-items: center;
    display: flex;
 }
 
-.single-appraisal .property-stats .stats-row .col h5:after, .single-appraisal .property-stats .stats-row .col-md-5 h5:after  {
+.single-appraisal .property-stats .stats-row .col h5:after,
+.single-appraisal .property-stats .stats-row .col-md-5 h5:after {
    right: -30px;
    left: inherit;
 }
 
-.single-appraisal .property-stats .stats-row .col label, .single-appraisal .property-stats .stats-row .col-md-5 label {
+.single-appraisal .property-stats .stats-row .col label,
+.single-appraisal .property-stats .stats-row .col-md-5 label {
    text-align: center;
    display: flex;
    justify-content: center;
@@ -328,12 +331,16 @@
    margin-bottom: 40px;
 }
 
-.stats-row > .col, .stats-row > .col-md-5 {
+.stats-row>.col,
+.stats-row>.col-md-5 {
    border-right: 1px solid #e8e8e8;
 
 }
 
-.stats-row > .col:last-of-type, .stats-row > .col-md-5:last-of-type { border-right: none; }
+.stats-row>.col:last-of-type,
+.stats-row>.col-md-5:last-of-type {
+   border-right: none;
+}
 
 .property-map img {
    width: 100%;
@@ -342,25 +349,30 @@
 
 @media (max-width: 768px) {
    .single-appraisal .appraisal-inner {
-       max-width: 100%;
+      max-width: 100%;
    }
+
    .single-appraisal .pricing-confidence {
-       flex-direction: column;
+      flex-direction: column;
    }
+
    #investment-potential .col {
-       width: 100%;
-       flex-basis: inherit;
-       flex-grow: inherit;
+      width: 100%;
+      flex-basis: inherit;
+      flex-grow: inherit;
    }
+
    #investment-potential .col:last-of-type {
-       width: 100%;
+      width: 100%;
    }
-   .single-appraisal #investment-potential > div.col label, .single-appraisal #investment-potential > div.col-md-5 label {
-       margin: 0 auto;
-       display: block;
-       margin-bottom: 15px;
-       padding-bottom: 15px;
-       border-bottom: 1px solid #f1f1f1;
+
+   .single-appraisal #investment-potential>div.col label,
+   .single-appraisal #investment-potential>div.col-md-5 label {
+      margin: 0 auto;
+      display: block;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #f1f1f1;
    }
 }
 
@@ -377,7 +389,7 @@
    top: 0;
    width: 100%;
    height: 100%;
-   background-color:#fff;
+   background-color: #fff;
    overflow: hidden;
 }
 
@@ -406,128 +418,175 @@
 }
 
 
-@media (max-width: 768px) { 
+@media (max-width: 768px) {
    .single-appraisal .stats-row {
-       flex-direction: column;
+      flex-direction: column;
    }
+
    .single-appraisal .stats-row .col {
-       margin-bottom: 30px;
+      margin-bottom: 30px;
    }
+
    .single-appraisal .hero-image img {
-       height: 400px;
+      height: 400px;
    }
-   #appraisal-content > .row {
-       flex-direction: column-reverse;
+
+   #appraisal-content>.row {
+      flex-direction: column-reverse;
    }
+
    .single-appraisal #appraisal-summary {
-       min-height: inherit!important;
-   padding-top: 40px;
-   padding-bottom: 40px;
+      min-height: inherit !important;
+      padding-top: 40px;
+      padding-bottom: 40px;
    }
+
    .single-appraisal .featured-box {
-       margin-bottom: 40px;
-       padding: 20px;
+      margin-bottom: 40px;
+      padding: 20px;
    }
+
    .single-appraisal #sales-history-graph {
-       flex-direction: column;
+      flex-direction: column;
    }
+
    .single-appraisal #sales-history-graph:before {
-       display: none;
+      display: none;
    }
-   #sales-history-graph > li {
-       margin-bottom: 90px;
-       position: relative;
+
+   #sales-history-graph>li {
+      margin-bottom: 90px;
+      position: relative;
    }
+
    .single-appraisal #sales-history-graph .history-date {
-       margin-bottom: 0px;
+      margin-bottom: 0px;
    }
+
    .single-appraisal #sales-history-graph .history-date:before {
-       content: '';
-       width: 23px;
-       height: 23px;
-       border-radius: 50%;
-       position: absolute;
-       bottom: inherit;
-       left: inherit;
-       background-color: #121212;
-       right: inherit;
-       top: -30px;
-       left: calc(50% - 13px);
+      content: '';
+      width: 23px;
+      height: 23px;
+      border-radius: 50%;
+      position: absolute;
+      bottom: inherit;
+      left: inherit;
+      background-color: #121212;
+      right: inherit;
+      top: -30px;
+      left: calc(50% - 13px);
    }
+
    .single-appraisal h2 {
-       margin-bottom: 70px!important;
+      margin-bottom: 70px !important;
    }
-   #sales-history-graph > li:after {
-       height: 40px;
-       width: 1px;
-       position: absolute;
-       border-right: 1px dashed grey;
-       content: '';
-       left: calc(50% - 1px);
-       bottom: -60px;
+
+   #sales-history-graph>li:after {
+      height: 40px;
+      width: 1px;
+      position: absolute;
+      border-right: 1px dashed grey;
+      content: '';
+      left: calc(50% - 1px);
+      bottom: -60px;
    }
-   #schools-table  tr {
-       display: flex;
-       width: 100%;
-       flex-direction: column;
-       position: relative;
-       font-weight: 300;
-       margin-bottom: 30px;
+
+   #schools-table tr {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      position: relative;
+      font-weight: 300;
+      margin-bottom: 30px;
    }
-   #schools-table  tr td {
-       background-color: #fff;
-       padding: 5px;
+
+   #schools-table tr td {
+      background-color: #fff;
+      padding: 5px;
    }
-   #schools-table  tr td:first-of-type {
-       font-weight: 400;
-       background-color: #f8f8f8;
-       padding: 0.75rem;
+
+   #schools-table tr td:first-of-type {
+      font-weight: 400;
+      background-color: #f8f8f8;
+      padding: 0.75rem;
 
    }
+
    .single-appraisal .table td {
-       border: none;
+      border: none;
    }
+
    .single-appraisal .featured-box label {
-       margin-left: 0px;
+      margin-left: 0px;
    }
-   .single-appraisal .property-stats .stats-row .col h5, .single-appraisal .property-stats .stats-row .col-md-3 h5 {
-       text-align: center;
-       display: block;
+
+   .single-appraisal .property-stats .stats-row .col h5,
+   .single-appraisal .property-stats .stats-row .col-md-3 h5 {
+      text-align: center;
+      display: block;
    }
-   .single-appraisal .property-stats .stats-row .col, .single-appraisal .property-stats .stats-row .col-md-5 {
-       display: block;
+
+   .single-appraisal .property-stats .stats-row .col,
+   .single-appraisal .property-stats .stats-row .col-md-5 {
+      display: block;
    }
 }
 
 @-webkit-keyframes pulse {
-    0% { opacity: 0.3; }
-    50% {  opacity: 1; }
-    100% { opacity: 0.3; }
+   0% {
+      opacity: 0.3;
+   }
+
+   50% {
+      opacity: 1;
+   }
+
+   100% {
+      opacity: 0.3;
+   }
 }
 
 @keyframes pulse {
-    0% { opacity: 0.3; }
-    50% { opacity: 1; }
-    100% { opacity: 0.3; }
+   0% {
+      opacity: 0.3;
+   }
+
+   50% {
+      opacity: 1;
+   }
+
+   100% {
+      opacity: 0.3;
+   }
 }
 
 #loading-container.visible #loading-image {
-    -webkit-animation: pulse 2s infinite ease-in-out;
-    -o-animation: pulse 2s infinite ease-in-out;
-    -ms-animation: pulse 2s infinite ease-in-out; 
-    -moz-animation: pulse 2s infinite ease-in-out; 
-    animation: pulse 2s infinite ease-in-out;
-    object-fit: contain;
+   -webkit-animation: pulse 2s infinite ease-in-out;
+   -o-animation: pulse 2s infinite ease-in-out;
+   -ms-animation: pulse 2s infinite ease-in-out;
+   -moz-animation: pulse 2s infinite ease-in-out;
+   animation: pulse 2s infinite ease-in-out;
+   object-fit: contain;
 }
 
 #loading-container.visible {
-    z-index: 99999;
+   z-index: 99999;
 }
 
 h1 span.suburb-details {
-    color: #121212;
-    line-height: 26px;
-    font-size: 24px;
-    display: block;
-    margin-bottom: 20px;
+   color: #121212;
+   line-height: 26px;
+   font-size: 24px;
+   display: block;
+   margin-bottom: 20px;
+}
+
+.mw-1512 {
+   max-width: 1512px;
+   margin: 0 auto;
+}
+
+.mw-640 {
+   max-width: 640px;
+   margin: 0 auto;
 }

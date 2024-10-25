@@ -270,7 +270,7 @@ function pricefinder_da_autocomplete_address_form($atts)
     // Define default attributes
     $atts = shortcode_atts(
         array(
-            'engagement_tools' => 'sell',
+            'engagement_tools' => 'general',
             'form_placeholder' => 'Enter your address',
             'form_submit' => 'Submit'
         ),
@@ -279,7 +279,7 @@ function pricefinder_da_autocomplete_address_form($atts)
     );
 
     // Extract attributes
-    $engagement_tools = explode(',', $atts['engagement_tools']);
+    $engagement_tools = explode(',', $atts['engagement_tools'] ? :  'general');
     $url_slug = get_option('pricefinder_da_page_url_slug') ? : 'instant-digital-appraisal';
     $form_placeholder = $atts['form_placeholder'];
     $form_submit = $atts['form_submit'];
@@ -310,7 +310,7 @@ function pricefinder_da_autocomplete_address_form($atts)
         <div class="d-flex flex-row">
             <div class="pricefinder-da-address position-relative w-100">
                 <input class="form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
-                <div id="pricefinder-da-result" class="position-absolute start-0 top-100 w-100 small"></div>
+                <div id="pricefinder-da-result" class="gform-theme__disable-reset position-absolute start-0 top-100 w-100 small"></div>
             </div>
             <button type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2">' . $form_submit . '</button>
         </div>
@@ -426,6 +426,47 @@ function pdfa_load_addreses(){
     
 }
 add_action('wp_footer', 'pdfa_load_addreses');
+
+/*
+* 	Instant Digital Appraisal Form Shortcode.
+*
+*/
+function pricefinder_da_appraisal_form_shortcode($atts)
+{
+    // Define default attributes
+    $atts = shortcode_atts(
+        array(
+            'class_section' => 'bg-light',
+            'class_container' => 'mw-1512',
+            'class_row' => 'row mx-0 align-items-center',
+            'class_col' => 'col-lg-6 px-0',
+            'class_form_wrapper' => 'container px-lg-0',
+            'class_form' => 'bg-white rounded shadow p-5 mx-0 mx-lg-5 my-5',
+            'class_map_wrapper' => 'container px-lg-0 d-none d-lg-block',
+            'class_map' => 'vh-100',
+        ),
+        $atts
+    );
+
+    echo '
+        <section class="section--instant-digital-appraisal ' . $atts['class_section'] . '">
+            <div class="' . $atts['class_container'] . '">
+                <div class="' . $atts['class_row'] . '">
+                    <div class="' . $atts['class_col'] . '">
+                        <div class="' . $atts['class_form_wrapper'] . '">
+                            <div class="' . $atts['class_form'] . '">' . do_shortcode('[gravityform id="1" title="false"]') . '</div>
+                        </div>
+                    </div>
+                    <div class="' . $atts['class_col'] . '">
+                        <div class="' . $atts['class_map_wrapper'] . '">
+                            <div class="' . $atts['class_map'] . '" id="pfda-appraisal-map"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>';
+}
+add_shortcode('pfda_appraisal_form', 'pricefinder_da_appraisal_form_shortcode');
 
 function pfda_set_featured_image($post_id, $image_filename)
 {
@@ -598,3 +639,17 @@ function GetDrivingDistance($lat1, $long1, $lat2, $long2)
 
     return ['distance' => $dist, 'time' => $time];
 }
+
+/**
+ * Hooks for Instant Digital Appraisal Form and Page
+ */
+function pdfa_instant_digital_appraisal_hooks(){
+    $url_slug = get_option('pricefinder_da_page_url_slug') ? : 'instant-digital-appraisal';
+
+    // Remove the required legend from the form
+    if (is_page($url_slug)) {
+        add_filter('gform_required_legend', '__return_empty_string');
+    }
+};
+
+add_action('wp', 'pdfa_instant_digital_appraisal_hooks');
