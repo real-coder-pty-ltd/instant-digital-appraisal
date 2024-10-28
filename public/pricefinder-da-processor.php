@@ -113,7 +113,12 @@ if (! empty($demographics->response)) {
     }
 
     $owning = array_sum($owning);
-    $ownership_percentage = round(($owning / $total) * 100, 2);
+    
+    if ($total != 0) {
+        $ownership_percentage = round(($owning / $total) * 100, 2);
+    } else {
+        $ownership_percentage = 0;
+    }
 
 }
 
@@ -150,7 +155,12 @@ if (! empty($sales->response)) {
     }
 
     $total_properties = count(array_filter($history));
-    $average_days_on_market = round(array_sum($history) / $total_properties);
+    
+    if ($total_properties != 0) {
+        $average_days_on_market = round(array_sum($history) / $total_properties);
+    } else {
+        $average_days_on_market = 0;
+    }
 
     update_field('sales_result', json_encode($sales->body), $post_id);
 }
