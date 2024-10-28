@@ -270,7 +270,7 @@ function pricefinder_da_autocomplete_address_form($atts)
     // Define default attributes
     $atts = shortcode_atts(
         array(
-            'engagement_tools' => 'general',
+            'tabs' => 'general',
             'form_placeholder' => 'Enter your address',
             'form_submit' => 'Submit'
         ),
@@ -279,7 +279,7 @@ function pricefinder_da_autocomplete_address_form($atts)
     );
 
     // Extract attributes
-    $engagement_tools = explode(',', $atts['engagement_tools'] ? :  'general');
+    $tabs = explode(',', $atts['tabs'] ? :  'general');
     $url_slug = get_option('pricefinder_da_page_url_slug') ? : 'instant-digital-appraisal';
     $form_placeholder = $atts['form_placeholder'];
     $form_submit = $atts['form_submit'];
@@ -287,18 +287,18 @@ function pricefinder_da_autocomplete_address_form($atts)
     echo '
     <form id="pricefinder-da-form" method="GET" action="/' . $url_slug . '/">';
     
-    if (is_array($engagement_tools)) {
+    if (is_array($tabs)) {
         $index = 0;
-        $ul_class = count($engagement_tools) === 1 ? 'd-none' : '';
+        $ul_class = count($tabs) === 1 ? 'd-none' : '';
     
         echo '<ul id="pricefinder-da-appraisal-type-wrapper" class="nav nav-pills mb-3 ' . $ul_class . '" id="pills-tab" role="tablist">';
-        foreach ($engagement_tools as $tool) {
+        foreach ($tabs as $tab) {
             $active_class = $index === 0 ? ' active' : '';
             $aria_selected = $index === 0 ? 'true' : 'false';
     
             echo '<div class="radio">';
-            echo '<input type="radio" class="pricefinder-da-appraisal-type d-none" name="appraisal-type" id="tool_' . esc_attr($tool) . '" value="' . esc_attr($tool) . '"' . ($index === 0 ? ' checked' : '') . '>';
-            echo '<label for="tool_' . esc_attr($tool) . '" class="nav-link text-capitalize' . $active_class . '" data-bs-toggle="pill" role="tab" aria-selected="' . $aria_selected . '">' . esc_html($tool) . '</label>';
+            echo '<input type="radio" class="pricefinder-da-appraisal-type d-none" name="appraisal-type" id="tool_' . esc_attr($tab) . '" value="' . esc_attr($tab) . '"' . ($index === 0 ? ' checked' : '') . '>';
+            echo '<label for="tool_' . esc_attr($tab) . '" class="nav-link text-capitalize' . $active_class . '" data-bs-toggle="pill" role="tab" aria-selected="' . $aria_selected . '">' . esc_html($tab) . '</label>';
             echo '</div>';
     
             $index++;
@@ -321,8 +321,8 @@ function pricefinder_da_autocomplete_address_form($atts)
 
 
     if (is_plugin_active('easy-property-listings/easy-property-listings.php')) {
-        foreach ($engagement_tools as $tool) {
-            pfda_fetch_addresses($tool);
+        foreach ($tabs as $tab) {
+            pfda_fetch_addresses($tab);
         }
     }
     
@@ -333,17 +333,17 @@ add_shortcode('pfda_address_form', 'pricefinder_da_autocomplete_address_form');
 * 	Fetch addresses from the listings.
 *
 */
-function pfda_fetch_addresses($tool){
+function pfda_fetch_addresses($tab){
 
     // Initialize variables for post type and property status
     $post_type = '';
     $property_status = '';
 
     // Set post type and property status based on the tool parameter
-    if ($tool === 'buy') {
+    if ($tab === 'buy') {
         $post_type = 'property';
         $property_status = 'current';
-    } elseif ($tool === 'rental') {
+    } elseif ($tab === 'rental') {
         $post_type = 'rental';
         $property_status = 'current';
     }
@@ -404,7 +404,7 @@ function pfda_fetch_addresses($tool){
             $full_address .= $suburb . ', ' . $state . ' ' . $postcode;
     
             // Add the full address to the addresses array
-            $addresses[$tool][] = $full_address;
+            $addresses[$tab][] = $full_address;
         }
 
         // Reset post data
@@ -418,10 +418,10 @@ function pfda_fetch_addresses($tool){
 
 function pdfa_load_addreses(){
     $url_slug = get_option('pricefinder_da_page_url_slug') ? : 'instant-digital-appraisal';
-    $tool = isset($_GET['appraisal-type']) ? $_GET['appraisal-type'] : 'sell';
+    $tab = isset($_GET['appraisal-type']) ? $_GET['appraisal-type'] : 'sell';
 
     if (is_page($url_slug)) {
-        pfda_fetch_addresses($tool);
+        pfda_fetch_addresses($tab);
     }
     
 }
@@ -598,12 +598,15 @@ function geolocationaddress($lat, $long)
 function nice_number($n)
 {
     // first strip any formatting;
-    $n = (0 + str_replace(',', '', $n));
+    $n = str_replace(',', '', $n);
 
     // is this a number?
-    if (! is_numeric($n)) {
+    if (!is_numeric($n)) {
         return false;
     }
+
+    // convert to a number
+    $n = (float)$n;
 
     // now filter it;
     if ($n > 1000000000000) {
