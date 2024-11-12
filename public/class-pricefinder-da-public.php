@@ -280,7 +280,7 @@ function pricefinder_da_autocomplete_address_form($atts)
 
     // Extract attributes
     $tabs = explode(',', $atts['tabs'] ? :  'general');
-    $url_slug = get_option('pricefinder_da_page_url_slug') ? : 'instant-digital-appraisal';
+    $url_slug = get_option('pricefinder_da_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
     $form_placeholder = $atts['form_placeholder'];
     $form_submit = $atts['form_submit'];
 
@@ -417,7 +417,7 @@ function pfda_fetch_addresses($tab){
 }
 
 function pdfa_load_addreses(){
-    $url_slug = get_option('pricefinder_da_page_url_slug') ? : 'instant-digital-appraisal';
+    $url_slug = get_option('pricefinder_da_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
     $tab = isset($_GET['appraisal-type']) ? $_GET['appraisal-type'] : 'sell';
 
     if (is_page($url_slug)) {
@@ -647,7 +647,7 @@ function GetDrivingDistance($lat1, $long1, $lat2, $long2)
  * Hooks for Instant Digital Appraisal Form and Page
  */
 function pdfa_instant_digital_appraisal_hooks(){
-    $url_slug = get_option('pricefinder_da_page_url_slug') ? : 'instant-digital-appraisal';
+    $url_slug = get_option('pricefinder_da_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
 
     // Remove the required legend from the form
     if (is_page($url_slug)) {
@@ -656,3 +656,698 @@ function pdfa_instant_digital_appraisal_hooks(){
 };
 
 add_action('wp', 'pdfa_instant_digital_appraisal_hooks');
+
+
+/**
+ * Domain API Functions
+ */
+
+// Fetch the access token from Domain API
+function rc_domain_fetch_access_token() {
+    // Set your client ID and client secret
+    $client_id = get_option('pricefinder_da_client_id');
+    $client_secret = get_option('pricefinder_da_secret_key');
+
+    // Define the token URL
+    $token_url = 'https://auth.domain.com.au/v1/connect/token';
+
+    // Prepare the POST data
+    $data = [
+        'grant_type' => 'client_credentials',
+        'scope' => 'api_properties_read api_addresslocators_read api_demographics_read api_suburbperformance_read api_locations_read',
+    ];
+
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_URL, $token_url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/x-www-form-urlencoded'
+    ]);
+    curl_setopt($ch, CURLOPT_USERPWD, $client_id . ':' . $client_secret);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+
+    // Execute the request
+    $response = curl_exec($ch);
+
+    // Check for errors
+    if (curl_errno($ch)) {
+        echo 'cURL error: ' . curl_error($ch);
+    } else {
+        // Decode the JSON response
+        $response_data = json_decode($response, true);
+
+        // Output the access token
+        if (isset($response_data['access_token'])) {
+            return $response_data['access_token'];
+        } else {
+            echo 'Error retrieving access token: ' . $response;
+        }
+    }
+
+    // Close cURL session
+    curl_close($ch);
+
+    return null;
+}
+
+// Fetch property suggestions from Domain API
+function rc_domain_fetch_property_suggest($location) {
+    $access_token = rc_domain_fetch_access_token();
+    if (!$access_token) {
+        return null;
+    }
+
+    // Define the base API URL
+    $base_url = 'https://api.domain.com.au/';
+    $api_version = 'v1';
+    $endpoint = 'properties/_suggest';
+
+    // Construct the full API URL
+    $api_url = $base_url . $api_version . '/' . $endpoint;
+
+    // Prepare the query parameters
+    $params = [
+        'terms' => $location,
+        'pageSize' => 20,
+        'channel' => 'All'
+    ];
+
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_URL, $api_url . '?' . http_build_query($params));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $access_token,
+        'Content-Type: application/json'
+    ]);
+
+    // Execute the request
+    $response = curl_exec($ch);
+
+    // Check for errors
+    if (curl_errno($ch)) {
+        echo 'cURL error: ' . curl_error($ch);
+        return null;
+    } else {
+        // Decode the JSON response
+        $response_data = json_decode($response, true);
+
+        // Return the response data
+        return $response_data;
+    }
+
+    // Close the cURL session
+    curl_close($ch);
+}
+
+// Fetch property details from Domain API
+function rc_domain_fetch_property($extracted_property_id) {
+    $access_token = rc_domain_fetch_access_token();
+    if (!$access_token) {
+        return null;
+    }
+
+    // Define the base API URL
+    $base_url = 'https://api.domain.com.au/';
+    $api_version = 'v1';
+    $endpoint = 'properties/' . $extracted_property_id;
+
+    // Construct the full API URL
+    $api_url = $base_url . $api_version . '/' . $endpoint;
+
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    $options = [
+        CURLOPT_URL => $api_url,
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $access_token,
+            'Content-Type: application/json'
+        ],
+    ];
+
+    curl_setopt_array($ch, $options);
+
+    // Execute the request
+    $response = curl_exec($ch);
+
+    // Check for errors
+    if (curl_errno($ch)) {
+        echo 'Error: ' . curl_error($ch);
+        return null;
+    } else {
+        // Decode the JSON response
+        $result = json_decode($response, true);
+
+        // Check for API errors
+        if (isset($result['error'])) {
+            echo 'Error: ' . $result['error'];
+            return null;
+        } else {
+            // Return the result
+            return $result;
+        }
+    }
+
+    // Close the cURL session
+    curl_close($ch);
+}
+
+// Fetch property price estimate from Domain API
+function rc_domain_fetch_property_price_estimate($extracted_property_id) {
+    $access_token = rc_domain_fetch_access_token();
+    if (!$access_token) {
+        return null;
+    }
+
+    // Define the base API URL
+    $base_url = 'https://api.domain.com.au/';
+    $api_version = 'v1';
+    $endpoint = 'properties/' . $extracted_property_id . '/priceEstimate';
+
+    // Construct the full API URL
+    $api_url = $base_url . $api_version . '/' . $endpoint;
+
+    var_dump($api_url);
+
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    $options = [
+        CURLOPT_URL => $api_url,
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $access_token,
+            'Content-Type: application/json'
+        ],
+    ];
+
+    curl_setopt_array($ch, $options);
+
+    // Execute the request
+    $response = curl_exec($ch);
+
+    // Check for errors
+    if (curl_errno($ch)) {
+        echo 'Error: ' . curl_error($ch);
+        return null;
+    } else {
+        // Decode the JSON response
+        $result = json_decode($response, true);
+
+        // Check for API errors
+        if (isset($result['error'])) {
+            echo 'Error: ' . $result['error'];
+            return null;
+        } else {
+            // Return the result
+            return $result;
+        }
+    }
+
+    // Close the cURL session
+    curl_close($ch);
+}
+
+// Fetch schools from Domain API
+function rc_domain_fetch_schools($latitude, $longitude) {
+    $access_token = rc_domain_fetch_access_token();
+    if (!$access_token || !$latitude || !$longitude) {
+        return null;
+    }
+
+    // Define the base API URL
+    $base_url = 'https://api.domain.com.au/';
+    $api_version = 'v2';
+    $endpoint = 'schools/' . urlencode($latitude) . '/' . urlencode($longitude);
+
+    // Construct the full API URL
+    $api_url = $base_url . $api_version . '/' . $endpoint;
+
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    $options = [
+        CURLOPT_URL => $api_url,
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $access_token,
+            'Content-Type: application/json'
+        ],
+    ];
+
+    curl_setopt_array($ch, $options);
+
+    // Execute the request
+    $response = curl_exec($ch);
+
+    // Check for errors
+    if (curl_errno($ch)) {
+        echo 'Error: ' . curl_error($ch);
+        return null;
+    } else {
+        // Decode the JSON response
+        $result = json_decode($response, true);
+
+        // Check for API errors
+        if (isset($result['error'])) {
+            echo 'Error: ' . $result['error'];
+            return null;
+        } else {
+            // Return the result
+            return $result;
+        }
+    }
+
+    // Close the cURL session
+    curl_close($ch);
+}
+
+// Fetch demographics from Domain API
+function rc_domain_fetch_demographics($state, $suburb, $postcode) {
+    $access_token = rc_domain_fetch_access_token();
+    if (!$access_token || !$state || !$suburb || !$postcode) {
+        return null;
+    }
+
+    // Define the base API URL
+    $base_url = 'https://api.domain.com.au/';
+    $api_version = 'v2';
+    $endpoint = 'demographics/' . urlencode($state) . '/' . urlencode($suburb) . '/' . urlencode($postcode);
+
+    // Construct the full API URL
+    $api_url = $base_url . $api_version . '/' . $endpoint;
+
+    // Calculate the year 10 years ago from now
+    $year = date('Y') - 10;
+
+    // Prepare the query parameters
+    $params = [
+        'types' => 'AgeGroupOfPopulation, CountryOfBirth, NatureOfOccupancy, Occupation, GeographicalPopulation, DwellingStructure, EducationAttendance, HousingLoanRepayment, MaritalStatus, Religion, TransportToWork, FamilyComposition, HouseholdIncome, Rent, LabourForceStatus',
+        'year' => $year
+    ];
+
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    $options = [
+        CURLOPT_URL => $api_url . '?' . http_build_query($params),
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $access_token,
+            'Content-Type: application/json'
+        ],
+    ];
+
+    curl_setopt_array($ch, $options);
+
+    // Execute the request
+    $response = curl_exec($ch);
+
+    // Check for errors
+    if (curl_errno($ch)) {
+        echo 'Error: ' . curl_error($ch);
+        return null;
+    } else {
+        // Decode the JSON response
+        $result = json_decode($response, true);
+
+        // Check for API errors
+        if (isset($result['error'])) {
+            echo 'Error: ' . $result['error'];
+            return null;
+        } else {
+            // Return the result
+            return $result;
+        }
+    }
+
+    // Close the cURL session
+    curl_close($ch);
+}
+
+// Fetch suburb performance statistics from Domain API
+function rc_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode) {
+    $access_token = rc_domain_fetch_access_token();
+    if (!$access_token) {
+        return null;
+    }
+
+    // Define the base API URL
+    $base_url = 'https://api.domain.com.au/';
+    $api_version = 'v2';
+    $endpoint = 'suburbPerformanceStatistics/' . urlencode($state) . '/' . urlencode($suburb) . '/' . urlencode($postcode);
+
+    // Construct the full API URL
+    $api_url = $base_url . $api_version . '/' . $endpoint;
+
+    // Prepare the query parameters
+    $params = [
+        'propertyCategory' => '',
+        'bedrooms' => '',
+        'periodSize' => 'quarters',
+        'startingPeriodRelativeToCurrent' => '1',
+        'totalPeriods' => '40'
+    ];
+
+    // Initialize cURL session
+    $ch = curl_init();
+
+    // Set cURL options
+    $options = [
+        CURLOPT_URL => $api_url . '?' . http_build_query($params),
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $access_token,
+            'Content-Type: application/json'
+        ],
+    ];
+
+    curl_setopt_array($ch, $options);
+
+    // Execute the request
+    $response = curl_exec($ch);
+
+    // Check for errors
+    if (curl_errno($ch)) {
+        echo 'Error: ' . curl_error($ch);
+        return null;
+    } else {
+        // Decode the JSON response
+        $result = json_decode($response, true);
+
+        // Check for API errors
+        if (isset($result['error'])) {
+            echo 'Error: ' . $result['error'];
+            return null;
+        } else {
+            // Return the result
+            return $result;
+        }
+    }
+
+    // Close the cURL session
+    curl_close($ch);
+}
+
+// Extract the property suggest data
+function rc_domain_extract_property_suggest($fetched_property_suggest) {
+    if (!$fetched_property_suggest) {
+        return null;
+    }
+
+    // Decode the JSON string
+    $fetched_property_suggest = json_decode($fetched_property_suggest, true);
+
+    // Extract the required data
+    $extracted_data = [];
+
+    foreach ($fetched_property_suggest as $property) {
+        $address_components = $property['addressComponents'];
+
+        $extracted_data[] = [
+            'address' => $property['address'],
+            'unit_number' => isset($address_components['unitNumber']) ? $address_components['unitNumber'] : null,
+            'street_number' => isset($address_components['streetNumber']) ? $address_components['streetNumber'] : null,
+            'street_name' => isset($address_components['streetName']) ? $address_components['streetName'] : null,
+            'street_type' => isset($address_components['streetType']) ? $address_components['streetType'] : null,
+            'street_type_long' => isset($address_components['streetTypeLong']) ? $address_components['streetTypeLong'] : null,
+            'suburb' => isset($address_components['suburb']) ? $address_components['suburb'] : null,
+            'post_code' => isset($address_components['postCode']) ? $address_components['postCode'] : null,
+            'state' => isset($address_components['state']) ? $address_components['state'] : null,
+            'id' => isset($property['id']) ? $property['id'] : null,
+            'relative_score' => isset($property['relativeScore']) ? $property['relativeScore'] : null,
+        ];
+    }
+
+    // Return the extracted data as an associative array
+    return $extracted_data;
+}
+
+// Extract the property data
+function rc_domain_extract_property($fetched_property) {
+    if (!$fetched_property) {
+        return null;
+    }
+
+    // Decode the JSON string
+    $fetched_property = json_decode($fetched_property, true);
+
+    // Extract general data
+    $id = isset($fetched_property['id']) ? $fetched_property['id'] : null;
+    $canonical_url = isset($fetched_property['canonicalUrl']) ? $fetched_property['canonicalUrl'] : null;
+    $url_slug = isset($fetched_property['urlSlug']) ? $fetched_property['urlSlug'] : null;
+    $url_slug_short = isset($fetched_property['urlSlugShort']) ? $fetched_property['urlSlugShort'] : null;
+    $on_market_types = isset($fetched_property['onMarketTypes']) ? $fetched_property['onMarketTypes'] : [];
+    $status = isset($fetched_property['status']) ? $fetched_property['status'] : null;
+    $adverts = isset($fetched_property['adverts']) ? $fetched_property['adverts'] : [];
+    $flat_number = isset($fetched_property['flatNumber']) ? $fetched_property['flatNumber'] : null;
+    $is_residential = isset($fetched_property['isResidential']) ? $fetched_property['isResidential'] : null;
+    $internal_area = isset($fetched_property['internalArea']) ? $fetched_property['internalArea'] : null;
+    $area_size = isset($fetched_property['areaSize']) ? $fetched_property['areaSize'] : null;
+    $created = isset($fetched_property['created']) ? $fetched_property['created'] : null;
+    $updated = isset($fetched_property['updated']) ? $fetched_property['updated'] : null;
+
+    // Extract address details
+    $address_id = isset($fetched_property['addressId']) ? $fetched_property['addressId'] : null;
+    $address = isset($fetched_property['address']) ? $fetched_property['address'] : null;
+    $address_coordinates = isset($fetched_property['addressCoordinate']) ? $fetched_property['addressCoordinate'] : null;
+    $latitude = isset($address_coordinates['lat']) ? $address_coordinates['lat'] : null;
+    $longitude = isset($address_coordinates['lon']) ? $address_coordinates['lon'] : null;
+    $postcode = isset($fetched_property['postcode']) ? $fetched_property['postcode'] : null;
+    $state = isset($fetched_property['state']) ? $fetched_property['state'] : null;
+    $street_address = isset($fetched_property['streetAddress']) ? $fetched_property['streetAddress'] : null;
+    $street_name = isset($fetched_property['streetName']) ? $fetched_property['streetName'] : null;
+    $street_number = isset($fetched_property['streetNumber']) ? $fetched_property['streetNumber'] : null;
+    $street_type = isset($fetched_property['streetType']) ? $fetched_property['streetType'] : null;
+    $street_type_long = isset($fetched_property['streetTypeLong']) ? $fetched_property['streetTypeLong'] : null;
+    $suburb = isset($fetched_property['suburb']) ? $fetched_property['suburb'] : null;
+    $suburb_id = isset($fetched_property['suburbId']) ? $fetched_property['suburbId'] : null;
+
+    // Extract features
+    $bathrooms = isset($fetched_property['bathrooms']) ? $fetched_property['bathrooms'] : null;
+    $bedrooms = isset($fetched_property['bedrooms']) ? $fetched_property['bedrooms'] : null;
+    $car_spaces = isset($fetched_property['carSpaces']) ? $fetched_property['carSpaces'] : null;
+    $created = isset($fetched_property['created']) ? $fetched_property['created'] : null;
+    $features = isset($fetched_property['features']) ? $fetched_property['features'] : [];
+
+    // Extract history
+    $sales_history = isset($fetched_property['history']['sales']) ? $fetched_property['history']['sales'] : [];
+    $rentals_history = isset($fetched_property['history']['rentals']) ? $fetched_property['history']['rentals'] : [];
+
+    // Extract photos
+    $photos = isset($fetched_property['photos']) ? $fetched_property['photos'] : [];
+
+    // Return the extracted data as an associative array
+    return [
+        'general_data' => [
+            'id' => $id,
+            'canonical_url' => $canonical_url,
+            'url_slug' => $url_slug,
+            'url_slug_short' => $url_slug_short,
+            'on_market_types' => $on_market_types,
+            'status' => $status,
+            'adverts' => $adverts,
+            'flat_number' => $flat_number,
+            'is_residential' => $is_residential,
+            'internal_area' => $internal_area,
+            'area_size' => $area_size,
+            'created' => $created,
+            'updated' => $updated,
+        ],
+        'address_data' => [
+            'address_id' => $address_id,
+            'address' => $address,
+            'address_coordinates' => $address_coordinates,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'postcode' => $postcode,
+            'state' => $state,
+            'street_address' => $street_address,
+            'street_name' => $street_name,
+            'street_number' => $street_number,
+            'street_type' => $street_type,
+            'street_type_long' => $street_type_long,
+            'suburb' => $suburb,
+            'suburb_id' => $suburb_id,
+        ],
+        'features_data' => [
+            'bathrooms' => $bathrooms,
+            'bedrooms' => $bedrooms,
+            'car_spaces' => $car_spaces,
+            'created' => $created,
+            'features' => $features,
+        ],
+        'history_data' => [
+            'sales_history' => $sales_history,
+            'rentals_history' => $rentals_history,
+        ],
+        'photos_data' => $photos,
+    ];
+}
+
+// Extract the property price estimate data
+function rc_domain_extract_property_price_estimate($fetched_property_price_estimate) {
+    if (!$fetched_property_price_estimate) {
+        return null;
+    }
+
+    // Decode the JSON string
+    $fetched_property_price_estimate = json_decode($fetched_property_price_estimate, true);
+
+    // Extract the required data
+    $date = isset($fetched_property_price_estimate['date']) ? $fetched_property_price_estimate['date'] : null;
+    $lower_price = isset($fetched_property_price_estimate['lowerPrice']) ? $fetched_property_price_estimate['lowerPrice'] : null;
+    $mid_price = isset($fetched_property_price_estimate['midPrice']) ? $fetched_property_price_estimate['midPrice'] : null;
+    $price_confidence = isset($fetched_property_price_estimate['priceConfidence']) ? $fetched_property_price_estimate['priceConfidence'] : null;
+    $source = isset($fetched_property_price_estimate['source']) ? $fetched_property_price_estimate['source'] : null;
+    $upper_price = isset($fetched_property_price_estimate['upperPrice']) ? $fetched_property_price_estimate['upperPrice'] : null;
+    $history = isset($fetched_property_price_estimate['history']) ? $fetched_property_price_estimate['history'] : [];
+    
+    // Return the extracted data as an associative array
+    return [
+        'date' => $date,
+        'lower_price' => $lower_price,
+        'mid_price' => $mid_price,
+        'price_confidence' => $price_confidence,
+        'source' => $source,
+        'upper_price' => $upper_price,
+        'history' => $history,
+    ];
+}
+
+// Extract the schools data
+function rc_domain_extract_schools($fetched_schools) {
+    if (!$fetched_schools) {
+        return null;
+    }
+
+    // Decode the JSON string
+    $fetched_schools = json_decode($fetched_schools, true);
+    
+    // Extract the required data
+    $extracted_data = [];
+
+    var_dump($extracted_schools);
+
+    foreach ($fetched_schools as $school_info) {
+        $school = $school_info['school'];
+        $profile = isset($school['profile']) ? $school['profile'] : [];
+    
+        $extracted_data[] = [
+            'distance' => $school_info['distance'],
+            'name' => $school['name'],
+            'suburb' => $school['suburb'],
+            'state' => $school['state'],
+            'postcode' => $school['postcode'],
+            'url' => isset($profile['url']) ? $profile['url'] : null,
+            'totalEnrolments' => isset($profile['totalEnrolments']) ? $profile['totalEnrolments'] : null
+        ];
+    }
+
+    // Return the extracted data as an associative array
+    return $extracted_data;
+}
+
+// Extract the demographics data
+function rc_domain_extract_demographics($fetched_demographics) {
+    if (!$fetched_demographics) {
+        return null;
+    }
+
+    // Decode the JSON string
+    $fetched_demographics = json_decode($fetched_demographics, true);
+
+    // Extract the required data
+    $extracted_data = [];
+
+    foreach ($fetched_demographics['demographics'] as $demographic) {
+        $type = $demographic['type'];
+        $total = $demographic['total'];
+        $year = $demographic['year'];
+        $items = $demographic['items'];
+
+        $extracted_items = [];
+        foreach ($items as $item) {
+            $extracted_items[] = [
+                'label' => $item['label'],
+                'value' => $item['value'],
+                'composition' => $item['composition']
+            ];
+        }
+
+        $extracted_data[] = [
+            'type' => $type,
+            'total' => $total,
+            'year' => $year,
+            'items' => $extracted_items
+        ];
+    }
+
+    // Return the extracted data as an associative array
+    return $extracted_data;
+}
+
+// Extract the suburb performance statistics data
+function rc_domain_extract_suburb_performance_statistics($fetched_suburb_performance_statistics) {
+    if (!$fetched_suburb_performance_statistics) {
+        return null;
+    }
+
+    // Decode the JSON string
+    $fetched_suburb_performance_statistics = json_decode($fetched_suburb_performance_statistics, true);
+
+    // Extract the required data
+    $header = $fetched_suburb_performance_statistics['header'];
+    $series_info = $fetched_suburb_performance_statistics['series']['seriesInfo'];
+
+    $extracted_data = [
+        'suburb' => $header['suburb'],
+        'state' => $header['state'],
+        'property_category' => $header['propertyCategory'],
+        'series' => []
+    ];
+    
+    foreach ($series_info as $info) {
+        $values = $info['values'];
+        $extracted_data['series'][] = [
+            'year' => $info['year'],
+            'month' => $info['month'],
+            'median_sold_price' => isset($values['medianSoldPrice']) ? $values['medianSoldPrice'] : null,
+            'number_sold' => isset($values['numberSold']) ? $values['numberSold'] : null,
+            'highest_sold_price' => isset($values['highestSoldPrice']) ? $values['highestSoldPrice'] : null,
+            'lowest_sold_price' => isset($values['lowestSoldPrice']) ? $values['lowestSoldPrice'] : null,
+            '5th_percentile_sold_price' => isset($values['5thPercentileSoldPrice']) ? $values['5thPercentileSoldPrice'] : null,
+            '25th_percentile_sold_price' => isset($values['25thPercentileSoldPrice']) ? $values['25thPercentileSoldPrice'] : null,
+            '75th_percentile_sold_price' => isset($values['75thPercentileSoldPrice']) ? $values['75thPercentileSoldPrice'] : null,
+            '95th_percentile_sold_price' => isset($values['95thPercentileSoldPrice']) ? $values['95thPercentileSoldPrice'] : null,
+            'median_sale_listing_price' => isset($values['medianSaleListingPrice']) ? $values['medianSaleListingPrice'] : null,
+            'number_sale_listing' => isset($values['numberSaleListing']) ? $values['numberSaleListing'] : null,
+            'highest_sale_listing_price' => isset($values['highestSaleListingPrice']) ? $values['highestSaleListingPrice'] : null,
+            'lowest_sale_listing_price' => isset($values['lowestSaleListingPrice']) ? $values['lowestSaleListingPrice'] : null,
+            'auction_number_auctioned' => isset($values['auctionNumberAuctioned']) ? $values['auctionNumberAuctioned'] : null,
+            'auction_number_sold' => isset($values['auctionNumberSold']) ? $values['auctionNumberSold'] : null,
+            'auction_number_withdrawn' => isset($values['auctionNumberWithdrawn']) ? $values['auctionNumberWithdrawn'] : null,
+            'days_on_market' => isset($values['daysOnMarket']) ? $values['daysOnMarket'] : null,
+            'discount_percentage' => isset($values['discountPercentage']) ? $values['discountPercentage'] : null,
+            'median_rent_listing_price' => isset($values['medianRentListingPrice']) ? $values['medianRentListingPrice'] : null,
+            'number_rent_listing' => isset($values['numberRentListing']) ? $values['numberRentListing'] : null,
+            'highest_rent_listing_price' => isset($values['highestRentListingPrice']) ? $values['highestRentListingPrice'] : null,
+            'lowest_rent_listing_price' => isset($values['lowestRentListingPrice']) ? $values['lowestRentListingPrice'] : null
+        ];
+    }
+
+    // Return the extracted data as an associative array
+    return $extracted_data;
+}
