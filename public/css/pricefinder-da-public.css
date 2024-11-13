@@ -590,3 +590,12 @@ h1 span.suburb-details {
    max-width: 640px;
    margin: 0 auto;
 }
+
+.rc-ida-results {
+   max-height: 229px;
+   overflow-y: scroll;
+}
+
+.z-2 {
+   z-index: 2;
+}

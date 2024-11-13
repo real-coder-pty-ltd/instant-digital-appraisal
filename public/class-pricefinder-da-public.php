@@ -93,12 +93,22 @@ class Pricefinder_Da_Public
          * between the defined hooks and the functions defined in this
          * class.
          */
-        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__).'js/pricefinder-da-public.js', ['jquery'], $this->version, true);
+        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/pricefinder-da-public.js', ['jquery'], $this->version, true);
 
         /**
          * Google Maps Script.
          */
         wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key='.get_option('pricefinder_da_google_maps_api_key').'&amp;libraries=places', [], $this->version, false);
+        
+        /**
+         * Domain API - Property Suggest.
+         */
+        wp_enqueue_script('rc-domain-property-suggest', plugin_dir_url(__FILE__) . '/js/rc-domain-property-suggest.js', ['jquery'], null, true);
+
+        wp_localize_script('rc-domain-property-suggest', 'autocomplete_params', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('autocomplete_nonce')
+        ]);
     }
 }
 
@@ -287,32 +297,36 @@ function pricefinder_da_autocomplete_address_form($atts)
     echo '
     <form id="pricefinder-da-form" method="GET" action="/' . $url_slug . '/">';
     
-    if (is_array($tabs)) {
-        $index = 0;
-        $ul_class = count($tabs) === 1 ? 'd-none' : '';
+    // if (is_array($tabs)) {
+    //     $index = 0;
+    //     $ul_class = count($tabs) === 1 ? 'd-none' : '';
     
-        echo '<ul id="pricefinder-da-appraisal-type-wrapper" class="nav nav-pills mb-3 ' . $ul_class . '" id="pills-tab" role="tablist">';
-        foreach ($tabs as $tab) {
-            $active_class = $index === 0 ? ' active' : '';
-            $aria_selected = $index === 0 ? 'true' : 'false';
+    //     echo '<ul id="pricefinder-da-appraisal-type-wrapper" class="nav nav-pills mb-3 ' . $ul_class . '" id="pills-tab" role="tablist">';
+    //     foreach ($tabs as $tab) {
+    //         $active_class = $index === 0 ? ' active' : '';
+    //         $aria_selected = $index === 0 ? 'true' : 'false';
     
-            echo '<div class="radio">';
-            echo '<input type="radio" class="pricefinder-da-appraisal-type d-none" name="appraisal-type" id="tool_' . esc_attr($tab) . '" value="' . esc_attr($tab) . '"' . ($index === 0 ? ' checked' : '') . '>';
-            echo '<label for="tool_' . esc_attr($tab) . '" class="nav-link text-capitalize' . $active_class . '" data-bs-toggle="pill" role="tab" aria-selected="' . $aria_selected . '">' . esc_html($tab) . '</label>';
-            echo '</div>';
+    //         echo '<div class="radio">';
+    //         echo '<input type="radio" class="pricefinder-da-appraisal-type d-none" name="appraisal-type" id="tool_' . esc_attr($tab) . '" value="' . esc_attr($tab) . '"' . ($index === 0 ? ' checked' : '') . '>';
+    //         echo '<label for="tool_' . esc_attr($tab) . '" class="nav-link text-capitalize' . $active_class . '" data-bs-toggle="pill" role="tab" aria-selected="' . $aria_selected . '">' . esc_html($tab) . '</label>';
+    //         echo '</div>';
     
-            $index++;
-        }
-        echo '</ul>';
-    }
+    //         $index++;
+    //     }
+    //     echo '</ul>';
+    // }
     
     echo '
         <div class="d-flex flex-row">
-            <div class="pricefinder-da-address position-relative w-100">
-                <input class="form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
-                <div id="pricefinder-da-result" class="gform-theme__disable-reset position-absolute start-0 top-100 w-100 small"></div>
+            <div id="rc-ida-search" class="rc-ida-search position-relative w-100">
+                <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
+                <input id="rc-ida-state" class="rc-ida-state" type="hidden" name="state">
+                <input id="rc-ida-suburb" class="rc-ida-suburb" type="hidden" name="suburb">
+                <input id="rc-ida-postcode" class="rc-ida-postcode" type="hidden" name="postcode">
+                <input id="rc-ida-property-id" class="rc-ida-property-id" type="hidden" name="property_id">
+                <ul id="rc-ida-results" class="rc-ida-results card shadow gform-theme__disable-reset position-absolute start-0 top-100 w-100 small list-unstyled z-2 px-2 d-none"></ul>
             </div>
-            <button type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2">' . $form_submit . '</button>
+            <button id="rc-ida-submit" type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2" disabled>' . $form_submit . '</button>
         </div>
     </form>
     <div id="loading-container">
@@ -320,11 +334,11 @@ function pricefinder_da_autocomplete_address_form($atts)
     </div>';
 
 
-    if (is_plugin_active('easy-property-listings/easy-property-listings.php')) {
-        foreach ($tabs as $tab) {
-            pfda_fetch_addresses($tab);
-        }
-    }
+    // if (is_plugin_active('easy-property-listings/easy-property-listings.php')) {
+    //     foreach ($tabs as $tab) {
+    //         pfda_fetch_addresses($tab);
+    //     }
+    // }
     
 }
 add_shortcode('pfda_address_form', 'pricefinder_da_autocomplete_address_form');
@@ -459,7 +473,7 @@ function pricefinder_da_appraisal_form_shortcode($atts)
                     </div>
                     <div class="' . $atts['class_col'] . '">
                         <div class="' . $atts['class_map_wrapper'] . '">
-                            <div class="' . $atts['class_map'] . '" id="pfda-appraisal-map"></div>
+                            <div class="' . $atts['class_map'] . '" id="rc-ida-google-map"></div>
                         </div>
                     </div>
                 </div>
@@ -767,7 +781,7 @@ function rc_domain_fetch_property_suggest($location) {
 }
 
 // Fetch property details from Domain API
-function rc_domain_fetch_property($extracted_property_id) {
+function rc_domain_fetch_property($property_id) {
     $access_token = rc_domain_fetch_access_token();
     if (!$access_token) {
         return null;
@@ -776,7 +790,7 @@ function rc_domain_fetch_property($extracted_property_id) {
     // Define the base API URL
     $base_url = 'https://api.domain.com.au/';
     $api_version = 'v1';
-    $endpoint = 'properties/' . $extracted_property_id;
+    $endpoint = 'properties/' . $property_id;
 
     // Construct the full API URL
     $api_url = $base_url . $api_version . '/' . $endpoint;
@@ -822,7 +836,7 @@ function rc_domain_fetch_property($extracted_property_id) {
 }
 
 // Fetch property price estimate from Domain API
-function rc_domain_fetch_property_price_estimate($extracted_property_id) {
+function rc_domain_fetch_property_price_estimate($property_id) {
     $access_token = rc_domain_fetch_access_token();
     if (!$access_token) {
         return null;
@@ -831,7 +845,7 @@ function rc_domain_fetch_property_price_estimate($extracted_property_id) {
     // Define the base API URL
     $base_url = 'https://api.domain.com.au/';
     $api_version = 'v1';
-    $endpoint = 'properties/' . $extracted_property_id . '/priceEstimate';
+    $endpoint = 'properties/' . $property_id . '/priceEstimate';
 
     // Construct the full API URL
     $api_url = $base_url . $api_version . '/' . $endpoint;
@@ -1351,3 +1365,23 @@ function rc_domain_extract_suburb_performance_statistics($fetched_suburb_perform
     // Return the extracted data as an associative array
     return $extracted_data;
 }
+
+// Fetch property suggest data via AJAX
+function rc_domain_fetch_property_suggest_ajax() {
+    check_ajax_referer('autocomplete_nonce', 'nonce');
+
+    if (!isset($_POST['location'])) {
+        wp_send_json_error('Location not provided');
+    }
+
+    $location = sanitize_text_field($_POST['location']);
+    $suggestions = rc_domain_fetch_property_suggest($location);
+
+    if ($suggestions) {
+        wp_send_json_success($suggestions);
+    } else {
+        wp_send_json_error('No suggestions found');
+    }
+}
+add_action('wp_ajax_rc_domain_fetch_property_suggest', 'rc_domain_fetch_property_suggest_ajax');
+add_action('wp_ajax_nopriv_rc_domain_fetch_property_suggest', 'rc_domain_fetch_property_suggest_ajax');
