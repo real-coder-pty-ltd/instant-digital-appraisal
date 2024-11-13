@@ -333,7 +333,6 @@ function pricefinder_da_autocomplete_address_form($atts)
         <img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
     </div>';
 
-
     // if (is_plugin_active('easy-property-listings/easy-property-listings.php')) {
     //     foreach ($tabs as $tab) {
     //         pfda_fetch_addresses($tab);
