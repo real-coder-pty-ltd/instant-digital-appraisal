@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!results) {
         containerGFAddress.classList.add('position-relative');
-        inputGFAddress.insertAdjacentHTML('afterend', '<ul id="rc-ida-results" class="rc-ida-results card shadow gform-theme__disable-reset position-absolute start-0 top-100 w-100 small list-unstyled px-2 z-2 d-none"></ul>');
+        inputGFAddress.insertAdjacentHTML('afterend', '<ul id="rc-ida-results" class="rc-ida-results card shadow gform-theme__disable-reset position-absolute start-0 top-100 w-100 list-unstyled px-2 z-2 d-none"></ul>');
         results = document.querySelector('.rc-ida-results');
     }
     if (inputGFAddress) {

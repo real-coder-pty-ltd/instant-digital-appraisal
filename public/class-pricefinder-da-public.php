@@ -103,14 +103,20 @@ class Pricefinder_Da_Public
         /**
          * Domain API - Property Suggest.
          */
+        global $post;
 
+        if (has_shortcode($post->post_content, 'rc_ida_address_form') || has_shortcode($post->post_content, 'rc_ida_appraisal_form')) {
+            wp_enqueue_script('rc-domain-property-suggest-address', plugin_dir_url(__FILE__) . '/js/rc-ida-domain-property-suggest-address.js', ['jquery'], null, true);
+        
+            wp_localize_script('rc-domain-property-suggest-address', 'autocomplete_params', [
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('autocomplete_nonce')
+            ]);
+        }
 
-        wp_enqueue_script('rc-ida-domain-property-suggest-address', plugin_dir_url(__FILE__) . '/js/rc-ida-domain-property-suggest-address.js', ['jquery'], null, true);
-
-        wp_localize_script('rc-ida-domain-property-suggest-address', 'autocomplete_params', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('autocomplete_nonce')
-        ]);
+        if (has_shortcode($post->post_content, 'rc_ida_suburb_form')) {
+            wp_enqueue_script('rc-domain-property-suggest-suburb', plugin_dir_url(__FILE__) . '/js/rc-ida-domain-property-suggest-suburb.js', ['jquery'], null, true);
+        }
     }
 }
 
@@ -286,7 +292,7 @@ function rc_ida_address_form($atts)
             'form_submit' => 'Submit'
         ),
         $atts,
-        'pricefinder_da_form'
+        'rc_ida_address_form'
     );
 
     // Extract attributes
@@ -295,25 +301,91 @@ function rc_ida_address_form($atts)
     $form_submit = $atts['form_submit'];
 
     echo '
-    <form id="rc-ida-appraisal-form" method="GET" action="/' . $url_slug . '/">
-        <div class="d-flex flex-row">
-            <div id="rc-ida-search" class="rc-ida-search position-relative w-100">
-                <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
-                <input id="rc-ida-state" class="rc-ida-state" type="hidden" name="state">
-                <input id="rc-ida-suburb" class="rc-ida-suburb" type="hidden" name="suburb">
-                <input id="rc-ida-postcode" class="rc-ida-postcode" type="hidden" name="postcode">
-                <input id="rc-ida-property-id" class="rc-ida-property-id" type="hidden" name="property_id">
-                <ul id="rc-ida-results" class="rc-ida-results card shadow gform-theme__disable-reset position-absolute start-0 top-100 w-100 small list-unstyled z-2 px-2 d-none"></ul>
+        <form id="rc-ida-address-form" method="GET" action="/' . $url_slug . '/">
+            <div class="d-flex flex-row">
+                <div id="rc-ida-search" class="rc-ida-search position-relative w-100">
+                    <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
+                    <input id="rc-ida-state" class="rc-ida-state" type="hidden" name="state">
+                    <input id="rc-ida-suburb" class="rc-ida-suburb" type="hidden" name="suburb">
+                    <input id="rc-ida-postcode" class="rc-ida-postcode" type="hidden" name="postcode">
+                    <input id="rc-ida-property-id" class="rc-ida-property-id" type="hidden" name="property_id">
+                    <ul id="rc-ida-results" class="rc-ida-results card shadow gform-theme__disable-reset position-absolute start-0 top-100 w-100 list-unstyled z-2 px-2 d-none"></ul>
+                </div>
+                <button id="rc-ida-submit" type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2" disabled>' . $form_submit . '</button>
             </div>
-            <button id="rc-ida-submit" type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2" disabled>' . $form_submit . '</button>
+        </form>
+        <div id="loading-container">
+            <img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
         </div>
-    </form>
-    <div id="loading-container">
-        <img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
-    </div>';
+    ';
     
 }
 add_shortcode('rc_ida_address_form', 'rc_ida_address_form');
+
+/*
+* 	Suburb Form Shortcode.
+*
+*/
+function rc_ida_suburb_form($atts)
+{
+    $google_maps_api_key = get_option('rc_ida_google_maps_api_key');
+
+    // Define default attributes
+    $atts = shortcode_atts(
+        array(
+            'form_placeholder' => 'Select your suburb.',
+            'form_submit' => 'Search'
+        ),
+        $atts,
+        'rc-ida-suburb-form'
+    );
+
+    // Extract attributes
+    $url_slug = get_option('rc_ida_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
+    $form_placeholder = $atts['form_placeholder'];
+    $form_submit = $atts['form_submit'];
+
+    // Get all terms from the 'suburb' taxonomy
+    $suburbs = get_terms(array(
+        'taxonomy' => 'location',
+        'hide_empty' => false,
+    ));
+
+    // Initialize the suburbs list
+    $suburb_list = [];
+    foreach ($suburbs as $suburb) {
+        $suburb_list[] = $suburb->name;
+    }
+    $json_suburb_list = json_encode($suburb_list);
+    
+    echo '
+    <script>
+        const suburbs = ' . $json_suburb_list . ';
+        console.log(suburbs); // For debugging purposes
+    </script>
+    ';
+
+    echo '
+        <form id="rc-ida-suburb-form" method="GET" action="/' . $url_slug . '/">
+            <div class="d-flex flex-row">
+                <div id="rc-ida-search" class="rc-ida-search position-relative w-100">
+                    <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
+                    <input id="rc-ida-suburb" class="rc-ida-suburb" type="hidden" name="suburb">
+                    <input id="rc-ida-state" class="rc-ida-state" type="hidden" name="state">
+                    <input id="rc-ida-postcode" class="rc-ida-postcode" type="hidden" name="postcode">
+                    <ul id="rc-ida-results" class="rc-ida-results card shadow gform-theme__disable-reset position-absolute start-0 top-100 w-100 list-unstyled z-2 px-2 d-none">
+                    </ul>
+                </div>
+                <button id="rc-ida-submit" type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2" disabled>' . $form_submit . '</button>
+            </div>
+        </form>
+        <div id="loading-container">
+            <img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
+        </div>
+    ';
+    
+}
+add_shortcode('rc_ida_suburb_form', 'rc_ida_suburb_form');
 
 /*
 * 	Appraisal Form Shortcode.
@@ -352,7 +424,8 @@ function rc_ida_appraisal_form($atts)
                     </div>
                 </div>
             </div>
-        </section>';
+        </section>\
+    ';
 }
 add_shortcode('rc_ida_appraisal_form', 'rc_ida_appraisal_form');
 
@@ -956,7 +1029,7 @@ function rc_ida_domain_extract_property_suggest($fetched_property_suggest) {
     }
 
     // Decode the JSON string
-    $fetched_property_suggest = json_decode($fetched_property_suggest, true);
+    $fetched_property_suggest = $fetched_property_suggest;
 
     // Extract the required data
     $extracted_data = [];
@@ -1259,3 +1332,4 @@ function rc_ida_domain_fetch_property_suggest_ajax() {
 }
 add_action('wp_ajax_rc_ida_domain_fetch_property_suggest', 'rc_ida_domain_fetch_property_suggest_ajax');
 add_action('wp_ajax_nopriv_rc_ida_domain_fetch_property_suggest', 'rc_ida_domain_fetch_property_suggest_ajax');
+
