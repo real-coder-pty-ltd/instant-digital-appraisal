@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     body: new URLSearchParams({
-                        action: 'rc_domain_fetch_property_suggest',
+                        action: 'rc_ida_domain_fetch_property_suggest',
                         nonce: autocomplete_params.nonce,
                         location: query
                     })

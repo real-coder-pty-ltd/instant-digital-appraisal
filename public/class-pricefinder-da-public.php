@@ -98,14 +98,16 @@ class Pricefinder_Da_Public
         /**
          * Google Maps Script.
          */
-        wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key='.get_option('pricefinder_da_google_maps_api_key').'&amp;libraries=places', [], $this->version, false);
+        wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key='.get_option('rc_ida_google_maps_api_key').'&amp;libraries=places', [], $this->version, false);
         
         /**
          * Domain API - Property Suggest.
          */
-        wp_enqueue_script('rc-domain-property-suggest', plugin_dir_url(__FILE__) . '/js/rc-domain-property-suggest.js', ['jquery'], null, true);
 
-        wp_localize_script('rc-domain-property-suggest', 'autocomplete_params', [
+
+        wp_enqueue_script('rc-ida-domain-property-suggest-address', plugin_dir_url(__FILE__) . '/js/rc-ida-domain-property-suggest-address.js', ['jquery'], null, true);
+
+        wp_localize_script('rc-ida-domain-property-suggest-address', 'autocomplete_params', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('autocomplete_nonce')
         ]);
@@ -142,10 +144,10 @@ function curl_pricefinder_da()
         pricefinder_da_notice('warning', 'Access Token has expired. Generating new key...');
 
         // Check if options have been set, if not, break early.
-        if (get_option('pricefinder_da_client_id') && get_option('pricefinder_da_secret_key')) {
+        if (get_option('rc_ida_client_id') && get_option('rc_ida_client_secret')) {
 
-            $client_id = get_option('pricefinder_da_client_id');
-            $client_secret = get_option('pricefinder_da_secret_key');
+            $client_id = get_option('rc_ida_client_id');
+            $client_secret = get_option('rc_ida_client_secret');
             pricefinder_da_notice('secondary', 'Client ID & Secret Key set. Attempting to generate key through API...');
 
         } else {
@@ -157,8 +159,8 @@ function curl_pricefinder_da()
         }
 
         $ch = curl_init();
-        $client_id = get_option('pricefinder_da_client_id');
-        $client_secret = get_option('pricefinder_da_secret_key');
+        $client_id = get_option('rc_ida_client_id');
+        $client_secret = get_option('rc_ida_client_secret');
         $headers = ['Content-Type: application/x-www-form-urlencoded', 'Accept: application/json'];
 
         $options = [
@@ -266,21 +268,20 @@ function build_image($image_content, $id)
 // {
 
 //     echo '<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-// 	<script src="https://maps.googleapis.com/maps/api/js?key='.get_option('pricefinder_da_google_maps_api_key').'&callback=initAutocomplete&libraries=places&v=weekly" defer></script>';
+// 	<script src="https://maps.googleapis.com/maps/api/js?key='.get_option('rc_ida_google_maps_api_key').'&callback=initAutocomplete&libraries=places&v=weekly" defer></script>';
 // }
 
 // add_action('wp_enqueue_scripts', 'wpdocs_theme_name_scripts');
 
 /*
-* 	Google Places Autocomplete shortcode form.
+* 	Address Form Shortcode.
 *
 */
-function pricefinder_da_autocomplete_address_form($atts)
+function rc_ida_address_form($atts)
 {
     // Define default attributes
     $atts = shortcode_atts(
         array(
-            'tabs' => 'general',
             'form_placeholder' => 'Enter your address',
             'form_submit' => 'Submit'
         ),
@@ -289,34 +290,12 @@ function pricefinder_da_autocomplete_address_form($atts)
     );
 
     // Extract attributes
-    $tabs = explode(',', $atts['tabs'] ? :  'general');
-    $url_slug = get_option('pricefinder_da_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
+    $url_slug = get_option('rc_ida_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
     $form_placeholder = $atts['form_placeholder'];
     $form_submit = $atts['form_submit'];
 
     echo '
-    <form id="pricefinder-da-form" method="GET" action="/' . $url_slug . '/">';
-    
-    // if (is_array($tabs)) {
-    //     $index = 0;
-    //     $ul_class = count($tabs) === 1 ? 'd-none' : '';
-    
-    //     echo '<ul id="pricefinder-da-appraisal-type-wrapper" class="nav nav-pills mb-3 ' . $ul_class . '" id="pills-tab" role="tablist">';
-    //     foreach ($tabs as $tab) {
-    //         $active_class = $index === 0 ? ' active' : '';
-    //         $aria_selected = $index === 0 ? 'true' : 'false';
-    
-    //         echo '<div class="radio">';
-    //         echo '<input type="radio" class="pricefinder-da-appraisal-type d-none" name="appraisal-type" id="tool_' . esc_attr($tab) . '" value="' . esc_attr($tab) . '"' . ($index === 0 ? ' checked' : '') . '>';
-    //         echo '<label for="tool_' . esc_attr($tab) . '" class="nav-link text-capitalize' . $active_class . '" data-bs-toggle="pill" role="tab" aria-selected="' . $aria_selected . '">' . esc_html($tab) . '</label>';
-    //         echo '</div>';
-    
-    //         $index++;
-    //     }
-    //     echo '</ul>';
-    // }
-    
-    echo '
+    <form id="rc-ida-appraisal-form" method="GET" action="/' . $url_slug . '/">
         <div class="d-flex flex-row">
             <div id="rc-ida-search" class="rc-ida-search position-relative w-100">
                 <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
@@ -332,119 +311,15 @@ function pricefinder_da_autocomplete_address_form($atts)
     <div id="loading-container">
         <img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
     </div>';
-
-    // if (is_plugin_active('easy-property-listings/easy-property-listings.php')) {
-    //     foreach ($tabs as $tab) {
-    //         pfda_fetch_addresses($tab);
-    //     }
-    // }
     
 }
-add_shortcode('pfda_address_form', 'pricefinder_da_autocomplete_address_form');
+add_shortcode('rc_ida_address_form', 'rc_ida_address_form');
 
 /*
-* 	Fetch addresses from the listings.
+* 	Appraisal Form Shortcode.
 *
 */
-function pfda_fetch_addresses($tab){
-
-    // Initialize variables for post type and property status
-    $post_type = '';
-    $property_status = '';
-
-    // Set post type and property status based on the tool parameter
-    if ($tab === 'buy') {
-        $post_type = 'property';
-        $property_status = 'current';
-    } elseif ($tab === 'rental') {
-        $post_type = 'rental';
-        $property_status = 'current';
-    }
-    
-    // Define the query arguments
-    $args = array(
-        'post_type' => $post_type,
-        'posts_per_page' => -1,
-        'meta_query' => array(
-            array(
-                'key' => 'property_status',
-                'value' => $property_status,
-                'compare' => '='
-            )
-        )
-    );
-
-    // Execute the query
-    $query = new WP_Query($args);
-
-    // Initialize an array to store addresses
-    $addresses = [
-        'buy' => [],
-        'rental' => []
-    ];
-    
-    // Check if the query has posts
-    if ($query->have_posts()) {
-
-        // Loop through the query results
-        while ($query->have_posts()) {
-            $query->the_post();
-
-            // Check if the address should be displayed
-            $display_address = get_post_meta(get_the_ID(), 'property_address_display', true);
-    
-            // Retrieve address components based on display flag
-            if ($display_address === 'yes') {
-                $street_number = get_post_meta(get_the_ID(), 'property_address_street_number', true);
-                $street_name = get_post_meta(get_the_ID(), 'property_address_street_name', true);
-                $sub_number = get_post_meta(get_the_ID(), 'property_address_sub_number', true);
-            } else {
-                $street_number = '';
-                $street_name = '';
-                $sub_number = '';
-            }
-    
-            // Retrieve other address components
-            $suburb = get_post_meta(get_the_ID(), 'property_address_suburb', true);
-            $state = get_post_meta(get_the_ID(), 'property_address_state', true);
-            $postcode = get_post_meta(get_the_ID(), 'property_address_postal_code', true);
-    
-            // Construct the full address
-            $full_address = trim($street_number . ' ' . $street_name . ' ' . $sub_number);
-            if (!empty($full_address)) {
-                $full_address .= ', ';
-            }
-            $full_address .= $suburb . ', ' . $state . ' ' . $postcode;
-    
-            // Add the full address to the addresses array
-            $addresses[$tab][] = $full_address;
-        }
-
-        // Reset post data
-        wp_reset_postdata();
-        
-        // Convert addresses array to JSON and embed in a script tag
-        $json_addresses = json_encode($addresses);
-        echo "<script> var addresses = $json_addresses;</script>";
-    }
-}
-
-function pdfa_load_addreses(){
-    $url_slug = get_option('pricefinder_da_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
-    $tab = isset($_GET['appraisal-type']) ? $_GET['appraisal-type'] : 'sell';
-
-    if (is_page($url_slug)) {
-        pfda_fetch_addresses($tab);
-    }
-    
-}
-add_action('wp_footer', 'pdfa_load_addreses');
-
-/*
-* 	Instant Digital Appraisal Form Shortcode.
-*
-*/
-function pricefinder_da_appraisal_form_shortcode($atts)
+function rc_ida_appraisal_form($atts)
 {
     // Define default attributes
     $atts = shortcode_atts(
@@ -479,7 +354,7 @@ function pricefinder_da_appraisal_form_shortcode($atts)
             </div>
         </section>';
 }
-add_shortcode('pfda_appraisal_form', 'pricefinder_da_appraisal_form_shortcode');
+add_shortcode('rc_ida_appraisal_form', 'rc_ida_appraisal_form');
 
 function pfda_set_featured_image($post_id, $image_filename)
 {
@@ -637,7 +512,7 @@ function nice_number($n)
 
 function GetDrivingDistance($lat1, $long1, $lat2, $long2)
 {
-    $url = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins='.$lat1.','.$long1.'&destinations='.$lat2.','.$long2.'&key='.get_option('pricefinder_da_google_maps_api_key');
+    $url = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins='.$lat1.','.$long1.'&destinations='.$lat2.','.$long2.'&key='.get_option('rc_ida_google_maps_api_key');
     $ch = curl_init();
     $options = [
         CURLOPT_URL => $url,
@@ -659,8 +534,8 @@ function GetDrivingDistance($lat1, $long1, $lat2, $long2)
 /**
  * Hooks for Instant Digital Appraisal Form and Page
  */
-function pdfa_instant_digital_appraisal_hooks(){
-    $url_slug = get_option('pricefinder_da_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
+function rc_ida_hooks(){
+    $url_slug = get_option('rc_ida_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
 
     // Remove the required legend from the form
     if (is_page($url_slug)) {
@@ -668,7 +543,7 @@ function pdfa_instant_digital_appraisal_hooks(){
     }
 };
 
-add_action('wp', 'pdfa_instant_digital_appraisal_hooks');
+add_action('wp', 'rc_ida_hooks');
 
 
 /**
@@ -676,10 +551,10 @@ add_action('wp', 'pdfa_instant_digital_appraisal_hooks');
  */
 
 // Fetch the access token from Domain API
-function rc_domain_fetch_access_token() {
+function rc_ida_domain_fetch_access_token() {
     // Set your client ID and client secret
-    $client_id = get_option('pricefinder_da_client_id');
-    $client_secret = get_option('pricefinder_da_secret_key');
+    $client_id = get_option('rc_ida_client_id');
+    $client_secret = get_option('rc_ida_client_secret');
 
     // Define the token URL
     $token_url = 'https://auth.domain.com.au/v1/connect/token';
@@ -728,8 +603,8 @@ function rc_domain_fetch_access_token() {
 }
 
 // Fetch property suggestions from Domain API
-function rc_domain_fetch_property_suggest($location) {
-    $access_token = rc_domain_fetch_access_token();
+function rc_ida_domain_fetch_property_suggest($location) {
+    $access_token = rc_ida_domain_fetch_access_token();
     if (!$access_token) {
         return null;
     }
@@ -780,8 +655,8 @@ function rc_domain_fetch_property_suggest($location) {
 }
 
 // Fetch property details from Domain API
-function rc_domain_fetch_property($property_id) {
-    $access_token = rc_domain_fetch_access_token();
+function rc_ida_domain_fetch_property($property_id) {
+    $access_token = rc_ida_domain_fetch_access_token();
     if (!$access_token) {
         return null;
     }
@@ -835,8 +710,8 @@ function rc_domain_fetch_property($property_id) {
 }
 
 // Fetch property price estimate from Domain API
-function rc_domain_fetch_property_price_estimate($property_id) {
-    $access_token = rc_domain_fetch_access_token();
+function rc_ida_domain_fetch_property_price_estimate($property_id) {
+    $access_token = rc_ida_domain_fetch_access_token();
     if (!$access_token) {
         return null;
     }
@@ -892,8 +767,8 @@ function rc_domain_fetch_property_price_estimate($property_id) {
 }
 
 // Fetch schools from Domain API
-function rc_domain_fetch_schools($latitude, $longitude) {
-    $access_token = rc_domain_fetch_access_token();
+function rc_ida_domain_fetch_schools($latitude, $longitude) {
+    $access_token = rc_ida_domain_fetch_access_token();
     if (!$access_token || !$latitude || !$longitude) {
         return null;
     }
@@ -947,8 +822,8 @@ function rc_domain_fetch_schools($latitude, $longitude) {
 }
 
 // Fetch demographics from Domain API
-function rc_domain_fetch_demographics($state, $suburb, $postcode) {
-    $access_token = rc_domain_fetch_access_token();
+function rc_ida_domain_fetch_demographics($state, $suburb, $postcode) {
+    $access_token = rc_ida_domain_fetch_access_token();
     if (!$access_token || !$state || !$suburb || !$postcode) {
         return null;
     }
@@ -1011,8 +886,8 @@ function rc_domain_fetch_demographics($state, $suburb, $postcode) {
 }
 
 // Fetch suburb performance statistics from Domain API
-function rc_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode) {
-    $access_token = rc_domain_fetch_access_token();
+function rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode) {
+    $access_token = rc_ida_domain_fetch_access_token();
     if (!$access_token) {
         return null;
     }
@@ -1075,7 +950,7 @@ function rc_domain_fetch_suburb_performance_statistics($state, $suburb, $postcod
 }
 
 // Extract the property suggest data
-function rc_domain_extract_property_suggest($fetched_property_suggest) {
+function rc_ida_domain_extract_property_suggest($fetched_property_suggest) {
     if (!$fetched_property_suggest) {
         return null;
     }
@@ -1109,7 +984,7 @@ function rc_domain_extract_property_suggest($fetched_property_suggest) {
 }
 
 // Extract the property data
-function rc_domain_extract_property($fetched_property) {
+function rc_ida_domain_extract_property($fetched_property) {
     if (!$fetched_property) {
         return null;
     }
@@ -1211,7 +1086,7 @@ function rc_domain_extract_property($fetched_property) {
 }
 
 // Extract the property price estimate data
-function rc_domain_extract_property_price_estimate($fetched_property_price_estimate) {
+function rc_ida_domain_extract_property_price_estimate($fetched_property_price_estimate) {
     if (!$fetched_property_price_estimate) {
         return null;
     }
@@ -1241,7 +1116,7 @@ function rc_domain_extract_property_price_estimate($fetched_property_price_estim
 }
 
 // Extract the schools data
-function rc_domain_extract_schools($fetched_schools) {
+function rc_ida_domain_extract_schools($fetched_schools) {
     if (!$fetched_schools) {
         return null;
     }
@@ -1274,7 +1149,7 @@ function rc_domain_extract_schools($fetched_schools) {
 }
 
 // Extract the demographics data
-function rc_domain_extract_demographics($fetched_demographics) {
+function rc_ida_domain_extract_demographics($fetched_demographics) {
     if (!$fetched_demographics) {
         return null;
     }
@@ -1313,7 +1188,7 @@ function rc_domain_extract_demographics($fetched_demographics) {
 }
 
 // Extract the suburb performance statistics data
-function rc_domain_extract_suburb_performance_statistics($fetched_suburb_performance_statistics) {
+function rc_ida_domain_extract_suburb_performance_statistics($fetched_suburb_performance_statistics) {
     if (!$fetched_suburb_performance_statistics) {
         return null;
     }
@@ -1366,7 +1241,7 @@ function rc_domain_extract_suburb_performance_statistics($fetched_suburb_perform
 }
 
 // Fetch property suggest data via AJAX
-function rc_domain_fetch_property_suggest_ajax() {
+function rc_ida_domain_fetch_property_suggest_ajax() {
     check_ajax_referer('autocomplete_nonce', 'nonce');
 
     if (!isset($_POST['location'])) {
@@ -1374,7 +1249,7 @@ function rc_domain_fetch_property_suggest_ajax() {
     }
 
     $location = sanitize_text_field($_POST['location']);
-    $suggestions = rc_domain_fetch_property_suggest($location);
+    $suggestions = rc_ida_domain_fetch_property_suggest($location);
 
     if ($suggestions) {
         wp_send_json_success($suggestions);
@@ -1382,5 +1257,5 @@ function rc_domain_fetch_property_suggest_ajax() {
         wp_send_json_error('No suggestions found');
     }
 }
-add_action('wp_ajax_rc_domain_fetch_property_suggest', 'rc_domain_fetch_property_suggest_ajax');
-add_action('wp_ajax_nopriv_rc_domain_fetch_property_suggest', 'rc_domain_fetch_property_suggest_ajax');
+add_action('wp_ajax_rc_ida_domain_fetch_property_suggest', 'rc_ida_domain_fetch_property_suggest_ajax');
+add_action('wp_ajax_nopriv_rc_ida_domain_fetch_property_suggest', 'rc_ida_domain_fetch_property_suggest_ajax');

@@ -39,8 +39,8 @@ class Pricefinder_Da_Activator
         if (! get_option('pricefinder_da_developer_mode')) {
             add_option('pricefinder_da_developer_mode', false);
         }
-        if (! get_option('pricefinder_da_google_maps_api_key')) {
-            add_option('pricefinder_da_google_maps_api_key', 'none yet');
+        if (! get_option('rc_ida_google_maps_api_key')) {
+            add_option('rc_ida_google_maps_api_key', 'none yet');
         }
         $upload = wp_upload_dir();
         $upload_dir = $upload['basedir'];

@@ -99,38 +99,39 @@ class Pricefinder_Da_Admin
 }
 
 // Creates a subpage under the Tools section
-add_action('admin_menu', 'register_pricefinder_da_settings');
-function register_pricefinder_da_settings()
+add_action('admin_menu', 'rc_ida_register_settings');
+function rc_ida_register_settings()
 {
     add_submenu_page(
         'tools.php',
-        'Pricefinder DA Settings',
-        'Pricefinder DA Settings',
+        'RC IDA Settings',
+        'RC IDA Settings',
         'manage_options',
         'pricefinder-da',
-        'add_pricefinder_da_settings');
+        'rc_ida_add_settings');
 }
 
 // The admin page containing the form
-function add_pricefinder_da_settings()
+function rc_ida_add_settings()
 { ?>
     <div class="wrap">
 		<div id="icon-tools" class="icon32"></div>
-        <h1>Pricefinder Digital Appraisal Settings</h1>
-		<p>Here you can set all your settings for the Pricefinder Digital Appraisal Plugin</p>
+        <h1>Instant Digital Appraisal Settings</h1>
+		<p>Here you can set all your settings for the Instant Digital Appraisal Plugin</p>
         <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
-            <h3>Pricefinder Client ID</h3>
-			<p>Please contact Pricefinder <a href="https://www.pricefinder.com.au/api/" target="_blank">here</a> to obtain your client/secret keys. If you enter a key here, it will overwrite the old one.</p>
-			<input type="text" name="pricefinder_da_client_id" size="50" value="<?php echo get_option('pricefinder_da_client_id'); ?>">
-			<h3>Pricefinder Secret Key</h3>
-            <input type="password" name="pricefinder_da_secret_key" size="50" value="<?php echo get_option('pricefinder_da_secret_key'); ?>">
+            <h3>Client ID</h3>
+			<input type="text" name="rc_ida_client_id" size="50" value="<?php echo get_option('rc_ida_client_id'); ?>">
+			<h3>Client Secret</h3>
+            <input type="password" name="rc_ida_client_secret" size="50" value="<?php echo get_option('rc_ida_client_secret'); ?>">
 			<h3>Google Maps Autocomplete API Key</h3>
-			<p>You'll need a google maps API key with Places enabled.</p>
-            <input type="password" name="pricefinder_da_google_maps_api_key" size="50" value="<?php echo get_option('pricefinder_da_google_maps_api_key'); ?>">
+			<p>You'll need a Google Maps API key with Places enabled.</p>
+            <input type="password" name="rc_ida_google_maps_api_key" size="50" value="<?php echo get_option('rc_ida_google_maps_api_key'); ?>">
 			<h3>Appraisal Page URL Slug</h3>
-            <input type="text" name="pricefinder_da_appraisal_page_url_slug" size="50" value="<?php echo get_option('pricefinder_da_appraisal_page_url_slug'); ?>">
+            <p>Enter the URL slug for the page you want to use for the appraisal form.</p>
+            <input type="text" name="rc_ida_appraisal_page_url_slug" size="50" value="<?php echo get_option('rc_ida_appraisal_page_url_slug'); ?>">
 			<h3>Thank You Page URL Slug</h3>
-            <input type="text" name="pricefinder_da_thank_you_page_url_slug" size="50" value="<?php echo get_option('pricefinder_da_thank_you_page_url_slug'); ?>">
+            <p>Enter the URL slug for the page you want to use for the thank you page.</p>
+            <input type="text" name="rc_ida_thank_you_page_url_slug" size="50" value="<?php echo get_option('rc_ida_thank_you_page_url_slug'); ?>">
 			<input type="hidden" name="action" value="process_form">	<br><br>		 
             <input type="submit" name="submit" id="submit" class="update-button button button-primary" value="Update"  />
         </form> 		
@@ -138,89 +139,88 @@ function add_pricefinder_da_settings()
     <?php
 }
 
-function submit_pricefinder_da_key()
+function rc_ida_submit_key()
 {
+    if (isset($_POST['rc_ida_client_id'])) {
 
-    if (isset($_POST['pricefinder_da_client_id'])) {
-
-        $api_key = sanitize_text_field($_POST['pricefinder_da_client_id']);
-        $api_exists = get_option('pricefinder_da_client_id');
+        $api_key = sanitize_text_field($_POST['rc_ida_client_id']);
+        $api_exists = get_option('rc_ida_client_id');
 
         if (! empty($api_key) && ! empty($api_exists)) {
 
-            update_option('pricefinder_da_client_id', $api_key);
+            update_option('rc_ida_client_id', $api_key);
 
         } else {
 
-            add_option('pricefinder_da_client_id', $api_key);
+            add_option('rc_ida_client_id', $api_key);
 
         }
 
     }
 
-    if (isset($_POST['pricefinder_da_secret_key'])) {
+    if (isset($_POST['rc_ida_client_secret'])) {
 
-        $api_key = sanitize_text_field($_POST['pricefinder_da_secret_key']);
-        $api_exists = get_option('pricefinder_da_secret_key');
+        $api_key = sanitize_text_field($_POST['rc_ida_client_secret']);
+        $api_exists = get_option('rc_ida_client_secret');
 
         if (! empty($api_key) && ! empty($api_exists)) {
 
-            update_option('pricefinder_da_secret_key', $api_key);
+            update_option('rc_ida_client_secret', $api_key);
 
         } else {
 
-            add_option('pricefinder_da_secret_key', $api_key);
+            add_option('rc_ida_client_secret', $api_key);
 
         }
 
     }
 
-    if (isset($_POST['pricefinder_da_google_maps_api_key'])) {
+    if (isset($_POST['rc_ida_google_maps_api_key'])) {
 
-        $google_maps_api_key = sanitize_text_field($_POST['pricefinder_da_google_maps_api_key']);
-        $google_maps_api_exists = get_option('pricefinder_da_google_maps_api_key');
+        $google_maps_api_key = sanitize_text_field($_POST['rc_ida_google_maps_api_key']);
+        $google_maps_api_exists = get_option('rc_ida_google_maps_api_key');
 
         if (! empty($google_maps_api_exists) && ! empty($google_maps_api_exists)) {
 
-            update_option('pricefinder_da_google_maps_api_key', $google_maps_api_key);
+            update_option('rc_ida_google_maps_api_key', $google_maps_api_key);
 
         } else {
 
-            add_option('pricefinder_da_google_maps_api_key', $google_maps_api_key);
+            add_option('rc_ida_google_maps_api_key', $google_maps_api_key);
 
         }
 
     }
 
-    if (isset($_POST['pricefinder_da_appraisal_page_url_slug'])) {
+    if (isset($_POST['rc_ida_appraisal_page_url_slug'])) {
 
-        $pricefinder_da_appraisal_page_url_slug = sanitize_text_field($_POST['pricefinder_da_appraisal_page_url_slug']);
-        $pricefinder_da_appraisal_page_url_slug_exists = get_option('pricefinder_da_appraisal_page_url_slug');
+        $rc_ida_appraisal_page_url_slug = sanitize_text_field($_POST['rc_ida_appraisal_page_url_slug']);
+        $rc_ida_appraisal_page_url_slug_exists = get_option('rc_ida_appraisal_page_url_slug');
 
-        if (! empty($pricefinder_da_appraisal_page_url_slug_exists) && ! empty($pricefinder_da_appraisal_page_url_slug_exists)) {
+        if (! empty($rc_ida_appraisal_page_url_slug_exists) && ! empty($rc_ida_appraisal_page_url_slug_exists)) {
 
-            update_option('pricefinder_da_appraisal_page_url_slugy', $pricefinder_da_appraisal_page_url_slug);
+            update_option('rc_ida_appraisal_page_url_slugy', $rc_ida_appraisal_page_url_slug);
 
         } else {
 
-            add_option('pricefinder_da_appraisal_page_url_slug', $pricefinder_da_appraisal_page_url_slug);
+            add_option('rc_ida_appraisal_page_url_slug', $rc_ida_appraisal_page_url_slug);
 
         }
 
     }
 
-    if (isset($_POST['pricefinder_da_thank_you_page_url_slug'])) {
+    if (isset($_POST['rc_ida_thank_you_page_url_slug'])) {
 
-        $pricefinder_da_thank_you_page_url_slug = sanitize_text_field($_POST['pricefinder_da_thank_you_page_url_slug']);
-        $pricefinder_da_thank_you_page_url_slug_exists = get_option('pricefinder_da_thank_you_page_url_slug');
+        $rc_ida_thank_you_page_url_slug = sanitize_text_field($_POST['rc_ida_thank_you_page_url_slug']);
+        $rc_ida_thank_you_page_url_slug_exists = get_option('rc_ida_thank_you_page_url_slug');
 
-        if (! empty($pricefinder_da_thank_you_page_url_slug_exists) && ! empty($pricefinder_da_thank_you_page_url_slug_exists)) {
+        if (! empty($rc_ida_thank_you_page_url_slug_exists) && ! empty($rc_ida_thank_you_page_url_slug_exists)) {
 
-            update_option('pricefinder_da_thank_you_page_url_slugy', $pricefinder_da_thank_you_page_url_slug);
+            update_option('rc_ida_thank_you_page_url_slugy', $rc_ida_thank_you_page_url_slug);
 
         } else {
 
-            add_option('pricefinder_da_thank_you_page_url_slug', $pricefinder_da_thank_you_page_url_slug);
+            add_option('rc_ida_thank_you_page_url_slug', $rc_ida_thank_you_page_url_slug);
 
         }
 
@@ -230,8 +230,8 @@ function submit_pricefinder_da_key()
 
 }
 
-add_action('admin_post_nopriv_process_form', 'submit_pricefinder_da_key');
-add_action('admin_post_process_form', 'submit_pricefinder_da_key');
+add_action('admin_post_nopriv_process_form', 'rc_ida_submit_key');
+add_action('admin_post_process_form', 'rc_ida_submit_key');
 
 if (function_exists('acf_add_local_field_group')) {
 

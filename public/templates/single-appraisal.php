@@ -53,7 +53,7 @@ $formatted_title = '<h1 class="entry-title" style="font-size: 51px;">'.$property
 add_action('wp_head', 'pricefinder_da_google');
 function pricefinder_da_google(){
 	echo '	<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-			<script src="https://maps.googleapis.com/maps/api/js?key='.get_option('pricefinder_da_google_maps_api_key').'&callback=initMap&libraries=&v=weekly" defer></script>';
+			<script src="https://maps.googleapis.com/maps/api/js?key='.get_option('rc_ida_google_maps_api_key').'&callback=initMap&libraries=&v=weekly" defer></script>';
 	};
 	echo '<script>
 	let map;
