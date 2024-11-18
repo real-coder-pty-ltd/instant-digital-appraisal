@@ -341,7 +341,7 @@ function rc_ida_suburb_form($atts)
     );
 
     // Extract attributes
-    $url_slug = get_option('rc_ida_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
+    $url_slug = home_url('/app/plugins/instant-digital-appraisal/public/rc-ida-processor-domain-suburb.php');
     $form_placeholder = $atts['form_placeholder'];
     $form_submit = $atts['form_submit'];
 
@@ -366,7 +366,7 @@ function rc_ida_suburb_form($atts)
     ';
 
     echo '
-        <form id="rc-ida-suburb-form" method="GET" action="/' . $url_slug . '/">
+        <form id="rc-ida-suburb-form" method="GET" action="' . $url_slug . '">
             <div class="d-flex flex-row">
                 <div id="rc-ida-search" class="rc-ida-search position-relative w-100">
                     <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
