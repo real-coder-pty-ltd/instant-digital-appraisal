@@ -748,18 +748,19 @@ function rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $
             if ($fetched_suburb_performance_statistics) {
                 
                 $series_data = $fetched_suburb_performance_statistics['series'];
-                $seriesInfo_data = $series_data['seriesInfo'];
+                $series_json = json_encode($series_data);
+                // $seriesInfo_data = $series_data['seriesInfo'];
     
                 $label = $category . ' - ' . $bedrooms;
-                $itemIndex = null;
+                // $itemIndex = null;
     
                 // Find the correct index in the $acf_statistics['items'] array
-                foreach ($acf_statistics['items'] as $index => $item) {
-                    if ($item['label'] === $label) {
-                        $itemIndex = $index;
-                        break;
-                    }
-                }
+                // foreach ($acf_statistics['items'] as $index => $item) {
+                //     if ($item['label'] === $label) {
+                //         $itemIndex = $index;
+                //         break;
+                //     }
+                // }
     
                 // If the item does not exist, create it
                 if ($itemIndex === null) {
@@ -767,44 +768,45 @@ function rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $
                         'label' => $label,
                         'bedrooms' => $bedrooms,
                         'propertycategory' => $category,
-                        'series' => [
-                            'seriesinfo' => []
-                        ]
+                        'series_data' => $series_json,
+                        // 'series' => [
+                        //     'seriesinfo' => []
+                        // ]
                     ];
-                    $itemIndex = count($acf_statistics['items']) - 1;
+                    // $itemIndex = count($acf_statistics['items']) - 1;
                 }
     
-                foreach ($series_data as $series) {
-                    foreach ($seriesInfo_data as $seriesInfo) {
-                        $acf_statistics['items'][$itemIndex]['series']['seriesinfo'][] = [
-                            'year' => $seriesInfo['year'],
-                            'month' => $seriesInfo['month'],
-                            'values' => [
-                                'medianSoldPrice' => $seriesInfo['values']['medianSoldPrice'],
-                                'numberSold' => $seriesInfo['values']['numberSold'],
-                                'highestSoldPrice' => $seriesInfo['values']['highestSoldPrice'],
-                                'lowestSoldPrice' => $seriesInfo['values']['lowestSoldPrice'],
-                                '5thPercentileSoldPrice' => $seriesInfo['values']['5thPercentileSoldPrice'],
-                                '25thPercentileSoldPrice' => $seriesInfo['values']['25thPercentileSoldPrice'],
-                                '75thPercentileSoldPrice' => $seriesInfo['values']['75thPercentileSoldPrice'],
-                                '95thPercentileSoldPrice' => $seriesInfo['values']['95thPercentileSoldPrice'],
-                                'medianSaleListingPrice' => $seriesInfo['values']['medianSaleListingPrice'],
-                                'numberSaleListing' => $seriesInfo['values']['numberSaleListing'],
-                                'highestSaleListingPrice' => $seriesInfo['values']['highestSaleListingPrice'],
-                                'lowestSaleListingPrice' => $seriesInfo['values']['lowestSaleListingPrice'],
-                                'auctionNumberAuctioned' => $seriesInfo['values']['auctionNumberAuctioned'],
-                                'auctionNumberSold' => $seriesInfo['values']['auctionNumberSold'],
-                                'auctionNumberWithdrawn' => $seriesInfo['values']['auctionNumberWithdrawn'],
-                                'daysOnMarket' => $seriesInfo['values']['daysOnMarket'],
-                                'discountPercentage' => $seriesInfo['values']['discountPercentage'],
-                                'medianRentListingPrice' => $seriesInfo['values']['medianRentListingPrice'],
-                                'numberRentListing' => $seriesInfo['values']['numberRentListing'],
-                                'highestRentListingPrice' => $seriesInfo['values']['highestRentListingPrice'],
-                                'lowestRentListingPrice' => $seriesInfo['values']['lowestRentListingPrice']
-                            ]
-                        ];
-                    }
-                }
+                // foreach ($series_data as $series) {
+                //     foreach ($seriesInfo_data as $seriesInfo) {
+                //         $acf_statistics['items'][$itemIndex]['series']['seriesinfo'][] = [
+                //             'year' => $seriesInfo['year'],
+                //             'month' => $seriesInfo['month'],
+                //             'values' => [
+                //                 'medianSoldPrice' => $seriesInfo['values']['medianSoldPrice'],
+                //                 'numberSold' => $seriesInfo['values']['numberSold'],
+                //                 'highestSoldPrice' => $seriesInfo['values']['highestSoldPrice'],
+                //                 'lowestSoldPrice' => $seriesInfo['values']['lowestSoldPrice'],
+                //                 '5thPercentileSoldPrice' => $seriesInfo['values']['5thPercentileSoldPrice'],
+                //                 '25thPercentileSoldPrice' => $seriesInfo['values']['25thPercentileSoldPrice'],
+                //                 '75thPercentileSoldPrice' => $seriesInfo['values']['75thPercentileSoldPrice'],
+                //                 '95thPercentileSoldPrice' => $seriesInfo['values']['95thPercentileSoldPrice'],
+                //                 'medianSaleListingPrice' => $seriesInfo['values']['medianSaleListingPrice'],
+                //                 'numberSaleListing' => $seriesInfo['values']['numberSaleListing'],
+                //                 'highestSaleListingPrice' => $seriesInfo['values']['highestSaleListingPrice'],
+                //                 'lowestSaleListingPrice' => $seriesInfo['values']['lowestSaleListingPrice'],
+                //                 'auctionNumberAuctioned' => $seriesInfo['values']['auctionNumberAuctioned'],
+                //                 'auctionNumberSold' => $seriesInfo['values']['auctionNumberSold'],
+                //                 'auctionNumberWithdrawn' => $seriesInfo['values']['auctionNumberWithdrawn'],
+                //                 'daysOnMarket' => $seriesInfo['values']['daysOnMarket'],
+                //                 'discountPercentage' => $seriesInfo['values']['discountPercentage'],
+                //                 'medianRentListingPrice' => $seriesInfo['values']['medianRentListingPrice'],
+                //                 'numberRentListing' => $seriesInfo['values']['numberRentListing'],
+                //                 'highestRentListingPrice' => $seriesInfo['values']['highestRentListingPrice'],
+                //                 'lowestRentListingPrice' => $seriesInfo['values']['lowestRentListingPrice']
+                //             ]
+                //         ];
+                //     }
+                // }
             }
         }
     }

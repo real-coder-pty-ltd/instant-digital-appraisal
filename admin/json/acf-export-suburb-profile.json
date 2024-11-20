@@ -2854,6 +2854,7 @@
                                     "id": ""
                                 },
                                 "layout": "block",
+                                "parent_repeater": "field_673c0cf041efe",
                                 "sub_fields": [
                                     {
                                         "key": "field_673699455b358",
@@ -3383,7 +3384,28 @@
                                             }
                                         ]
                                     }
-                                ],
+                                ]
+                            },
+                            {
+                                "key": "field_673d5669bffef",
+                                "label": "Series Data",
+                                "name": "series_data",
+                                "aria-label": "",
+                                "type": "textarea",
+                                "instructions": "",
+                                "required": 0,
+                                "conditional_logic": 0,
+                                "wrapper": {
+                                    "width": "",
+                                    "class": "",
+                                    "id": ""
+                                },
+                                "default_value": "",
+                                "maxlength": "",
+                                "allow_in_bindings": 0,
+                                "placeholder": "",
+                                "prepend": "",
+                                "append": "",
                                 "parent_repeater": "field_673c0cf041efe"
                             }
                         ]
