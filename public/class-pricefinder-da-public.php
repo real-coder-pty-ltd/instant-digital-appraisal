@@ -615,7 +615,6 @@ function rc_ida_hooks(){
         add_filter('gform_required_legend', '__return_empty_string');
     }
 };
-
 add_action('wp', 'rc_ida_hooks');
 
 /**
@@ -658,11 +657,11 @@ function rc_ida_domain_suburb_profile($suburb, $state, $postcode) {
             update_field('general_modified_date', $today, $post_id);
             rc_ida_domain_process_demographics($post_id, $state, $suburb, $postcode);
             rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
-
-            echo 'Profile updated.';
-        } else {
-            echo 'Redirect to single page.';
         }
+
+        // Redirect to single post page
+        wp_redirect(get_permalink($post_id));
+        exit;
 
     } else {
         // Post does not exist, create a new one
@@ -689,7 +688,9 @@ function rc_ida_domain_suburb_profile($suburb, $state, $postcode) {
         rc_ida_domain_process_demographics($post_id, $state, $suburb, $postcode);
         rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
 
-        echo 'Profile created.';
+        // Redirect to single post page
+        wp_redirect(get_permalink($post_id));
+        exit;
     }
 }
 
