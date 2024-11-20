@@ -618,6 +618,199 @@ function rc_ida_hooks(){
 
 add_action('wp', 'rc_ida_hooks');
 
+/**
+ * Suburb Profile Functions
+ */
+
+// Create or update suburb profile post, and return the post ID
+function rc_ida_domain_suburb_profile($suburb, $state, $postcode) {
+    if (!$suburb || !$state || !$postcode) {
+        return null;
+    }
+
+    // Prepare the post data
+    $post_id = 0;
+    $post_action = 'created';
+    $address = $suburb . ', ' . $state . ' ' . $postcode;
+    $slug = sanitize_title($suburb . '-' . $state . '-' . $postcode);
+
+    // Check if a post with the given slug exists
+    $post = get_page_by_path($slug, OBJECT, 'suburb-profile');
+
+    // Prepare the post data
+    $today = date('Y-m-d H:i:s');
+
+    if ($post) {
+        // Post exists, update its data
+        $post_id = $post->ID;
+        $post_action = 'updated';
+        $modified_date = get_field('general_modified_date', $post_id);
+        $date_diff = (strtotime($today) - strtotime($modified_date)) / (60 * 60 * 24);
+
+        $post_data = array(
+            'ID'           => $post_id,
+            'post_title'   => $address,
+        );
+
+        wp_update_post($post_data);
+
+        if ($date_diff > 30) {
+            update_field('general_modified_date', $today, $post_id);
+            rc_ida_domain_process_demographics($post_id, $state, $suburb, $postcode);
+            rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
+
+            echo 'Profile updated.';
+        } else {
+            echo 'Redirect to single page.';
+        }
+
+    } else {
+        // Post does not exist, create a new one
+        $post_action = 'created';
+        $post_data = array(
+            'post_title'   => $address,
+            'post_name'    => $slug,
+            'post_status'  => 'publish',
+            'post_type'    => 'suburb-profile',
+        );
+        $post_id = wp_insert_post($post_data);
+
+        $fields = array(
+            'general_created_date' => $today,
+            'general_modified_date' => $today,
+            'general_address' => $address,
+            'general_suburb' => $suburb,
+            'general_state' => $state,
+            'general_postcode' => $postcode,
+        );
+        foreach ($fields as $field_key => $field_value) {
+            update_field($field_key, $field_value, $post_id);
+        }
+        rc_ida_domain_process_demographics($post_id, $state, $suburb, $postcode);
+        rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
+
+        echo 'Profile created.';
+    }
+}
+
+function rc_ida_domain_process_demographics($post_id, $state, $suburb, $postcode) {
+    if (!$post_id || !$state || !$suburb || !$postcode) {
+        return null;
+    }
+
+    // $fetched_demographics = rc_ida_domain_fetch_demographics($state, $suburb, $postcode);
+    $fetched_demographics = json_decode(file_get_contents(dirname(dirname(__FILE__)) . '/admin/json/response-suburb-demographics.json'), true);
+
+    if (!$fetched_demographics) {
+        return null;
+    }
+
+    // Extract the required data
+    $demographics_data = $fetched_demographics['demographics'];
+    $acf_demographics = [];
+
+    foreach ($demographics_data as $demographic) {
+        $type = strtolower(str_replace(' ', '_', $demographic['type']));
+        $acf_demographic = [
+            'total' => $demographic['total'],
+            'year' => $demographic['year'],
+            'items' => []
+        ];
+
+        foreach ($demographic['items'] as $item) {
+            $acf_demographic['items'][] = [
+                'label' => $item['label'],
+                'value' => $item['value'],
+                'composition' => $item['composition']
+            ];
+        }
+
+        $acf_demographics[$type] = $acf_demographic;
+    }
+
+    update_field('demographics', $acf_demographics, $post_id);
+}
+
+function rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode) {
+    if (!$post_id || !$state || !$suburb || !$postcode) {
+        return null;
+    }
+
+    $statistics_data = [];
+    $acf_statistics = [];
+    
+    foreach (['House', 'Unit'] as $category) {
+        for ($bedrooms = 1; $bedrooms <= 5; $bedrooms++) {
+            $fetched_suburb_performance_statistics = '';
+            // $fetched_suburb_performance_statistics = rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms);
+            $fetched_suburb_performance_statistics = json_decode(file_get_contents(dirname(dirname(__FILE__)) . '/admin/json/response-suburb-statistics-' . strtolower($category) . '-' . $bedrooms . '.json'), true);
+    
+            if ($fetched_suburb_performance_statistics) {
+                
+                $series_data = $fetched_suburb_performance_statistics['series'];
+                $seriesInfo_data = $series_data['seriesInfo'];
+    
+                $label = $category . ' - ' . $bedrooms;
+                $itemIndex = null;
+    
+                // Find the correct index in the $acf_statistics['items'] array
+                foreach ($acf_statistics['items'] as $index => $item) {
+                    if ($item['label'] === $label) {
+                        $itemIndex = $index;
+                        break;
+                    }
+                }
+    
+                // If the item does not exist, create it
+                if ($itemIndex === null) {
+                    $acf_statistics['items'][] = [
+                        'label' => $label,
+                        'bedrooms' => $bedrooms,
+                        'propertycategory' => $category,
+                        'series' => [
+                            'seriesinfo' => []
+                        ]
+                    ];
+                    $itemIndex = count($acf_statistics['items']) - 1;
+                }
+    
+                foreach ($series_data as $series) {
+                    foreach ($seriesInfo_data as $seriesInfo) {
+                        $acf_statistics['items'][$itemIndex]['series']['seriesinfo'][] = [
+                            'year' => $seriesInfo['year'],
+                            'month' => $seriesInfo['month'],
+                            'values' => [
+                                'medianSoldPrice' => $seriesInfo['values']['medianSoldPrice'],
+                                'numberSold' => $seriesInfo['values']['numberSold'],
+                                'highestSoldPrice' => $seriesInfo['values']['highestSoldPrice'],
+                                'lowestSoldPrice' => $seriesInfo['values']['lowestSoldPrice'],
+                                '5thPercentileSoldPrice' => $seriesInfo['values']['5thPercentileSoldPrice'],
+                                '25thPercentileSoldPrice' => $seriesInfo['values']['25thPercentileSoldPrice'],
+                                '75thPercentileSoldPrice' => $seriesInfo['values']['75thPercentileSoldPrice'],
+                                '95thPercentileSoldPrice' => $seriesInfo['values']['95thPercentileSoldPrice'],
+                                'medianSaleListingPrice' => $seriesInfo['values']['medianSaleListingPrice'],
+                                'numberSaleListing' => $seriesInfo['values']['numberSaleListing'],
+                                'highestSaleListingPrice' => $seriesInfo['values']['highestSaleListingPrice'],
+                                'lowestSaleListingPrice' => $seriesInfo['values']['lowestSaleListingPrice'],
+                                'auctionNumberAuctioned' => $seriesInfo['values']['auctionNumberAuctioned'],
+                                'auctionNumberSold' => $seriesInfo['values']['auctionNumberSold'],
+                                'auctionNumberWithdrawn' => $seriesInfo['values']['auctionNumberWithdrawn'],
+                                'daysOnMarket' => $seriesInfo['values']['daysOnMarket'],
+                                'discountPercentage' => $seriesInfo['values']['discountPercentage'],
+                                'medianRentListingPrice' => $seriesInfo['values']['medianRentListingPrice'],
+                                'numberRentListing' => $seriesInfo['values']['numberRentListing'],
+                                'highestRentListingPrice' => $seriesInfo['values']['highestRentListingPrice'],
+                                'lowestRentListingPrice' => $seriesInfo['values']['lowestRentListingPrice']
+                            ]
+                        ];
+                    }
+                }
+            }
+        }
+    }
+
+    update_field('suburb_performance_statistics', $acf_statistics, $post_id);
+}
 
 /**
  * Domain API Functions
@@ -897,6 +1090,8 @@ function rc_ida_domain_fetch_schools($latitude, $longitude) {
 // Fetch demographics from Domain API
 function rc_ida_domain_fetch_demographics($state, $suburb, $postcode) {
     $access_token = rc_ida_domain_fetch_access_token();
+
+    var_dump($access_token);
     if (!$access_token || !$state || !$suburb || !$postcode) {
         return null;
     }
@@ -908,9 +1103,7 @@ function rc_ida_domain_fetch_demographics($state, $suburb, $postcode) {
 
     // Construct the full API URL
     $api_url = $base_url . $api_version . '/' . $endpoint;
-
-    // Calculate the year 10 years ago from now
-    $year = date('Y') - 10;
+    $year = '2016';
 
     // Prepare the query parameters
     $params = [
@@ -959,7 +1152,7 @@ function rc_ida_domain_fetch_demographics($state, $suburb, $postcode) {
 }
 
 // Fetch suburb performance statistics from Domain API
-function rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode) {
+function rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms) {
     $access_token = rc_ida_domain_fetch_access_token();
     if (!$access_token) {
         return null;
@@ -975,8 +1168,8 @@ function rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $pos
 
     // Prepare the query parameters
     $params = [
-        'propertyCategory' => '',
-        'bedrooms' => '',
+        'propertyCategory' => $category,
+        'bedrooms' => $bedrooms,
         'periodSize' => 'quarters',
         'startingPeriodRelativeToCurrent' => '1',
         'totalPeriods' => '40'
@@ -1020,297 +1213,6 @@ function rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $pos
 
     // Close the cURL session
     curl_close($ch);
-}
-
-// Extract the property suggest data
-function rc_ida_domain_extract_property_suggest($fetched_property_suggest) {
-    if (!$fetched_property_suggest) {
-        return null;
-    }
-
-    // Decode the JSON string
-    $fetched_property_suggest = $fetched_property_suggest;
-
-    // Extract the required data
-    $extracted_data = [];
-
-    foreach ($fetched_property_suggest as $property) {
-        $address_components = $property['addressComponents'];
-
-        $extracted_data[] = [
-            'address' => $property['address'],
-            'unit_number' => isset($address_components['unitNumber']) ? $address_components['unitNumber'] : null,
-            'street_number' => isset($address_components['streetNumber']) ? $address_components['streetNumber'] : null,
-            'street_name' => isset($address_components['streetName']) ? $address_components['streetName'] : null,
-            'street_type' => isset($address_components['streetType']) ? $address_components['streetType'] : null,
-            'street_type_long' => isset($address_components['streetTypeLong']) ? $address_components['streetTypeLong'] : null,
-            'suburb' => isset($address_components['suburb']) ? $address_components['suburb'] : null,
-            'post_code' => isset($address_components['postCode']) ? $address_components['postCode'] : null,
-            'state' => isset($address_components['state']) ? $address_components['state'] : null,
-            'id' => isset($property['id']) ? $property['id'] : null,
-            'relative_score' => isset($property['relativeScore']) ? $property['relativeScore'] : null,
-        ];
-    }
-
-    // Return the extracted data as an associative array
-    return $extracted_data;
-}
-
-// Extract the property data
-function rc_ida_domain_extract_property($fetched_property) {
-    if (!$fetched_property) {
-        return null;
-    }
-
-    // Decode the JSON string
-    $fetched_property = json_decode($fetched_property, true);
-
-    // Extract general data
-    $id = isset($fetched_property['id']) ? $fetched_property['id'] : null;
-    $canonical_url = isset($fetched_property['canonicalUrl']) ? $fetched_property['canonicalUrl'] : null;
-    $url_slug = isset($fetched_property['urlSlug']) ? $fetched_property['urlSlug'] : null;
-    $url_slug_short = isset($fetched_property['urlSlugShort']) ? $fetched_property['urlSlugShort'] : null;
-    $on_market_types = isset($fetched_property['onMarketTypes']) ? $fetched_property['onMarketTypes'] : [];
-    $status = isset($fetched_property['status']) ? $fetched_property['status'] : null;
-    $adverts = isset($fetched_property['adverts']) ? $fetched_property['adverts'] : [];
-    $flat_number = isset($fetched_property['flatNumber']) ? $fetched_property['flatNumber'] : null;
-    $is_residential = isset($fetched_property['isResidential']) ? $fetched_property['isResidential'] : null;
-    $internal_area = isset($fetched_property['internalArea']) ? $fetched_property['internalArea'] : null;
-    $area_size = isset($fetched_property['areaSize']) ? $fetched_property['areaSize'] : null;
-    $created = isset($fetched_property['created']) ? $fetched_property['created'] : null;
-    $updated = isset($fetched_property['updated']) ? $fetched_property['updated'] : null;
-
-    // Extract address details
-    $address_id = isset($fetched_property['addressId']) ? $fetched_property['addressId'] : null;
-    $address = isset($fetched_property['address']) ? $fetched_property['address'] : null;
-    $address_coordinates = isset($fetched_property['addressCoordinate']) ? $fetched_property['addressCoordinate'] : null;
-    $latitude = isset($address_coordinates['lat']) ? $address_coordinates['lat'] : null;
-    $longitude = isset($address_coordinates['lon']) ? $address_coordinates['lon'] : null;
-    $postcode = isset($fetched_property['postcode']) ? $fetched_property['postcode'] : null;
-    $state = isset($fetched_property['state']) ? $fetched_property['state'] : null;
-    $street_address = isset($fetched_property['streetAddress']) ? $fetched_property['streetAddress'] : null;
-    $street_name = isset($fetched_property['streetName']) ? $fetched_property['streetName'] : null;
-    $street_number = isset($fetched_property['streetNumber']) ? $fetched_property['streetNumber'] : null;
-    $street_type = isset($fetched_property['streetType']) ? $fetched_property['streetType'] : null;
-    $street_type_long = isset($fetched_property['streetTypeLong']) ? $fetched_property['streetTypeLong'] : null;
-    $suburb = isset($fetched_property['suburb']) ? $fetched_property['suburb'] : null;
-    $suburb_id = isset($fetched_property['suburbId']) ? $fetched_property['suburbId'] : null;
-
-    // Extract features
-    $bathrooms = isset($fetched_property['bathrooms']) ? $fetched_property['bathrooms'] : null;
-    $bedrooms = isset($fetched_property['bedrooms']) ? $fetched_property['bedrooms'] : null;
-    $car_spaces = isset($fetched_property['carSpaces']) ? $fetched_property['carSpaces'] : null;
-    $created = isset($fetched_property['created']) ? $fetched_property['created'] : null;
-    $features = isset($fetched_property['features']) ? $fetched_property['features'] : [];
-
-    // Extract history
-    $sales_history = isset($fetched_property['history']['sales']) ? $fetched_property['history']['sales'] : [];
-    $rentals_history = isset($fetched_property['history']['rentals']) ? $fetched_property['history']['rentals'] : [];
-
-    // Extract photos
-    $photos = isset($fetched_property['photos']) ? $fetched_property['photos'] : [];
-
-    // Return the extracted data as an associative array
-    return [
-        'general_data' => [
-            'id' => $id,
-            'canonical_url' => $canonical_url,
-            'url_slug' => $url_slug,
-            'url_slug_short' => $url_slug_short,
-            'on_market_types' => $on_market_types,
-            'status' => $status,
-            'adverts' => $adverts,
-            'flat_number' => $flat_number,
-            'is_residential' => $is_residential,
-            'internal_area' => $internal_area,
-            'area_size' => $area_size,
-            'created' => $created,
-            'updated' => $updated,
-        ],
-        'address_data' => [
-            'address_id' => $address_id,
-            'address' => $address,
-            'address_coordinates' => $address_coordinates,
-            'latitude' => $latitude,
-            'longitude' => $longitude,
-            'postcode' => $postcode,
-            'state' => $state,
-            'street_address' => $street_address,
-            'street_name' => $street_name,
-            'street_number' => $street_number,
-            'street_type' => $street_type,
-            'street_type_long' => $street_type_long,
-            'suburb' => $suburb,
-            'suburb_id' => $suburb_id,
-        ],
-        'features_data' => [
-            'bathrooms' => $bathrooms,
-            'bedrooms' => $bedrooms,
-            'car_spaces' => $car_spaces,
-            'created' => $created,
-            'features' => $features,
-        ],
-        'history_data' => [
-            'sales_history' => $sales_history,
-            'rentals_history' => $rentals_history,
-        ],
-        'photos_data' => $photos,
-    ];
-}
-
-// Extract the property price estimate data
-function rc_ida_domain_extract_property_price_estimate($fetched_property_price_estimate) {
-    if (!$fetched_property_price_estimate) {
-        return null;
-    }
-
-    // Decode the JSON string
-    $fetched_property_price_estimate = json_decode($fetched_property_price_estimate, true);
-
-    // Extract the required data
-    $date = isset($fetched_property_price_estimate['date']) ? $fetched_property_price_estimate['date'] : null;
-    $lower_price = isset($fetched_property_price_estimate['lowerPrice']) ? $fetched_property_price_estimate['lowerPrice'] : null;
-    $mid_price = isset($fetched_property_price_estimate['midPrice']) ? $fetched_property_price_estimate['midPrice'] : null;
-    $price_confidence = isset($fetched_property_price_estimate['priceConfidence']) ? $fetched_property_price_estimate['priceConfidence'] : null;
-    $source = isset($fetched_property_price_estimate['source']) ? $fetched_property_price_estimate['source'] : null;
-    $upper_price = isset($fetched_property_price_estimate['upperPrice']) ? $fetched_property_price_estimate['upperPrice'] : null;
-    $history = isset($fetched_property_price_estimate['history']) ? $fetched_property_price_estimate['history'] : [];
-    
-    // Return the extracted data as an associative array
-    return [
-        'date' => $date,
-        'lower_price' => $lower_price,
-        'mid_price' => $mid_price,
-        'price_confidence' => $price_confidence,
-        'source' => $source,
-        'upper_price' => $upper_price,
-        'history' => $history,
-    ];
-}
-
-// Extract the schools data
-function rc_ida_domain_extract_schools($fetched_schools) {
-    if (!$fetched_schools) {
-        return null;
-    }
-
-    // Decode the JSON string
-    $fetched_schools = json_decode($fetched_schools, true);
-    
-    // Extract the required data
-    $extracted_data = [];
-
-    var_dump($extracted_schools);
-
-    foreach ($fetched_schools as $school_info) {
-        $school = $school_info['school'];
-        $profile = isset($school['profile']) ? $school['profile'] : [];
-    
-        $extracted_data[] = [
-            'distance' => $school_info['distance'],
-            'name' => $school['name'],
-            'suburb' => $school['suburb'],
-            'state' => $school['state'],
-            'postcode' => $school['postcode'],
-            'url' => isset($profile['url']) ? $profile['url'] : null,
-            'totalEnrolments' => isset($profile['totalEnrolments']) ? $profile['totalEnrolments'] : null
-        ];
-    }
-
-    // Return the extracted data as an associative array
-    return $extracted_data;
-}
-
-// Extract the demographics data
-function rc_ida_domain_extract_demographics($fetched_demographics) {
-    if (!$fetched_demographics) {
-        return null;
-    }
-
-    // Decode the JSON string
-    $fetched_demographics = json_decode($fetched_demographics, true);
-
-    // Extract the required data
-    $extracted_data = [];
-
-    foreach ($fetched_demographics['demographics'] as $demographic) {
-        $type = $demographic['type'];
-        $total = $demographic['total'];
-        $year = $demographic['year'];
-        $items = $demographic['items'];
-
-        $extracted_items = [];
-        foreach ($items as $item) {
-            $extracted_items[] = [
-                'label' => $item['label'],
-                'value' => $item['value'],
-                'composition' => $item['composition']
-            ];
-        }
-
-        $extracted_data[] = [
-            'type' => $type,
-            'total' => $total,
-            'year' => $year,
-            'items' => $extracted_items
-        ];
-    }
-
-    // Return the extracted data as an associative array
-    return $extracted_data;
-}
-
-// Extract the suburb performance statistics data
-function rc_ida_domain_extract_suburb_performance_statistics($fetched_suburb_performance_statistics) {
-    if (!$fetched_suburb_performance_statistics) {
-        return null;
-    }
-
-    // Decode the JSON string
-    $fetched_suburb_performance_statistics = json_decode($fetched_suburb_performance_statistics, true);
-
-    // Extract the required data
-    $header = $fetched_suburb_performance_statistics['header'];
-    $series_info = $fetched_suburb_performance_statistics['series']['seriesInfo'];
-
-    $extracted_data = [
-        'suburb' => $header['suburb'],
-        'state' => $header['state'],
-        'property_category' => $header['propertyCategory'],
-        'series' => []
-    ];
-    
-    foreach ($series_info as $info) {
-        $values = $info['values'];
-        $extracted_data['series'][] = [
-            'year' => $info['year'],
-            'month' => $info['month'],
-            'median_sold_price' => isset($values['medianSoldPrice']) ? $values['medianSoldPrice'] : null,
-            'number_sold' => isset($values['numberSold']) ? $values['numberSold'] : null,
-            'highest_sold_price' => isset($values['highestSoldPrice']) ? $values['highestSoldPrice'] : null,
-            'lowest_sold_price' => isset($values['lowestSoldPrice']) ? $values['lowestSoldPrice'] : null,
-            '5th_percentile_sold_price' => isset($values['5thPercentileSoldPrice']) ? $values['5thPercentileSoldPrice'] : null,
-            '25th_percentile_sold_price' => isset($values['25thPercentileSoldPrice']) ? $values['25thPercentileSoldPrice'] : null,
-            '75th_percentile_sold_price' => isset($values['75thPercentileSoldPrice']) ? $values['75thPercentileSoldPrice'] : null,
-            '95th_percentile_sold_price' => isset($values['95thPercentileSoldPrice']) ? $values['95thPercentileSoldPrice'] : null,
-            'median_sale_listing_price' => isset($values['medianSaleListingPrice']) ? $values['medianSaleListingPrice'] : null,
-            'number_sale_listing' => isset($values['numberSaleListing']) ? $values['numberSaleListing'] : null,
-            'highest_sale_listing_price' => isset($values['highestSaleListingPrice']) ? $values['highestSaleListingPrice'] : null,
-            'lowest_sale_listing_price' => isset($values['lowestSaleListingPrice']) ? $values['lowestSaleListingPrice'] : null,
-            'auction_number_auctioned' => isset($values['auctionNumberAuctioned']) ? $values['auctionNumberAuctioned'] : null,
-            'auction_number_sold' => isset($values['auctionNumberSold']) ? $values['auctionNumberSold'] : null,
-            'auction_number_withdrawn' => isset($values['auctionNumberWithdrawn']) ? $values['auctionNumberWithdrawn'] : null,
-            'days_on_market' => isset($values['daysOnMarket']) ? $values['daysOnMarket'] : null,
-            'discount_percentage' => isset($values['discountPercentage']) ? $values['discountPercentage'] : null,
-            'median_rent_listing_price' => isset($values['medianRentListingPrice']) ? $values['medianRentListingPrice'] : null,
-            'number_rent_listing' => isset($values['numberRentListing']) ? $values['numberRentListing'] : null,
-            'highest_rent_listing_price' => isset($values['highestRentListingPrice']) ? $values['highestRentListingPrice'] : null,
-            'lowest_rent_listing_price' => isset($values['lowestRentListingPrice']) ? $values['lowestRentListingPrice'] : null
-        ];
-    }
-
-    // Return the extracted data as an associative array
-    return $extracted_data;
 }
 
 // Fetch property suggest data via AJAX

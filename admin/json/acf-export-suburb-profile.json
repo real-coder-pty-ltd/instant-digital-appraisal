@@ -216,7 +216,7 @@
                     {
                         "key": "field_67368eb6bd548",
                         "label": "Age Group of Population",
-                        "name": "age_group_of_population",
+                        "name": "agegroupofpopulation",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -384,7 +384,7 @@
                     {
                         "key": "field_67368fbf9a500",
                         "label": "Country of Birth",
-                        "name": "country_of_birth",
+                        "name": "countryofbirth",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -552,7 +552,7 @@
                     {
                         "key": "field_67368fe39a507",
                         "label": "Nature of Occupancy",
-                        "name": "nature_of_occupancy",
+                        "name": "natureofoccupancy",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -888,7 +888,7 @@
                     {
                         "key": "field_673690369a515",
                         "label": "Geographical Population",
-                        "name": "geographical_population",
+                        "name": "geographicalpopulation",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -1056,7 +1056,7 @@
                     {
                         "key": "field_673690569a51c",
                         "label": "Dwelling Structure",
-                        "name": "dwelling_structure",
+                        "name": "dwellingstructure",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -1224,7 +1224,7 @@
                     {
                         "key": "field_6736906e9a523",
                         "label": "Education Attendance",
-                        "name": "education_attendance",
+                        "name": "educationattendance",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -1392,7 +1392,7 @@
                     {
                         "key": "field_673690969a52b",
                         "label": "Housing Loan Repayment",
-                        "name": "housing_loan_repayment",
+                        "name": "housingloanrepayment",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -1560,7 +1560,7 @@
                     {
                         "key": "field_673690b59a532",
                         "label": "Marital Status",
-                        "name": "marital_status",
+                        "name": "maritalstatus",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -1896,7 +1896,7 @@
                     {
                         "key": "field_673690f29a540",
                         "label": "Transport To Work",
-                        "name": "transport_to_work",
+                        "name": "transporttowork",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -2064,7 +2064,7 @@
                     {
                         "key": "field_673691099a547",
                         "label": "Family Composition",
-                        "name": "family_composition",
+                        "name": "familycomposition",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -2232,7 +2232,7 @@
                     {
                         "key": "field_6736913b9a555",
                         "label": "Household Income",
-                        "name": "household_income",
+                        "name": "householdincome",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -2568,7 +2568,7 @@
                     {
                         "key": "field_673691609a563",
                         "label": "Labour Force Status",
-                        "name": "labour_force_status",
+                        "name": "labourforcestatus",
                         "aria-label": "",
                         "type": "group",
                         "instructions": "",
@@ -2752,116 +2752,11 @@
                 "layout": "block",
                 "sub_fields": [
                     {
-                        "key": "field_6736aeb1e9710",
-                        "label": "Label",
-                        "name": "label",
+                        "key": "field_673c0cf041efe",
+                        "label": "Items",
+                        "name": "items",
                         "aria-label": "",
-                        "type": "text",
-                        "instructions": "",
-                        "required": 0,
-                        "conditional_logic": 0,
-                        "wrapper": {
-                            "width": "25",
-                            "class": "",
-                            "id": ""
-                        },
-                        "default_value": "",
-                        "maxlength": "",
-                        "allow_in_bindings": 0,
-                        "placeholder": "",
-                        "prepend": "",
-                        "append": ""
-                    },
-                    {
-                        "key": "field_673698e65b354",
-                        "label": "Suburb",
-                        "name": "suburb",
-                        "aria-label": "",
-                        "type": "text",
-                        "instructions": "",
-                        "required": 0,
-                        "conditional_logic": 0,
-                        "wrapper": {
-                            "width": "33",
-                            "class": "",
-                            "id": ""
-                        },
-                        "default_value": "",
-                        "maxlength": "",
-                        "allow_in_bindings": 0,
-                        "placeholder": "",
-                        "prepend": "",
-                        "append": ""
-                    },
-                    {
-                        "key": "field_673698ee5b355",
-                        "label": "State",
-                        "name": "state",
-                        "aria-label": "",
-                        "type": "text",
-                        "instructions": "",
-                        "required": 0,
-                        "conditional_logic": 0,
-                        "wrapper": {
-                            "width": "33",
-                            "class": "",
-                            "id": ""
-                        },
-                        "default_value": "",
-                        "maxlength": "",
-                        "allow_in_bindings": 0,
-                        "placeholder": "",
-                        "prepend": "",
-                        "append": ""
-                    },
-                    {
-                        "key": "field_673ab94c3cfb6",
-                        "label": "Postcode",
-                        "name": "postcode",
-                        "aria-label": "",
-                        "type": "text",
-                        "instructions": "",
-                        "required": 0,
-                        "conditional_logic": 0,
-                        "wrapper": {
-                            "width": "33",
-                            "class": "",
-                            "id": ""
-                        },
-                        "default_value": "",
-                        "maxlength": "",
-                        "allow_in_bindings": 0,
-                        "placeholder": "",
-                        "prepend": "",
-                        "append": ""
-                    },
-                    {
-                        "key": "field_673698f55b356",
-                        "label": "Property Category",
-                        "name": "property_category",
-                        "aria-label": "",
-                        "type": "text",
-                        "instructions": "",
-                        "required": 0,
-                        "conditional_logic": 0,
-                        "wrapper": {
-                            "width": "30",
-                            "class": "",
-                            "id": ""
-                        },
-                        "default_value": "",
-                        "maxlength": "",
-                        "allow_in_bindings": 0,
-                        "placeholder": "",
-                        "prepend": "",
-                        "append": ""
-                    },
-                    {
-                        "key": "field_6736990b5b357",
-                        "label": "Series",
-                        "name": "series",
-                        "aria-label": "",
-                        "type": "group",
+                        "type": "repeater",
                         "instructions": "",
                         "required": 0,
                         "conditional_logic": 0,
@@ -2871,13 +2766,85 @@
                             "id": ""
                         },
                         "layout": "block",
+                        "pagination": 0,
+                        "min": 0,
+                        "max": 0,
+                        "collapsed": "",
+                        "button_label": "Add Row",
+                        "rows_per_page": 20,
                         "sub_fields": [
                             {
-                                "key": "field_673699455b358",
-                                "label": "Series Info",
-                                "name": "series_info",
+                                "key": "field_673c0d1a41eff",
+                                "label": "Label",
+                                "name": "label",
                                 "aria-label": "",
-                                "type": "repeater",
+                                "type": "text",
+                                "instructions": "",
+                                "required": 0,
+                                "conditional_logic": 0,
+                                "wrapper": {
+                                    "width": "",
+                                    "class": "",
+                                    "id": ""
+                                },
+                                "default_value": "",
+                                "maxlength": "",
+                                "allow_in_bindings": 0,
+                                "placeholder": "",
+                                "prepend": "",
+                                "append": "",
+                                "parent_repeater": "field_673c0cf041efe"
+                            },
+                            {
+                                "key": "field_673c0d7641f00",
+                                "label": "Bedrooms",
+                                "name": "bedrooms",
+                                "aria-label": "",
+                                "type": "text",
+                                "instructions": "",
+                                "required": 0,
+                                "conditional_logic": 0,
+                                "wrapper": {
+                                    "width": "50",
+                                    "class": "",
+                                    "id": ""
+                                },
+                                "default_value": "",
+                                "maxlength": "",
+                                "allow_in_bindings": 0,
+                                "placeholder": "",
+                                "prepend": "",
+                                "append": "",
+                                "parent_repeater": "field_673c0cf041efe"
+                            },
+                            {
+                                "key": "field_673698f55b356",
+                                "label": "Property Category",
+                                "name": "propertycategory",
+                                "aria-label": "",
+                                "type": "text",
+                                "instructions": "",
+                                "required": 0,
+                                "conditional_logic": 0,
+                                "wrapper": {
+                                    "width": "50",
+                                    "class": "",
+                                    "id": ""
+                                },
+                                "default_value": "",
+                                "maxlength": "",
+                                "allow_in_bindings": 0,
+                                "placeholder": "",
+                                "prepend": "",
+                                "append": "",
+                                "parent_repeater": "field_673c0cf041efe"
+                            },
+                            {
+                                "key": "field_6736990b5b357",
+                                "label": "Series",
+                                "name": "series",
+                                "aria-label": "",
+                                "type": "group",
                                 "instructions": "",
                                 "required": 0,
                                 "conditional_logic": 0,
@@ -2887,63 +2854,13 @@
                                     "id": ""
                                 },
                                 "layout": "block",
-                                "pagination": 0,
-                                "min": 0,
-                                "max": 0,
-                                "collapsed": "",
-                                "button_label": "Add Row",
-                                "rows_per_page": 20,
                                 "sub_fields": [
                                     {
-                                        "key": "field_673699525b359",
-                                        "label": "Year",
-                                        "name": "year",
+                                        "key": "field_673699455b358",
+                                        "label": "Series Info",
+                                        "name": "seriesinfo",
                                         "aria-label": "",
-                                        "type": "text",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "50",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "default_value": "",
-                                        "maxlength": "",
-                                        "allow_in_bindings": 0,
-                                        "placeholder": "",
-                                        "prepend": "",
-                                        "append": "",
-                                        "parent_repeater": "field_673699455b358"
-                                    },
-                                    {
-                                        "key": "field_673699675b35a",
-                                        "label": "Month",
-                                        "name": "month",
-                                        "aria-label": "",
-                                        "type": "text",
-                                        "instructions": "",
-                                        "required": 0,
-                                        "conditional_logic": 0,
-                                        "wrapper": {
-                                            "width": "50",
-                                            "class": "",
-                                            "id": ""
-                                        },
-                                        "default_value": "",
-                                        "maxlength": "",
-                                        "allow_in_bindings": 0,
-                                        "placeholder": "",
-                                        "prepend": "",
-                                        "append": "",
-                                        "parent_repeater": "field_673699455b358"
-                                    },
-                                    {
-                                        "key": "field_673699705b35b",
-                                        "label": "Values",
-                                        "name": "values",
-                                        "aria-label": "",
-                                        "type": "group",
+                                        "type": "repeater",
                                         "instructions": "",
                                         "required": 0,
                                         "conditional_logic": 0,
@@ -2953,18 +2870,24 @@
                                             "id": ""
                                         },
                                         "layout": "block",
+                                        "pagination": 0,
+                                        "min": 0,
+                                        "max": 0,
+                                        "collapsed": "",
+                                        "button_label": "Add Row",
+                                        "rows_per_page": 20,
                                         "sub_fields": [
                                             {
-                                                "key": "field_673699ca5b35c",
-                                                "label": "Median Sold Price",
-                                                "name": "median_sold_price",
+                                                "key": "field_673699525b359",
+                                                "label": "Year",
+                                                "name": "year",
                                                 "aria-label": "",
                                                 "type": "text",
                                                 "instructions": "",
                                                 "required": 0,
                                                 "conditional_logic": 0,
                                                 "wrapper": {
-                                                    "width": "",
+                                                    "width": "50",
                                                     "class": "",
                                                     "id": ""
                                                 },
@@ -2973,19 +2896,20 @@
                                                 "allow_in_bindings": 0,
                                                 "placeholder": "",
                                                 "prepend": "",
-                                                "append": ""
+                                                "append": "",
+                                                "parent_repeater": "field_673699455b358"
                                             },
                                             {
-                                                "key": "field_67369a015b35d",
-                                                "label": "Number Sold",
-                                                "name": "number_sold",
+                                                "key": "field_673699675b35a",
+                                                "label": "Month",
+                                                "name": "month",
                                                 "aria-label": "",
                                                 "type": "text",
                                                 "instructions": "",
                                                 "required": 0,
                                                 "conditional_logic": 0,
                                                 "wrapper": {
-                                                    "width": "",
+                                                    "width": "50",
                                                     "class": "",
                                                     "id": ""
                                                 },
@@ -2994,14 +2918,15 @@
                                                 "allow_in_bindings": 0,
                                                 "placeholder": "",
                                                 "prepend": "",
-                                                "append": ""
+                                                "append": "",
+                                                "parent_repeater": "field_673699455b358"
                                             },
                                             {
-                                                "key": "field_67369a1b5b35e",
-                                                "label": "Highest Sold Price",
-                                                "name": "highest_sold_price",
+                                                "key": "field_673699705b35b",
+                                                "label": "Values",
+                                                "name": "values",
                                                 "aria-label": "",
-                                                "type": "text",
+                                                "type": "group",
                                                 "instructions": "",
                                                 "required": 0,
                                                 "conditional_logic": 0,
@@ -3010,395 +2935,456 @@
                                                     "class": "",
                                                     "id": ""
                                                 },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a1f5b35f",
-                                                "label": "Lowest Sold Price",
-                                                "name": "lowest_sold_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a2d5b360",
-                                                "label": "5th Percentile Sold Price",
-                                                "name": "5th_percentile_sold_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a3c5b361",
-                                                "label": "25th Percentile Sold Price",
-                                                "name": "25th_percentile_sold_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a415b362",
-                                                "label": "75th Percentile Sold Price",
-                                                "name": "75th_percentile_sold_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a485b363",
-                                                "label": "95th Percentile Sold Price",
-                                                "name": "95th_percentile_sold_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a545b364",
-                                                "label": "Median Sale Listing Price",
-                                                "name": "median_sale_listing_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a5c5b365",
-                                                "label": "Number Sale Listing",
-                                                "name": "number_sale_listing",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a645b366",
-                                                "label": "Highest Sale Listing Price",
-                                                "name": "highest_sale_listing_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a6b5b367",
-                                                "label": "Lowest Sale Listing Price",
-                                                "name": "lowest_sale_listing_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a725b368",
-                                                "label": "Auction Number Auctioned",
-                                                "name": "auction_number_auctioned",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a7f5b369",
-                                                "label": "Auction Number Sold",
-                                                "name": "auction_number_sold",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a835b36a",
-                                                "label": "Auction Number Withdrawn",
-                                                "name": "auction_number_withdrawn",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a8a5b36b",
-                                                "label": "Days On Market",
-                                                "name": "days_on_market",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a925b36c",
-                                                "label": "Discount Percentage",
-                                                "name": "discount_percentage",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369a9b5b36d",
-                                                "label": "Median Rent Listing Price",
-                                                "name": "median_rent_listing_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369aa95b36e",
-                                                "label": "Number Rent Listing",
-                                                "name": "number_rent_listing",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369ab25b36f",
-                                                "label": "Highest Rent Listing Price",
-                                                "name": "highest_rent_listing_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
-                                            },
-                                            {
-                                                "key": "field_67369abb5b370",
-                                                "label": "Lowest Rent Listing Price",
-                                                "name": "lowest_rent_listing_price",
-                                                "aria-label": "",
-                                                "type": "text",
-                                                "instructions": "",
-                                                "required": 0,
-                                                "conditional_logic": 0,
-                                                "wrapper": {
-                                                    "width": "",
-                                                    "class": "",
-                                                    "id": ""
-                                                },
-                                                "default_value": "",
-                                                "maxlength": "",
-                                                "allow_in_bindings": 0,
-                                                "placeholder": "",
-                                                "prepend": "",
-                                                "append": ""
+                                                "layout": "block",
+                                                "parent_repeater": "field_673699455b358",
+                                                "sub_fields": [
+                                                    {
+                                                        "key": "field_673699ca5b35c",
+                                                        "label": "Median Sold Price",
+                                                        "name": "medianSoldPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a015b35d",
+                                                        "label": "Number Sold",
+                                                        "name": "numberSold",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a1b5b35e",
+                                                        "label": "Highest Sold Price",
+                                                        "name": "highestSoldPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a1f5b35f",
+                                                        "label": "Lowest Sold Price",
+                                                        "name": "lowestSoldPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a2d5b360",
+                                                        "label": "5th Percentile Sold Price",
+                                                        "name": "5thPercentileSoldPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a3c5b361",
+                                                        "label": "25th Percentile Sold Price",
+                                                        "name": "25thPercentileSoldPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a415b362",
+                                                        "label": "75th Percentile Sold Price",
+                                                        "name": "75thPercentileSoldPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a485b363",
+                                                        "label": "95th Percentile Sold Price",
+                                                        "name": "95thPercentileSoldPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a545b364",
+                                                        "label": "Median Sale Listing Price",
+                                                        "name": "medianSaleListingPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a5c5b365",
+                                                        "label": "Number Sale Listing",
+                                                        "name": "numberSaleListing",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a645b366",
+                                                        "label": "Highest Sale Listing Price",
+                                                        "name": "highestSaleListingPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a6b5b367",
+                                                        "label": "Lowest Sale Listing Price",
+                                                        "name": "lowestSaleListingPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a725b368",
+                                                        "label": "Auction Number Auctioned",
+                                                        "name": "auctionNumberAuctioned",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a7f5b369",
+                                                        "label": "Auction Number Sold",
+                                                        "name": "auction_numberSold",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a835b36a",
+                                                        "label": "Auction Number Withdrawn",
+                                                        "name": "auctionNumberWithdrawn",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a8a5b36b",
+                                                        "label": "Days On Market",
+                                                        "name": "daysOnMarket",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a925b36c",
+                                                        "label": "Discount Percentage",
+                                                        "name": "discountPercentage",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369a9b5b36d",
+                                                        "label": "Median Rent Listing Price",
+                                                        "name": "medianRentListingPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369aa95b36e",
+                                                        "label": "Number Rent Listing",
+                                                        "name": "numberRentListing",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369ab25b36f",
+                                                        "label": "Highest Rent Listing Price",
+                                                        "name": "highestRentListingPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    },
+                                                    {
+                                                        "key": "field_67369abb5b370",
+                                                        "label": "Lowest Rent Listing Price",
+                                                        "name": "lowestRentListingPrice",
+                                                        "aria-label": "",
+                                                        "type": "text",
+                                                        "instructions": "",
+                                                        "required": 0,
+                                                        "conditional_logic": 0,
+                                                        "wrapper": {
+                                                            "width": "",
+                                                            "class": "",
+                                                            "id": ""
+                                                        },
+                                                        "default_value": "",
+                                                        "maxlength": "",
+                                                        "allow_in_bindings": 0,
+                                                        "placeholder": "",
+                                                        "prepend": "",
+                                                        "append": ""
+                                                    }
+                                                ]
                                             }
-                                        ],
-                                        "parent_repeater": "field_673699455b358"
+                                        ]
                                     }
-                                ]
+                                ],
+                                "parent_repeater": "field_673c0cf041efe"
                             }
                         ]
                     }
@@ -3410,7 +3396,7 @@
                 {
                     "param": "post_type",
                     "operator": "==",
-                    "value": "suburb-profiles"
+                    "value": "suburb-profile"
                 }
             ]
         ],

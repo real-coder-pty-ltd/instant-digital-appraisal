@@ -189,7 +189,7 @@ function rc_ida_post_type_suburb_profile()
         'publicly_queryable' => true,
         'capability_type' => 'page',
     ];
-    register_post_type('suburb-profiles', $args);
+    register_post_type('suburb-profile', $args);
 
 }
 add_action('init', 'rc_ida_post_type_suburb_profile', 0);
