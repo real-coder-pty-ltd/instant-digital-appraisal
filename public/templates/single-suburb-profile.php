@@ -331,7 +331,7 @@ get_header();
                                                         </div>
                                                     </div>
                                                     <div class="col-12">
-                                                        <div class="row">
+                                                        <div class="row gy-3">
                                                             <div class="col-12">
                                                                 <h4>Sales and Growth</h4>
                                                             </div>
@@ -405,7 +405,9 @@ get_header();
                                                                 </table>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <canvas class="rc-ida-chart" data-years="<?= $years ?>" data-median-sold-prices="<?= $median_sold_prices ?>"></canvas>
+                                                                <div class="d-flex justify-content-center justify-content-md-end">
+                                                                    <canvas class="rc-ida-chart mt-2" data-years="<?= $years ?>" data-median-sold-prices="<?= $median_sold_prices ?>"></canvas>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -480,6 +482,16 @@ get_header();
     document.addEventListener("DOMContentLoaded", function(event) {
         var charts = document.querySelectorAll('.rc-ida-chart');
 
+        function niceNumber(value) {
+            if (value >= 1000000) {
+                return (value / 1000000).toFixed(0) + 'M';
+            } else if (value >= 1000) {
+                return (value / 1000).toFixed(0) + 'K';
+            } else {
+                return value;
+            }
+        }
+
         charts.forEach(function(chart) {
             var ctx = chart.getContext('2d');
             var years = chart.getAttribute('data-years').split(',');
@@ -498,8 +510,19 @@ get_header();
                 },
                 options: {
                     scales: {
+                        x: {
+                        },
                         y: {
-                            beginAtZero: true
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + niceNumber(value);
+                                }
+                            },
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
                         }
                     }
                 }
