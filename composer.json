@@ -13,5 +13,7 @@
             "email": "julius@realcoder.com.au"
         }
     ],
-    "require": {}
+    "require": {
+        "laravel/pint": "^1.18"
+    }
 }
