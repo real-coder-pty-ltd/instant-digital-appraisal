@@ -902,8 +902,8 @@ function rc_ida_calculate_and_display_percentage($items, $labels) {
     if ($item_1 && $item_2) {
         $total_value = ($item_1['value'] + $item_2['value']);
         if ($total_value > 0) {
-            $item_1_percentage = number_format(($item_1['value'] / $total_value) * 100, 2);
-            $item_2_percentage = number_format(($item_2['value'] / $total_value) * 100, 2);
+            $item_1_percentage = number_format(($item_1['value'] / $total_value) * 100, 0);
+            $item_2_percentage = number_format(($item_2['value'] / $total_value) * 100, 0);
 
             return [
                 'item_1' => $item_1,
