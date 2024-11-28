@@ -1,0 +1,1107 @@
+[
+    {
+        "dateRanges": [
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 16,
+                        "demand": 550,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": 2.2304832713754648
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 13,
+                        "demand": 408,
+                        "supplyChangePercentage": 8.333333333333332,
+                        "demandChangePercentage": 9.090909090909092
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 10,
+                        "demand": 509,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": -9.75177304964539
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 39,
+                        "demand": 1225,
+                        "supplyChangePercentage": 2.631578947368421,
+                        "demandChangePercentage": -1.2096774193548387
+                    }
+                ],
+                "startDate": "2024-07-01",
+                "endDate": "2024-07-07"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 13,
+                        "demand": 650,
+                        "supplyChangePercentage": -18.75,
+                        "demandChangePercentage": 18.181818181818183
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 12,
+                        "demand": 378,
+                        "supplyChangePercentage": -7.6923076923076925,
+                        "demandChangePercentage": -7.352941176470589
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 11,
+                        "demand": 485,
+                        "supplyChangePercentage": 10,
+                        "demandChangePercentage": -4.715127701375246
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 36,
+                        "demand": 1251,
+                        "supplyChangePercentage": -7.6923076923076925,
+                        "demandChangePercentage": 2.122448979591837
+                    }
+                ],
+                "startDate": "2024-07-08",
+                "endDate": "2024-07-14"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 11,
+                        "demand": 584,
+                        "supplyChangePercentage": -15.384615384615385,
+                        "demandChangePercentage": -10.153846153846153
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 11,
+                        "demand": 346,
+                        "supplyChangePercentage": -8.333333333333332,
+                        "demandChangePercentage": -8.465608465608465
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 12,
+                        "demand": 407,
+                        "supplyChangePercentage": 9.090909090909092,
+                        "demandChangePercentage": -16.082474226804123
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 34,
+                        "demand": 1122,
+                        "supplyChangePercentage": -5.555555555555555,
+                        "demandChangePercentage": -10.311750599520384
+                    }
+                ],
+                "startDate": "2024-07-15",
+                "endDate": "2024-07-21"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 9,
+                        "demand": 508,
+                        "supplyChangePercentage": -18.181818181818183,
+                        "demandChangePercentage": -13.013698630136986
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 10,
+                        "demand": 435,
+                        "supplyChangePercentage": -9.090909090909092,
+                        "demandChangePercentage": 25.722543352601157
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 12,
+                        "demand": 312,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": -23.34152334152334
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 31,
+                        "demand": 1092,
+                        "supplyChangePercentage": -8.823529411764707,
+                        "demandChangePercentage": -2.6737967914438503
+                    }
+                ],
+                "startDate": "2024-07-22",
+                "endDate": "2024-07-28"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 11,
+                        "demand": 441,
+                        "supplyChangePercentage": 22.22222222222222,
+                        "demandChangePercentage": -13.188976377952756
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 12,
+                        "demand": 559,
+                        "supplyChangePercentage": 20,
+                        "demandChangePercentage": 28.50574712643678
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 12,
+                        "demand": 338,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": 8.333333333333332
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 35,
+                        "demand": 1082,
+                        "supplyChangePercentage": 12.903225806451612,
+                        "demandChangePercentage": -0.9157509157509158
+                    }
+                ],
+                "startDate": "2024-07-29",
+                "endDate": "2024-08-04"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 12,
+                        "demand": 469,
+                        "supplyChangePercentage": 9.090909090909092,
+                        "demandChangePercentage": 6.349206349206349
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 16,
+                        "demand": 678,
+                        "supplyChangePercentage": 33.33333333333333,
+                        "demandChangePercentage": 21.288014311270125
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 13,
+                        "demand": 329,
+                        "supplyChangePercentage": 8.333333333333332,
+                        "demandChangePercentage": -2.6627218934911245
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 41,
+                        "demand": 1226,
+                        "supplyChangePercentage": 17.142857142857142,
+                        "demandChangePercentage": 13.308687615526802
+                    }
+                ],
+                "startDate": "2024-08-05",
+                "endDate": "2024-08-11"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 13,
+                        "demand": 562,
+                        "supplyChangePercentage": 8.333333333333332,
+                        "demandChangePercentage": 19.82942430703625
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 15,
+                        "demand": 690,
+                        "supplyChangePercentage": -6.25,
+                        "demandChangePercentage": 1.7699115044247788
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 14,
+                        "demand": 329,
+                        "supplyChangePercentage": 7.6923076923076925,
+                        "demandChangePercentage": 0
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 41,
+                        "demand": 1283,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": 4.64926590538336
+                    }
+                ],
+                "startDate": "2024-08-12",
+                "endDate": "2024-08-18"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 14,
+                        "demand": 688,
+                        "supplyChangePercentage": 7.6923076923076925,
+                        "demandChangePercentage": 22.419928825622776
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 17,
+                        "demand": 593,
+                        "supplyChangePercentage": 13.333333333333334,
+                        "demandChangePercentage": -14.057971014492754
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 13,
+                        "demand": 343,
+                        "supplyChangePercentage": -7.142857142857142,
+                        "demandChangePercentage": 4.25531914893617
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 44,
+                        "demand": 1332,
+                        "supplyChangePercentage": 7.317073170731707,
+                        "demandChangePercentage": 3.819173811379579
+                    }
+                ],
+                "startDate": "2024-08-19",
+                "endDate": "2024-08-25"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 17,
+                        "demand": 722,
+                        "supplyChangePercentage": 21.428571428571427,
+                        "demandChangePercentage": 4.941860465116279
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 19,
+                        "demand": 651,
+                        "supplyChangePercentage": 11.76470588235294,
+                        "demandChangePercentage": 9.780775716694773
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 15,
+                        "demand": 400,
+                        "supplyChangePercentage": 15.384615384615385,
+                        "demandChangePercentage": 16.61807580174927
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 51,
+                        "demand": 1418,
+                        "supplyChangePercentage": 15.909090909090908,
+                        "demandChangePercentage": 6.456456456456457
+                    }
+                ],
+                "startDate": "2024-08-26",
+                "endDate": "2024-09-01"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 17,
+                        "demand": 692,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": -4.1551246537396125
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 18,
+                        "demand": 588,
+                        "supplyChangePercentage": -5.263157894736842,
+                        "demandChangePercentage": -9.67741935483871
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 18,
+                        "demand": 655,
+                        "supplyChangePercentage": 20,
+                        "demandChangePercentage": 63.74999999999999
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 53,
+                        "demand": 1553,
+                        "supplyChangePercentage": 3.9215686274509802,
+                        "demandChangePercentage": 9.520451339915374
+                    }
+                ],
+                "startDate": "2024-09-02",
+                "endDate": "2024-09-08"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 16,
+                        "demand": 716,
+                        "supplyChangePercentage": -5.88235294117647,
+                        "demandChangePercentage": 3.4682080924855487
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 17,
+                        "demand": 559,
+                        "supplyChangePercentage": -5.555555555555555,
+                        "demandChangePercentage": -4.931972789115646
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 17,
+                        "demand": 603,
+                        "supplyChangePercentage": -5.555555555555555,
+                        "demandChangePercentage": -7.938931297709924
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 50,
+                        "demand": 1485,
+                        "supplyChangePercentage": -5.660377358490567,
+                        "demandChangePercentage": -4.3786220218931104
+                    }
+                ],
+                "startDate": "2024-09-09",
+                "endDate": "2024-09-15"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 17,
+                        "demand": 684,
+                        "supplyChangePercentage": 6.25,
+                        "demandChangePercentage": -4.4692737430167595
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 14,
+                        "demand": 629,
+                        "supplyChangePercentage": -17.647058823529413,
+                        "demandChangePercentage": 12.522361359570661
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 16,
+                        "demand": 711,
+                        "supplyChangePercentage": -5.88235294117647,
+                        "demandChangePercentage": 17.91044776119403
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 47,
+                        "demand": 1595,
+                        "supplyChangePercentage": -6,
+                        "demandChangePercentage": 7.4074074074074066
+                    }
+                ],
+                "startDate": "2024-09-16",
+                "endDate": "2024-09-22"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 15,
+                        "demand": 618,
+                        "supplyChangePercentage": -11.76470588235294,
+                        "demandChangePercentage": -9.649122807017543
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 9,
+                        "demand": 506,
+                        "supplyChangePercentage": -35.714285714285715,
+                        "demandChangePercentage": -19.554848966613672
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 15,
+                        "demand": 627,
+                        "supplyChangePercentage": -6.25,
+                        "demandChangePercentage": -11.814345991561181
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 39,
+                        "demand": 1403,
+                        "supplyChangePercentage": -17.02127659574468,
+                        "demandChangePercentage": -12.037617554858935
+                    }
+                ],
+                "startDate": "2024-09-23",
+                "endDate": "2024-09-29"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 15,
+                        "demand": 564,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": -8.737864077669903
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 11,
+                        "demand": 488,
+                        "supplyChangePercentage": 22.22222222222222,
+                        "demandChangePercentage": -3.557312252964427
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 15,
+                        "demand": 636,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": 1.4354066985645932
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 41,
+                        "demand": 1380,
+                        "supplyChangePercentage": 5.128205128205128,
+                        "demandChangePercentage": -1.639344262295082
+                    }
+                ],
+                "startDate": "2024-09-30",
+                "endDate": "2024-10-06"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 1,
+                        "demand": 24,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 17,
+                        "demand": 527,
+                        "supplyChangePercentage": 13.333333333333334,
+                        "demandChangePercentage": -6.560283687943262
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 11,
+                        "demand": 381,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": -21.92622950819672
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 14,
+                        "demand": 634,
+                        "supplyChangePercentage": -6.666666666666667,
+                        "demandChangePercentage": -0.3144654088050315
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 43,
+                        "demand": 1303,
+                        "supplyChangePercentage": 4.878048780487805,
+                        "demandChangePercentage": -5.579710144927536
+                    }
+                ],
+                "startDate": "2024-10-07",
+                "endDate": "2024-10-13"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 1,
+                        "demand": 36,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": 50
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 19,
+                        "demand": 634,
+                        "supplyChangePercentage": 11.76470588235294,
+                        "demandChangePercentage": 20.30360531309298
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 10,
+                        "demand": 353,
+                        "supplyChangePercentage": -9.090909090909092,
+                        "demandChangePercentage": -7.349081364829396
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 13,
+                        "demand": 621,
+                        "supplyChangePercentage": -7.142857142857142,
+                        "demandChangePercentage": -2.050473186119874
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 43,
+                        "demand": 1386,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": 6.36991557943208
+                    }
+                ],
+                "startDate": "2024-10-14",
+                "endDate": "2024-10-20"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 1,
+                        "demand": 39,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": 8.333333333333332
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 15,
+                        "demand": 622,
+                        "supplyChangePercentage": -21.052631578947366,
+                        "demandChangePercentage": -1.8927444794952681
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 11,
+                        "demand": 354,
+                        "supplyChangePercentage": 10,
+                        "demandChangePercentage": 0.28328611898017
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 14,
+                        "demand": 552,
+                        "supplyChangePercentage": 7.6923076923076925,
+                        "demandChangePercentage": -11.11111111111111
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 41,
+                        "demand": 1325,
+                        "supplyChangePercentage": -4.651162790697675,
+                        "demandChangePercentage": -4.401154401154401
+                    }
+                ],
+                "startDate": "2024-10-21",
+                "endDate": "2024-10-27"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 1,
+                        "demand": 2,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": -94.87179487179486
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 16,
+                        "demand": 607,
+                        "supplyChangePercentage": 6.666666666666667,
+                        "demandChangePercentage": -2.4115755627009645
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 12,
+                        "demand": 431,
+                        "supplyChangePercentage": 9.090909090909092,
+                        "demandChangePercentage": 21.75141242937853
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 13,
+                        "demand": 558,
+                        "supplyChangePercentage": -7.142857142857142,
+                        "demandChangePercentage": 1.0869565217391304
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 42,
+                        "demand": 1289,
+                        "supplyChangePercentage": 2.4390243902439024,
+                        "demandChangePercentage": -2.7169811320754715
+                    }
+                ],
+                "startDate": "2024-10-28",
+                "endDate": "2024-11-03"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 1,
+                        "demand": 42,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": 2000
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 16,
+                        "demand": 575,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": -5.2718286655683695
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 13,
+                        "demand": 401,
+                        "supplyChangePercentage": 8.333333333333332,
+                        "demandChangePercentage": -6.960556844547564
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 13,
+                        "demand": 415,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": -25.627240143369175
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 43,
+                        "demand": 1184,
+                        "supplyChangePercentage": 2.380952380952381,
+                        "demandChangePercentage": -8.145849495733126
+                    }
+                ],
+                "startDate": "2024-11-04",
+                "endDate": "2024-11-10"
+            },
+            {
+                "metricValues": [
+                    {
+                        "bedrooms": "0",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "1",
+                        "supply": 0,
+                        "demand": 0,
+                        "supplyChangePercentage": null,
+                        "demandChangePercentage": null
+                    },
+                    {
+                        "bedrooms": "2",
+                        "supply": 1,
+                        "demand": 49,
+                        "supplyChangePercentage": 0,
+                        "demandChangePercentage": 16.666666666666664
+                    },
+                    {
+                        "bedrooms": "3",
+                        "supply": 13,
+                        "demand": 441,
+                        "supplyChangePercentage": -18.75,
+                        "demandChangePercentage": -23.304347826086957
+                    },
+                    {
+                        "bedrooms": "4",
+                        "supply": 10,
+                        "demand": 362,
+                        "supplyChangePercentage": -23.076923076923077,
+                        "demandChangePercentage": -9.72568578553616
+                    },
+                    {
+                        "bedrooms": "5+",
+                        "supply": 14,
+                        "demand": 394,
+                        "supplyChangePercentage": 7.6923076923076925,
+                        "demandChangePercentage": -5.0602409638554215
+                    },
+                    {
+                        "bedrooms": "Combined",
+                        "supply": 38,
+                        "demand": 1050,
+                        "supplyChangePercentage": -11.627906976744185,
+                        "demandChangePercentage": -11.317567567567567
+                    }
+                ],
+                "startDate": "2024-11-11",
+                "endDate": "2024-11-17"
+            }
+        ],
+        "propertyType": "house"
+    }
+]
