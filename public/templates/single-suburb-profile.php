@@ -227,31 +227,32 @@ get_header();
                                 $property_category = $item['propertycategory'];
                                 $series_data = json_decode($item['series_data'], true);
 
-                                $last_item = null;
+                                $latest_item = null;
                                 if (!empty($series_data['seriesInfo'])) {
-                                    $last_item = end($series_data['seriesInfo']);
+                                    $latest_item = end($series_data['seriesInfo']);
                                 }
 
-                            if ( 0 != $last_item['values']['medianSoldPrice'] || 0 != $last_item['values']['numberSold'] || 0 != $last_item['values']['daysOnMarket']) :
-                                $median_sold_price = rc_ida_nice_number($last_item['values']['medianSoldPrice']) ? : '-';
-                                $entry_level = rc_ida_nice_number($last_item['values']['lowestSoldPrice']) ? : '-';
-                                $high_end = rc_ida_nice_number($last_item['values']['highestSoldPrice']) ? : '-';
-                                $median_rent_listing_price = rc_ida_nice_number($last_item['values']['medianRentListingPrice']);
-                                $days_on_market = $last_item['values']['daysOnMarket'] ?? 0;
+                            if ( 0 != $latest_item['values']['medianSoldPrice'] || 0 != $latest_item['values']['numberSold'] || 0 != $latest_item['values']['daysOnMarket']) :
+                                $latest_year = $latest_item['year'];
+                                $median_sold_price = rc_ida_nice_number($latest_item['values']['medianSoldPrice']) ? : '-';
+                                $entry_level = rc_ida_nice_number($latest_item['values']['lowestSoldPrice']) ? : '-';
+                                $high_end = rc_ida_nice_number($latest_item['values']['highestSoldPrice']) ? : '-';
+                                $median_rent_listing_price = rc_ida_nice_number($latest_item['values']['medianRentListingPrice']);
+                                $days_on_market = $latest_item['values']['daysOnMarket'] ?? 0;
                                 $days_label = $days_on_market > 1 ? 'days' : 'day';
                                 $days_text = $days_on_market != 0 ? $days_on_market . ' ' . $days_label : '-';
-                                $number_sold = $last_item['values']['numberSold'] ? : '-';
+                                $number_sold = $latest_item['values']['numberSold'] ? : '-';
                                 $auction_clearance_rate = 0;
 
-                                if (($last_item['values']['auctionNumberAuctioned'] + $last_item['values']['auctionNumberWithdrawn']) > 0) {
-                                    $auction_number_sold = $last_item['values']['auctionNumberSold'];
-                                    $auction_number_auctioned = $last_item['values']['auctionNumberAuctioned'];
-                                    $auction_number_withdrawn = $last_item['values']['auctionNumberWithdrawn'] ?? 0;
+                                if (($latest_item['values']['auctionNumberAuctioned'] + $latest_item['values']['auctionNumberWithdrawn']) > 0) {
+                                    $auction_number_sold = $latest_item['values']['auctionNumberSold'];
+                                    $auction_number_auctioned = $latest_item['values']['auctionNumberAuctioned'];
+                                    $auction_number_withdrawn = $latest_item['values']['auctionNumberWithdrawn'] ?? 0;
 
                                     $auction_clearance_rate = $auction_number_sold / ($auction_number_auctioned + $auction_number_withdrawn) * 100;
                                     $auction_clearance_rate_text = number_format($auction_clearance_rate, 1) . '%';
                                 } else {
-                                    $auction_clearance_rate = '-';
+                                    $auction_clearance_rate_text = '-';
                                 }
                                 
                                 // Output the totals
@@ -280,7 +281,7 @@ get_header();
                                                     <h3>Market Performance</h3>
                                                 </div>
                                             </div>
-                                            <?php if (10 <= number_format($last_item['values']['numberSold'])) : ?>
+                                            <?php if (10 <= number_format($latest_item['values']['numberSold'])) : ?>
                                                 <div class="row gy-4">
                                                     <div class="col-12">
                                                         <h4>Sales Price Range</h4>
@@ -318,7 +319,7 @@ get_header();
                                                             <div class="col-md-6">
                                                                 <div class="d-flex justify-content-between">
                                                                     <span>Auction clearance<br><small>Higher = more competition</small></span>
-                                                                    <span><?= $auction_clearance_rate; ?></span>
+                                                                    <span><?= $auction_clearance_rate_text; ?></span>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6">
@@ -338,13 +339,18 @@ get_header();
                                                                 <table class="table table-striped">
                                                                     <tr>
                                                                         <th>Year</th>
-                                                                        <th>Median Price</th>
+                                                                        <th>Median</th>
                                                                         <th>Growth</th>
-                                                                        <th>Number Sold</th>
+                                                                        <th># of Sales</th>
                                                                     </tr>
                                                                     <?php
                                                                         $median_sold_price_last = 0;
                                                                         
+                                                                        $data = [];
+
+                                                                        $years = '';
+                                                                        $median_sold_prices = '';
+
                                                                         foreach ($series_data['seriesInfo'] as $item) {
                                                                             $year = 0;
                                                                             $median_sold_price = 0;
@@ -353,29 +359,53 @@ get_header();
 
                                                                             $year = $item['year'];
                                                                             $median_sold_price = $item['values']['medianSoldPrice'] ?? 0;
-                                                                            $median_sold_price_label = rc_ida_nice_number($item['values']['medianSoldPrice']) ? : '-';
 
-                                                                            if ($median_sold_price_last != 0) {
-                                                                                $growth = (($median_sold_price - $median_sold_price_last) / $median_sold_price_last) * 100;
-                                                                            } else {
-                                                                                $growth = 0;
+                                                                            if ($latest_year - 5 < $year) {
+                                                                                $median_sold_price_label = rc_ida_nice_number($item['values']['medianSoldPrice']) ?: '-';
+
+                                                                                if ($median_sold_price_last != 0) {
+                                                                                    $growth = (($median_sold_price - $median_sold_price_last) / $median_sold_price_last) * 100;
+                                                                                } else {
+                                                                                    $growth = 0;
+                                                                                }
+                                                                                $growth_label = number_format($growth, 1) . '%';
+                                                                                $number_sold = $item['values']['numberSold'] ?: '-';
+
+                                                                                $data[] = [
+                                                                                    'year' => $year,
+                                                                                    'median_sold_price' => $median_sold_price,
+                                                                                    'median_sold_price_label' => $median_sold_price_label,
+                                                                                    'growth_label' => $growth_label,
+                                                                                    'number_sold' => $number_sold
+                                                                                ];
+
+                                                                                $years .= $year . ',';
+                                                                                $median_sold_prices .= (string) $median_sold_price . ',';
                                                                             }
-                                                                            $growth_label = number_format($growth, 1) . '%'; ;
-                                                                            $number_sold = $item['values']['numberSold'] ? : '-';
-
-                                                                            echo '<tr>';
-                                                                            echo '<td>' . $year . '</td>';
-                                                                            echo '<td>' . $median_sold_price_label . '</td>';
-                                                                            echo '<td>' . $growth_label . '</td>';
-                                                                            echo '<td>' . $number_sold . '</td>';
-                                                                            echo '</tr>';
 
                                                                             $median_sold_price_last = $median_sold_price;
                                                                         }
+
+                                                                        usort($data, function ($a, $b) {
+                                                                            return $b['year'] <=> $a['year'];
+                                                                        });
+
+                                                                        foreach ($data as $row) {
+                                                                            echo '<tr>';
+                                                                            echo '<td>' . $row['year'] . '</td>';
+                                                                            echo '<td>' . $row['median_sold_price_label'] . '</td>';
+                                                                            echo '<td>' . $row['growth_label'] . '</td>';
+                                                                            echo '<td>' . $row['number_sold'] . '</td>';
+                                                                            echo '</tr>';
+                                                                        }
+
+                                                                        $years = rtrim($years, ',');
+                                                                        $median_sold_prices = rtrim($median_sold_prices, ',');
                                                                     ?>
                                                                 </table>
                                                             </div>
                                                             <div class="col-md-6">
+                                                                <canvas class="rc-ida-chart" data-years="<?= $years ?>" data-median-sold-prices="<?= $median_sold_prices ?>"></canvas>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -445,8 +475,37 @@ get_header();
     $fetch = new BoundaryFetcher($fetcher['suburb'], $fetcher['state'], $fetcher['country']);
 ?>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function(event) {
+        var charts = document.querySelectorAll('.rc-ida-chart');
+
+        charts.forEach(function(chart) {
+            var ctx = chart.getContext('2d');
+            var years = chart.getAttribute('data-years').split(',');
+            var medianSoldPrices = chart.getAttribute('data-median-sold-prices').split(',');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Median Sold Prices',
+                        data: medianSoldPrices,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+
         var suburbCoords = <?php echo $fetch->boundary; ?>;
         var suburbCenter = <?php echo $fetch->center; ?>;
 
