@@ -14,4 +14,4 @@ if (!$suburb || !$state || !$postcode) {
 // Dynamically determine the path to wp-load.php
 require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/wp/wp-load.php';
 
-rc_ida_domain_suburb_profile($suburb, $state, $postcode);
+rc_ida_suburb_profile($suburb, $state, $postcode);

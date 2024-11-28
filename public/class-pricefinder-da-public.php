@@ -120,16 +120,131 @@ class Pricefinder_Da_Public
     }
 }
 
-function pricefinder_da_notice($level, $message)
+class BoundaryFetcher
 {
+    private $country;
+    private $state;
+    private $suburb;
+    private $url = "https://overpass-api.de/api/interpreter";
 
-    $dev_mode = get_option('pricefinder_da_developer_mode');
-    if ($dev_mode == 'true') {
-        echo '<div class="alert alert-'.$level.' alert-dismissible fade show" role="alert">'.$message.'<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-		<span aria-hidden="true">&times;</span>
-	  </button></div>';
-    } else {
-        return;
+    public $data;
+    public $boundary;
+    public $is_error;
+    public $center;
+
+    public function __construct($suburb, $state = 'Queensland', $country = 'Australia')
+    {
+        $this->country = $country;
+        $this->state = $state;
+        $this->suburb = $suburb;
+
+        $this->fetchBoundaryData();
+
+        return $this;
+    }
+
+    private function setCenter()
+    {
+        $center = [
+            'lat' => ($this->data[0]['bounds']['minlat'] + $this->data[0]['bounds']['maxlat']) / 2,
+            'lng' => ($this->data[0]['bounds']['minlon'] + $this->data[0]['bounds']['maxlon']) / 2,
+        ];
+        $this->center = json_encode($center);
+    }
+
+    public function fetchBoundaryData()
+    {
+        if (!$this->country || !$this->state || !$this->suburb) {
+            return [
+                'error' => true,
+                'message' => 'Country, state, and suburb must be set before fetching data.',
+            ];
+        }
+
+        $query = <<<EOT
+[out:json];
+area["name"="{$this->country}"]["boundary"="administrative"]->.a;
+area["name"="{$this->state}"]["boundary"="administrative"](area.a)->.b;
+relation["name"="{$this->suburb}"]["boundary"="administrative"](area.b);
+out geom;
+EOT;
+
+        $response = wp_remote_post($this->url, [
+            'body' => [
+                'data' => $query,
+            ],
+        ]);
+
+        if (is_wp_error($response)) {
+
+            $this->is_error = true;
+            return [
+                'error' => true,
+                'message' => $response->get_error_message(),
+            ];
+        }
+
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (empty($data['elements'])) {
+            return [
+                'error' => true,
+                'message' => 'No data found for the specified query.',
+            ];
+        }
+
+        $this->data = $data['elements'];
+
+        $this->stichPolygons();
+        $this->setCenter();
+        return $this;
+    }
+
+    public function stichPolygons()
+    {
+        $stitchedPolygon = [];
+ 
+        $ways = array_filter($this->data[0]['members'], function ($way) {
+            return $way['type'] === 'way';
+        });
+ 
+        $segments = array_map(function ($way) {
+            return $way['geometry'];
+        }, $ways);
+
+        $stitchedPolygon = array_shift($segments);
+
+        while (!empty($segments)) {
+            $lastPoint = end($stitchedPolygon);
+
+            foreach ($segments as $key => $segment) {
+                $firstPoint = $segment[0];
+                $lastSegmentPoint = end($segment);
+
+                if ($lastPoint === $firstPoint) {
+
+                    $stitchedPolygon = array_merge($stitchedPolygon, array_slice($segment, 1));
+                    unset($segments[$key]);
+                    break;
+                } elseif ($lastPoint === $lastSegmentPoint) {
+
+                    $stitchedPolygon = array_merge($stitchedPolygon, array_slice(array_reverse($segment), 1));
+                    unset($segments[$key]);
+                    break;
+                }
+            }
+        }
+
+        $firstPoint = $stitchedPolygon[0];
+        $lastPoint = end($stitchedPolygon);
+        if ($firstPoint !== $lastPoint) {
+            $stitchedPolygon[] = $firstPoint;
+        }
+
+        $suburb_coords_json = json_encode($stitchedPolygon);
+        $suburb_coords_json = str_replace('lon', 'lng', $suburb_coords_json);
+
+        $this->boundary = $suburb_coords_json;
     }
 
 }
@@ -556,7 +671,7 @@ function geolocationaddress($lat, $long)
 /**
  * Pretty up our numbers
  */
-function nice_number($n)
+function rc_ida_nice_number($n)
 {
     // first strip any formatting;
     $n = str_replace(',', '', $n);
@@ -621,8 +736,8 @@ add_action('wp', 'rc_ida_hooks');
  * Suburb Profile Functions
  */
 
-// Create or update suburb profile post, and return the post ID
-function rc_ida_domain_suburb_profile($suburb, $state, $postcode) {
+// Create or update suburb profile post, redirect to single page
+function rc_ida_suburb_profile($suburb, $state, $postcode) {
     if (!$suburb || !$state || !$postcode) {
         return null;
     }
@@ -655,8 +770,8 @@ function rc_ida_domain_suburb_profile($suburb, $state, $postcode) {
 
         if ($date_diff > 30) {
             update_field('general_modified_date', $today, $post_id);
-            rc_ida_domain_process_demographics($post_id, $state, $suburb, $postcode);
-            rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
+            rc_ida_process_demographics($post_id, $state, $suburb, $postcode);
+            rc_ida_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
         }
 
         // Redirect to single post page
@@ -685,8 +800,8 @@ function rc_ida_domain_suburb_profile($suburb, $state, $postcode) {
         foreach ($fields as $field_key => $field_value) {
             update_field($field_key, $field_value, $post_id);
         }
-        rc_ida_domain_process_demographics($post_id, $state, $suburb, $postcode);
-        rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
+        rc_ida_process_demographics($post_id, $state, $suburb, $postcode);
+        rc_ida_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
 
         // Redirect to single post page
         wp_redirect(get_permalink($post_id));
@@ -694,13 +809,13 @@ function rc_ida_domain_suburb_profile($suburb, $state, $postcode) {
     }
 }
 
-function rc_ida_domain_process_demographics($post_id, $state, $suburb, $postcode) {
+// Process suburb demographics data
+function rc_ida_process_demographics($post_id, $state, $suburb, $postcode) {
     if (!$post_id || !$state || !$suburb || !$postcode) {
         return null;
     }
 
-    // $fetched_demographics = rc_ida_domain_fetch_demographics($state, $suburb, $postcode);
-    $fetched_demographics = json_decode(file_get_contents(dirname(dirname(__FILE__)) . '/admin/json/response-suburb-demographics.json'), true);
+    $fetched_demographics = rc_ida_domain_fetch_demographics($state, $suburb, $postcode);
 
     if (!$fetched_demographics) {
         return null;
@@ -732,7 +847,8 @@ function rc_ida_domain_process_demographics($post_id, $state, $suburb, $postcode
     update_field('demographics', $acf_demographics, $post_id);
 }
 
-function rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode) {
+// Process suburb performance statistics data
+function rc_ida_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode) {
     if (!$post_id || !$state || !$suburb || !$postcode) {
         return null;
     }
@@ -741,27 +857,17 @@ function rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $
     $acf_statistics = [];
     
     foreach (['House', 'Unit'] as $category) {
-        for ($bedrooms = 1; $bedrooms <= 5; $bedrooms++) {
+        for ($bedrooms = 2; $bedrooms <= 4; $bedrooms++) {
             $fetched_suburb_performance_statistics = '';
-            // $fetched_suburb_performance_statistics = rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms);
-            $fetched_suburb_performance_statistics = json_decode(file_get_contents(dirname(dirname(__FILE__)) . '/admin/json/response-suburb-statistics-' . strtolower($category) . '-' . $bedrooms . '.json'), true);
+            $fetched_suburb_performance_statistics = rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms, 'years');
+            $fetched_suburb_performance_statistics_quarterly = rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms, 'quarters');
     
-            if ($fetched_suburb_performance_statistics) {
-                
+            if ($fetched_suburb_performance_statistics && $fetched_suburb_performance_statistics_quarterly) {
                 $series_data = $fetched_suburb_performance_statistics['series'];
+                $series_data_quarterly = $fetched_suburb_performance_statistics_quarterly['series'];
                 $series_json = json_encode($series_data);
-                // $seriesInfo_data = $series_data['seriesInfo'];
-    
-                $label = $category . ' - ' . $bedrooms;
-                // $itemIndex = null;
-    
-                // Find the correct index in the $acf_statistics['items'] array
-                // foreach ($acf_statistics['items'] as $index => $item) {
-                //     if ($item['label'] === $label) {
-                //         $itemIndex = $index;
-                //         break;
-                //     }
-                // }
+                $series_json_quarterly = json_encode($series_data_quarterly);
+                $label = strtolower($category) . '-' . strtolower($bedrooms);
     
                 // If the item does not exist, create it
                 if ($itemIndex === null) {
@@ -770,50 +876,68 @@ function rc_ida_domain_process_suburb_performance_statistics($post_id, $state, $
                         'bedrooms' => $bedrooms,
                         'propertycategory' => $category,
                         'series_data' => $series_json,
-                        // 'series' => [
-                        //     'seriesinfo' => []
-                        // ]
+                        'series_data_quarterly' => $series_json_quarterly,
                     ];
-                    // $itemIndex = count($acf_statistics['items']) - 1;
                 }
-    
-                // foreach ($series_data as $series) {
-                //     foreach ($seriesInfo_data as $seriesInfo) {
-                //         $acf_statistics['items'][$itemIndex]['series']['seriesinfo'][] = [
-                //             'year' => $seriesInfo['year'],
-                //             'month' => $seriesInfo['month'],
-                //             'values' => [
-                //                 'medianSoldPrice' => $seriesInfo['values']['medianSoldPrice'],
-                //                 'numberSold' => $seriesInfo['values']['numberSold'],
-                //                 'highestSoldPrice' => $seriesInfo['values']['highestSoldPrice'],
-                //                 'lowestSoldPrice' => $seriesInfo['values']['lowestSoldPrice'],
-                //                 '5thPercentileSoldPrice' => $seriesInfo['values']['5thPercentileSoldPrice'],
-                //                 '25thPercentileSoldPrice' => $seriesInfo['values']['25thPercentileSoldPrice'],
-                //                 '75thPercentileSoldPrice' => $seriesInfo['values']['75thPercentileSoldPrice'],
-                //                 '95thPercentileSoldPrice' => $seriesInfo['values']['95thPercentileSoldPrice'],
-                //                 'medianSaleListingPrice' => $seriesInfo['values']['medianSaleListingPrice'],
-                //                 'numberSaleListing' => $seriesInfo['values']['numberSaleListing'],
-                //                 'highestSaleListingPrice' => $seriesInfo['values']['highestSaleListingPrice'],
-                //                 'lowestSaleListingPrice' => $seriesInfo['values']['lowestSaleListingPrice'],
-                //                 'auctionNumberAuctioned' => $seriesInfo['values']['auctionNumberAuctioned'],
-                //                 'auctionNumberSold' => $seriesInfo['values']['auctionNumberSold'],
-                //                 'auctionNumberWithdrawn' => $seriesInfo['values']['auctionNumberWithdrawn'],
-                //                 'daysOnMarket' => $seriesInfo['values']['daysOnMarket'],
-                //                 'discountPercentage' => $seriesInfo['values']['discountPercentage'],
-                //                 'medianRentListingPrice' => $seriesInfo['values']['medianRentListingPrice'],
-                //                 'numberRentListing' => $seriesInfo['values']['numberRentListing'],
-                //                 'highestRentListingPrice' => $seriesInfo['values']['highestRentListingPrice'],
-                //                 'lowestRentListingPrice' => $seriesInfo['values']['lowestRentListingPrice']
-                //             ]
-                //         ];
-                //     }
-                // }
             }
         }
     }
 
     update_field('suburb_performance_statistics', $acf_statistics, $post_id);
 }
+
+// Calculate Difference
+function rc_ida_calculate_and_display_percentage($items, $labels) {
+    $item_1 = null;
+    $item_2 = null;
+
+    foreach ($items as $item) {
+        if ($item['label'] === $labels[0]) {
+            $item_1 = $item;
+        } elseif ($item['label'] === $labels[1]) {
+            $item_2 = $item;
+        }
+    }
+
+    if ($item_1 && $item_2) {
+        $total_value = ($item_1['value'] + $item_2['value']);
+        if ($total_value > 0) {
+            $item_1_percentage = number_format(($item_1['value'] / $total_value) * 100, 2);
+            $item_2_percentage = number_format(($item_2['value'] / $total_value) * 100, 2);
+
+            return [
+                'item_1' => $item_1,
+                'item_2' => $item_2,
+                'item_1_percentage' => $item_1_percentage,
+                'item_2_percentage' => $item_2_percentage,
+            ];
+        } else {
+            return [
+                'item_1' => $item_1,
+                'item_2' => $item_2,
+                'item_1_percentage' => 0,
+                'item_2_percentage' => 0,
+            ];
+        }
+    }
+
+    return null;
+}
+
+// Filter the single_template with our custom function
+function rc_ida_single_suburb_profile($single)
+{
+    global $post;
+    if ($post->post_type == 'suburb-profile') {
+        $file = plugin_dir_path(__FILE__) . 'templates/single-suburb-profile.php';
+        if (file_exists($file)) {
+            return $file;
+        }
+    }
+
+    return $single;
+}
+add_filter('single_template', 'rc_ida_single_suburb_profile');
 
 /**
  * Domain API Functions
@@ -993,8 +1117,6 @@ function rc_ida_domain_fetch_property_price_estimate($property_id) {
     // Construct the full API URL
     $api_url = $base_url . $api_version . '/' . $endpoint;
 
-    var_dump($api_url);
-
     // Initialize cURL session
     $ch = curl_init();
 
@@ -1094,7 +1216,6 @@ function rc_ida_domain_fetch_schools($latitude, $longitude) {
 function rc_ida_domain_fetch_demographics($state, $suburb, $postcode) {
     $access_token = rc_ida_domain_fetch_access_token();
 
-    var_dump($access_token);
     if (!$access_token || !$state || !$suburb || !$postcode) {
         return null;
     }
@@ -1155,7 +1276,7 @@ function rc_ida_domain_fetch_demographics($state, $suburb, $postcode) {
 }
 
 // Fetch suburb performance statistics from Domain API
-function rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms) {
+function rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms, $period_size) {
     $access_token = rc_ida_domain_fetch_access_token();
     if (!$access_token) {
         return null;
@@ -1173,7 +1294,7 @@ function rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $pos
     $params = [
         'propertyCategory' => $category,
         'bedrooms' => $bedrooms,
-        'periodSize' => 'quarters',
+        'periodSize' => $period_size,
         'startingPeriodRelativeToCurrent' => '1',
         'totalPeriods' => '40'
     ];

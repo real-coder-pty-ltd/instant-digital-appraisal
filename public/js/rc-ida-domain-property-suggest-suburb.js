@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    const states = ['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'ACT', 'NT'];
+    const states = ['SA'];
     const suggestions = document.getElementById('rc-ida-results');
 
     // List of suburbs to fetch postcodes

@@ -106,9 +106,9 @@ get_header();
 							</div>
 
 							<div class="pricing-confidence">
-								<div><label>LOW</label><?php echo nice_number($avm->salesAVM->priceRangeMinimum); ?></div>
-								<div class="mid-range"><label>MID</label><?php echo nice_number($avm->salesAVM->price); ?></div>
-								<div><label>HIGH</label><?php echo nice_number($avm->salesAVM->priceRangeMaximum); ?></div>
+								<div><label>LOW</label><?php echo rc_ida_nice_number($avm->salesAVM->priceRangeMinimum); ?></div>
+								<div class="mid-range"><label>MID</label><?php echo rc_ida_nice_number($avm->salesAVM->price); ?></div>
+								<div><label>HIGH</label><?php echo rc_ida_nice_number($avm->salesAVM->priceRangeMaximum); ?></div>
 							</div>
 					
 							<a href="/contact-us" class="btn btn-primary">Get a Personalised Appraisal Now</a>
