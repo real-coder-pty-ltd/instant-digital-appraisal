@@ -46,8 +46,6 @@ $marital_status_result = rc_ida_calculate_and_display_percentage($marital_status
 $suburb_performance_statistics = get_field('suburb_performance_statistics');
 $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
 
-get_header();
-
 ?>
 
 <section class="section--rc-ida-hero mb-5">
@@ -89,9 +87,13 @@ get_header();
                 <h2 class="rc-ida-about__title">About <?= get_bloginfo('name'); ?></h2>
                 <div class="rc-ida-about__content">
                     <?php if (get_the_content()) : ?>
-                        <?= get_the_content(); ?>
+                    <?= get_the_content(); ?>
                     <?php else : ?>
-                        <p class="mb-0">Showcasing a prominent local presence in <?= $suburb ?> and a team illustrating rich and accumulative experience, <?= get_bloginfo('name'); ?> offers an unrivalled calibre of personal attention. Established with a focus on delivering a personal and customised service, our commitment to honesty, integrity and professionalism is reflected in our strong sales history and industry reputation in <?= $suburb ?> and surrounding suburbs.</p>
+                    <p class="mb-0">Showcasing a prominent local presence in <?= $suburb ?> and a team illustrating rich
+                        and accumulative experience, <?= get_bloginfo('name'); ?> offers an unrivalled calibre of
+                        personal attention. Established with a focus on delivering a personal and customised service,
+                        our commitment to honesty, integrity and professionalism is reflected in our strong sales
+                        history and industry reputation in <?= $suburb ?> and surrounding suburbs.</p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -110,58 +112,65 @@ get_header();
 </section>
 
 <?php if ($demographics) : ?>
-    <section class="section--rc-ida-demographics" id="suburb-profile-demographics">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col">
-                    <h2 class="rc-ida-demographics__title">Demographics</h2>
-                    <div class="rc-ida-demographics__content">
-                        <p>A little bit about who lives locally, as provided by government census data.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row gy-3">
-                <?php if ($population) : ?>
-                    <div class="col-6 col-md-3">
-                        <h5 class="mb-2">Population</h5>
-                        <p class="fs-2 py-5 border border-1 border-dark text-center rounded fw-bold"><?= $population ?></p>
-                    </div>
-                <?php endif; ?>
-                <?php if ($average_age) : ?>
-                    <div class="col-6 col-md-3">
-                        <h5 class="mb-2">Average Age</h5>
-                        <p class="fs-2 py-5 border border-1 border-dark text-center rounded fw-bold"><?= $average_age['label'] ?></p>
-                    </div>
-                <?php endif; ?>
-
-                <div class="col-md-6">
-                    <?php if ($nature_of_occupancy_result) : ?>
-                        <div class="d-flex justify-content-between">
-                            <h5 class="mb-2">Owner</h5>
-                            <h5 class="mb-2">Renter</h5>
-                        </div>
-                        <div class="progress d-flex justify-content-between pe-3 mb-3" style="height: 40px;">
-                            <div class="progress-bar ps-3 text-start fs-5 fw-bold" role="progressbar" aria-valuenow="<?= $nature_of_occupancy_result['item_1_percentage'] ?>"
-                                aria-valuemin="0" aria-valuemax="100" style="width:<?= $nature_of_occupancy_result['item_1_percentage'] ?>%"><?= $nature_of_occupancy_result['item_1_percentage'] ?>%</div>
-                            <span class="float-right fs-5 fw-bold" style="line-height: 40px;"><?= $nature_of_occupancy_result['item_2_percentage'] ?>%</span>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ($marital_status_result) : ?>
-                        <div class="d-flex justify-content-between">
-                            <h5 class="mb-2">Family</h5>
-                            <h5 class="mb-2">Single</h5>
-                        </div>
-                        <div class="progress d-flex justify-content-between pe-3 mb-3" style="height: 40px;">
-                            <div class="progress-bar w-75 ps-3 text-start fs-5 fw-bold" role="progressbar" aria-valuenow="<?= $marital_status_result['item_1_percentage'] ?>"
-                                aria-valuemin="0" aria-valuemax="100" style="width:<?= $marital_status_result['item_1_percentage'] ?>%"><?= $marital_status_result['item_1_percentage'] ?>%</div>
-                            <span class="float-right fs-5 fw-bold" style="line-height: 40px;"><?= $marital_status_result['item_2_percentage'] ?>%</span>
-                        </div>
-                    <?php endif; ?>
+<section class="section--rc-ida-demographics" id="suburb-profile-demographics">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col">
+                <h2 class="rc-ida-demographics__title">Demographics</h2>
+                <div class="rc-ida-demographics__content">
+                    <p>A little bit about who lives locally, as provided by government census data.</p>
                 </div>
             </div>
         </div>
-    </section>
+        <div class="row gy-3">
+            <?php if ($population) : ?>
+            <div class="col-6 col-md-3">
+                <h5 class="mb-2">Population</h5>
+                <p class="fs-2 py-5 border border-1 border-dark text-center rounded fw-bold"><?= $population ?></p>
+            </div>
+            <?php endif; ?>
+            <?php if ($average_age) : ?>
+            <div class="col-6 col-md-3">
+                <h5 class="mb-2">Average Age</h5>
+                <p class="fs-2 py-5 border border-1 border-dark text-center rounded fw-bold">
+                    <?= $average_age['label'] ?></p>
+            </div>
+            <?php endif; ?>
+
+            <div class="col-md-6">
+                <?php if ($nature_of_occupancy_result) : ?>
+                <div class="d-flex justify-content-between">
+                    <h5 class="mb-2">Owner</h5>
+                    <h5 class="mb-2">Renter</h5>
+                </div>
+                <div class="progress d-flex justify-content-between pe-3 mb-3" style="height: 40px;">
+                    <div class="progress-bar ps-3 text-start fs-5 fw-bold" role="progressbar"
+                        aria-valuenow="<?= $nature_of_occupancy_result['item_1_percentage'] ?>" aria-valuemin="0"
+                        aria-valuemax="100" style="width:<?= $nature_of_occupancy_result['item_1_percentage'] ?>%">
+                        <?= $nature_of_occupancy_result['item_1_percentage'] ?>%</div>
+                    <span class="float-right fs-5 fw-bold"
+                        style="line-height: 40px;"><?= $nature_of_occupancy_result['item_2_percentage'] ?>%</span>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($marital_status_result) : ?>
+                <div class="d-flex justify-content-between">
+                    <h5 class="mb-2">Family</h5>
+                    <h5 class="mb-2">Single</h5>
+                </div>
+                <div class="progress d-flex justify-content-between pe-3 mb-3" style="height: 40px;">
+                    <div class="progress-bar w-75 ps-3 text-start fs-5 fw-bold" role="progressbar"
+                        aria-valuenow="<?= $marital_status_result['item_1_percentage'] ?>" aria-valuemin="0"
+                        aria-valuemax="100" style="width:<?= $marital_status_result['item_1_percentage'] ?>%">
+                        <?= $marital_status_result['item_1_percentage'] ?>%</div>
+                    <span class="float-right fs-5 fw-bold"
+                        style="line-height: 40px;"><?= $marital_status_result['item_2_percentage'] ?>%</span>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</section>
 <?php endif; ?>
 
 <section class="section--hr">
@@ -201,7 +210,8 @@ get_header();
             <div class="col">
                 <h2 class="rc-ida-market-trends__title">Market Trends</h2>
                 <div class="rc-ida-market-trends__content">
-                    <p>View median property prices in <?= $suburb ?> to get a better understanding of local market trends.</p>
+                    <p>View median property prices in <?= $suburb ?> to get a better understanding of local market
+                        trends.</p>
                 </div>
             </div>
         </div>
@@ -221,7 +231,7 @@ get_header();
                     </thead>
                     <tbody>
                         <?php foreach ($suburb_performance_statistics_list as $item) : ?>
-                            <?php 
+                        <?php 
                                 $id = $item['propertycategory'] . '-' . $item['bedrooms'];
                                 $bedrooms = $item['bedrooms'] == 1 ? $item['bedrooms'] . ' Bed' : $item['bedrooms'] . ' Beds';
                                 $property_category = $item['propertycategory'];
@@ -273,77 +283,79 @@ get_header();
                                 echo '</tr>';
                             ?>
 
-                                <tr>
-                                    <td colspan="7" scope="row" class="collapse rounded-2 border" id="trend-<?= $id; ?>">
-                                        <div class="suburb-profile-market-performance p-4">
-                                            <div class="row">
+                        <tr>
+                            <td colspan="7" scope="row" class="collapse rounded-2 border" id="trend-<?= $id; ?>">
+                                <div class="suburb-profile-market-performance p-4">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h3>Market Performance</h3>
+                                        </div>
+                                    </div>
+                                    <?php if (10 <= number_format($latest_item['values']['numberSold'])) : ?>
+                                    <div class="row gy-4">
+                                        <div class="col-12">
+                                            <h4>Sales Price Range</h4>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="row gy-4">
                                                 <div class="col-12">
-                                                    <h3>Market Performance</h3>
+                                                    <h5>Median Price</h5>
+                                                    <p class="h2"><?= $median_sold_price; ?></p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5>Entry Level</h5>
+                                                    <p class="h2"><?= $entry_level; ?>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5>High End</h5>
+                                                    <p class="h2"><?= $high_end; ?></p>
                                                 </div>
                                             </div>
-                                            <?php if (10 <= number_format($latest_item['values']['numberSold'])) : ?>
-                                                <div class="row gy-4">
-                                                    <div class="col-12">
-                                                        <h4>Sales Price Range</h4>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="row gy-4">
+                                                <div class="col-md-6">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>Sold This Year</span>
+                                                        <span><?= $number_sold; ?></span>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <div class="row gy-4">
-                                                            <div class="col-12">
-                                                                <h5>Median Price</h5>
-                                                                <p class="h2"><?= $median_sold_price; ?></p>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <h5>Entry Level</h5>
-                                                                <p class="h2"><?= $entry_level; ?>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <h5>High End</h5>
-                                                                <p class="h2"><?= $high_end; ?></p>
-                                                            </div>
-                                                        </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>Rental Median Price</span>
+                                                        <span>$<?= $median_rent_listing_price; ?></span>
                                                     </div>
-                                                    <div class="col-md-8">
-                                                        <div class="row gy-4">
-                                                            <div class="col-md-6">
-                                                                <div class="d-flex justify-content-between">
-                                                                    <span>Sold This Year</span>
-                                                                    <span><?= $number_sold; ?></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="d-flex justify-content-between">
-                                                                    <span>Rental Median Price</span>
-                                                                    <span>$<?= $median_rent_listing_price; ?></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="d-flex justify-content-between">
-                                                                    <span>Auction clearance<br><small>Higher = more competition</small></span>
-                                                                    <span><?= $auction_clearance_rate_text; ?></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="d-flex justify-content-between">
-                                                                    <span>Average days on market<br><small>Lower = more competition</small></span>
-                                                                    <span><?= $days_text; ?></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>Auction clearance<br><small>Higher = more
+                                                                competition</small></span>
+                                                        <span><?= $auction_clearance_rate_text; ?></span>
                                                     </div>
-                                                    <div class="col-12">
-                                                        <div class="row gy-3">
-                                                            <div class="col-12">
-                                                                <h4>Sales and Growth</h4>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <table class="table table-striped">
-                                                                    <tr>
-                                                                        <th>Year</th>
-                                                                        <th>Median</th>
-                                                                        <th>Growth</th>
-                                                                        <th># of Sales</th>
-                                                                    </tr>
-                                                                    <?php
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>Average days on market<br><small>Lower = more
+                                                                competition</small></span>
+                                                        <span><?= $days_text; ?></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row gy-3">
+                                                <div class="col-12">
+                                                    <h4>Sales and Growth</h4>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <table class="table table-striped">
+                                                        <tr>
+                                                            <th>Year</th>
+                                                            <th>Median</th>
+                                                            <th>Growth</th>
+                                                            <th># of Sales</th>
+                                                        </tr>
+                                                        <?php
                                                                         $median_sold_price_last = 0;
                                                                         
                                                                         $data = [];
@@ -402,28 +414,31 @@ get_header();
                                                                         $years = rtrim($years, ',');
                                                                         $median_sold_prices = rtrim($median_sold_prices, ',');
                                                                     ?>
-                                                                </table>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="d-flex justify-content-center justify-content-md-end">
-                                                                    <canvas class="rc-ida-chart" data-years="<?= $years ?>" data-median-sold-prices="<?= $median_sold_prices ?>"></canvas>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    </table>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-flex justify-content-center justify-content-md-end">
+                                                        <canvas class="rc-ida-chart" data-years="<?= $years ?>"
+                                                            data-median-sold-prices="<?= $median_sold_prices ?>"></canvas>
                                                     </div>
                                                 </div>
-                                            <?php else : ?>
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <h4>Not enough data</h4>
-                                                        <p><?= $number_sold; ?> sales this year for 2 bedroom House in <?= $suburb ;?>, market performance data requires a minimum of 10 sales.</p>
-                                                    </div>
-                                                </div>
-                                            <?php endif; ?>
+                                            </div>
                                         </div>
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
+                                    </div>
+                                    <?php else : ?>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h4>Not enough data</h4>
+                                            <p><?= $number_sold; ?> sales this year for 2 bedroom House in
+                                                <?= $suburb ;?>, market performance data requires a minimum of 10 sales.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -433,28 +448,28 @@ get_header();
 </section>
 <?php endif; ?>
 
-<?php get_footer(); ?>
-
-
 <style>
-    .section--rc-ida-hero {
-        background-image:url('<?= $bg_img_url; ?>');
-        background-repeat: no-repeat;
-        background-size: cover;
-    }
-    .section--rc-ida-nav {
-        position: sticky;
-        top: 0;
-        z-index: 2;
-    }
+.section--rc-ida-hero {
+    background-image: url('<?= $bg_img_url; ?>');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.section--rc-ida-nav {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+body.admin-bar .section--rc-ida-nav {
+    top: 32px;
+}
+
+@media (max-width: 782px) {
     body.admin-bar .section--rc-ida-nav {
-        top: 32px;
+        top: 46px;
     }
-    @media (max-width: 782px) {
-        body.admin-bar .section--rc-ida-nav {
-            top: 46px;
-        }
-    }
+}
 </style>
 
 <?php 
@@ -479,80 +494,79 @@ get_header();
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function(event) {
-        var charts = document.querySelectorAll('.rc-ida-chart');
+document.addEventListener("DOMContentLoaded", function(event) {
+    var charts = document.querySelectorAll('.rc-ida-chart');
 
-        function niceNumber(value) {
-            if (value >= 1000000) {
-                return (value / 1000000).toFixed(0) + 'M';
-            } else if (value >= 1000) {
-                return (value / 1000).toFixed(0) + 'K';
-            } else {
-                return value;
-            }
+    function niceNumber(value) {
+        if (value >= 1000000) {
+            return (value / 1000000).toFixed(0) + 'M';
+        } else if (value >= 1000) {
+            return (value / 1000).toFixed(0) + 'K';
+        } else {
+            return value;
         }
+    }
 
-        charts.forEach(function(chart) {
-            var ctx = chart.getContext('2d');
-            var years = chart.getAttribute('data-years').split(',');
-            var medianSoldPrices = chart.getAttribute('data-median-sold-prices').split(',');
+    charts.forEach(function(chart) {
+        var ctx = chart.getContext('2d');
+        var years = chart.getAttribute('data-years').split(',');
+        var medianSoldPrices = chart.getAttribute('data-median-sold-prices').split(',');
 
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: years,
-                    datasets: [{
-                        label: 'Median Sold Prices',
-                        data: medianSoldPrices,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Median Sold Prices',
+                    data: medianSoldPrices,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {},
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + niceNumber(value);
+                            }
                         },
-                        y: {
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + niceNumber(value);
-                                }
-                            },
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
                     }
                 }
-            });
+            }
+        });
+    });
+
+    var suburbCoords = <?php echo $fetch->boundary; ?>;
+    var suburbCenter = <?php echo $fetch->center; ?>;
+
+    function initMap() {
+        var mapOptions = {
+            zoom: 13,
+            center: suburbCenter,
+        };
+        var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        var suburbPolygon = new google.maps.Polygon({
+            paths: suburbCoords,
+            strokeColor: '#f7941d',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#f7941d',
+            fillOpacity: 0.35,
         });
 
-        var suburbCoords = <?php echo $fetch->boundary; ?>;
-        var suburbCenter = <?php echo $fetch->center; ?>;
+        suburbPolygon.setMap(map);
+    }
 
-        function initMap() {
-            var mapOptions = {
-                zoom: 13,
-                center: suburbCenter,
-            };
-            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-            var suburbPolygon = new google.maps.Polygon({
-                paths: suburbCoords,
-                strokeColor: '#f7941d',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#f7941d',
-                fillOpacity: 0.35,
-            });
-
-            suburbPolygon.setMap(map);
-        }
-
-        google.maps.event.addDomListener(window, 'load', initMap);
-    });
+    google.maps.event.addDomListener(window, 'load', initMap);
+});
 </script>
 
 <?php
