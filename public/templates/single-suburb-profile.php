@@ -235,8 +235,8 @@ get_header();
                             if ( 0 != $latest_item['values']['medianSoldPrice'] || 0 != $latest_item['values']['numberSold'] || 0 != $latest_item['values']['daysOnMarket']) :
                                 $latest_year = $latest_item['year'];
                                 $median_sold_price = rc_ida_nice_number($latest_item['values']['medianSoldPrice']) ? : '-';
-                                $entry_level = rc_ida_nice_number($latest_item['values']['lowestSoldPrice']) ? : '-';
-                                $high_end = rc_ida_nice_number($latest_item['values']['highestSoldPrice']) ? : '-';
+                                $entry_level = rc_ida_nice_number($latest_item['values']['5thPercentileSoldPrice']) ? : '-';
+                                $high_end = rc_ida_nice_number($latest_item['values']['95thPercentileSoldPrice']) ? : '-';
                                 $median_rent_listing_price = rc_ida_nice_number($latest_item['values']['medianRentListingPrice']);
                                 $days_on_market = $latest_item['values']['daysOnMarket'] ?? 0;
                                 $days_label = $days_on_market > 1 ? 'days' : 'day';
@@ -250,7 +250,7 @@ get_header();
                                     $auction_number_withdrawn = $latest_item['values']['auctionNumberWithdrawn'] ?? 0;
 
                                     $auction_clearance_rate = $auction_number_sold / ($auction_number_auctioned + $auction_number_withdrawn) * 100;
-                                    $auction_clearance_rate_text = number_format($auction_clearance_rate, 1) . '%';
+                                    $auction_clearance_rate_text = number_format($auction_clearance_rate, 0) . '%';
                                 } else {
                                     $auction_clearance_rate_text = '-';
                                 }
@@ -313,7 +313,7 @@ get_header();
                                                             <div class="col-md-6">
                                                                 <div class="d-flex justify-content-between">
                                                                     <span>Rental Median Price</span>
-                                                                    <span><?= $median_rent_listing_price; ?></span>
+                                                                    <span>$<?= $median_rent_listing_price; ?></span>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6">
@@ -360,7 +360,7 @@ get_header();
                                                                             $year = $item['year'];
                                                                             $median_sold_price = $item['values']['medianSoldPrice'] ?? 0;
 
-                                                                            if ($latest_year - 5 < $year) {
+                                                                            if ($latest_year - 6 < $year) {
                                                                                 $median_sold_price_label = rc_ida_nice_number($item['values']['medianSoldPrice']) ?: '-';
 
                                                                                 if ($median_sold_price_last != 0) {
@@ -406,7 +406,7 @@ get_header();
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <div class="d-flex justify-content-center justify-content-md-end">
-                                                                    <canvas class="rc-ida-chart mt-2" data-years="<?= $years ?>" data-median-sold-prices="<?= $median_sold_prices ?>"></canvas>
+                                                                    <canvas class="rc-ida-chart" data-years="<?= $years ?>" data-median-sold-prices="<?= $median_sold_prices ?>"></canvas>
                                                                 </div>
                                                             </div>
                                                         </div>
