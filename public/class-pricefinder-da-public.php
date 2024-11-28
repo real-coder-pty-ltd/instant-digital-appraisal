@@ -924,21 +924,6 @@ function rc_ida_calculate_and_display_percentage($items, $labels) {
     return null;
 }
 
-// Filter the single_template with our custom function
-function rc_ida_single_suburb_profile($single)
-{
-    global $post;
-    if ($post->post_type == 'suburb-profile') {
-        $file = plugin_dir_path(__FILE__) . 'templates/single-suburb-profile.php';
-        if (file_exists($file)) {
-            return $file;
-        }
-    }
-
-    return $single;
-}
-add_filter('single_template', 'rc_ida_single_suburb_profile');
-
 /**
  * Domain API Functions
  */
@@ -1358,4 +1343,3 @@ function rc_ida_domain_fetch_property_suggest_ajax() {
 }
 add_action('wp_ajax_rc_ida_domain_fetch_property_suggest', 'rc_ida_domain_fetch_property_suggest_ajax');
 add_action('wp_ajax_nopriv_rc_ida_domain_fetch_property_suggest', 'rc_ida_domain_fetch_property_suggest_ajax');
-

@@ -188,6 +188,7 @@ function rc_ida_post_type_suburb_profile()
         'exclude_from_search' => false,
         'publicly_queryable' => true,
         'capability_type' => 'page',
+        'rewrite' => ['slug' => 'suburb-profile', 'with_front' => false],
     ];
     register_post_type('suburb-profile', $args);
 
@@ -340,3 +341,27 @@ function rc_ida_taxonomy_property()
 
 }
 add_action('init', 'rc_ida_taxonomy_property', 0);
+
+function custom_suburb_profile_template_content($content): string {
+    if (is_singular('suburb-profile')) {
+    
+        ob_start();
+        
+        $template = locate_template('single-suburb-profile.php');
+        if (!$template) {
+            $template = plugin_dir_path(__FILE__) . 'public/templates/single-suburb-profile.php';
+        }
+
+        if (file_exists($template)) {
+            include $template;
+        }
+
+        $template_content = ob_get_clean();
+
+        $content = $content.$template_content;
+        return $template_content;
+    }
+
+    return $content;
+}
+add_filter('the_content', 'custom_suburb_profile_template_content');
