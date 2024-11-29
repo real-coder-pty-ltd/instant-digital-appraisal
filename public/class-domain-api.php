@@ -31,8 +31,6 @@ class Domain_API
 
     public $result;
 
-    public $response;
-
     public function __construct()
     {
 
@@ -44,7 +42,6 @@ class Domain_API
         ];
 
         $this->current_timestamp = time();
-        $this->response = 'API not used.';
     }
 
     public function buildQuery($params) {}
@@ -90,7 +87,6 @@ class Domain_API
         }
 
         $body = wp_remote_retrieve_body($response);
-        $this->response = $response;
         $this->data = json_decode($body, true);
         $this->result = 'True, with fresh data from Domain API.';
 
