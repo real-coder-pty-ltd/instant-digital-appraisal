@@ -90,7 +90,7 @@ class Domain_API
         }
 
         $body = wp_remote_retrieve_body($response);
-        $this->response = json_decode($response, true);
+        $this->response = $response;
         $this->data = json_decode($body, true);
         $this->result = 'True, with fresh data from Domain API.';
 
