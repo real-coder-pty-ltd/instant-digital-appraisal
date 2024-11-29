@@ -55,6 +55,7 @@ class Domain_API
         }
 
         $this->request_url = add_query_arg($this->query_params, $this->endpoint);
+        $this->request_url = esc_url($this->request_url);
         $this->data_key = 'domain_api_data_'.md5($this->request_url);
         $this->cache_key = 'domain_api_cache_'.md5($this->request_url);
 

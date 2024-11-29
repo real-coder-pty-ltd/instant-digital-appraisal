@@ -45,10 +45,20 @@ if ( ! $boundary ) {
 // Demographics
 $demographics = get_field('demographics');
 
+$demographics_params = [
+    'types' => 'AgeGroupOfPopulation,NatureOfOccupancy,Occupation,MaritalStatus',
+    'year' => '2016',
+];
+$demographics_route = [$state, $suburb, $postcode];
+$demographics = new Domain_API('demographics', $demographics_params, $demographics_route, 'v2');
+
 var_dump($demographics);
+
+die;
 
 // Population
 $population = $demographics['agegroupofpopulation']['total'];
+
 
 if ($population) {
     $population_label = $population['value'];
