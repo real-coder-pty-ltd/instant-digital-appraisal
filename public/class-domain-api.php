@@ -37,7 +37,7 @@ class Domain_API
         $this->api_url = 'https://api.domain.com.au/v2/';
         
         if ($version == 'v1') {
-            str_replace('v2', 'v1', $this->api_url);
+            $this->api_url = str_replace('v2', 'v1', $this->api_url);
         }
 
         $this->api_key = get_option('domain_api_key');
@@ -55,7 +55,9 @@ class Domain_API
         }
 
         $this->request_url = add_query_arg($this->query_params, $this->endpoint);
-        $this->request_url = esc_url($this->request_url);
+        $this->request_url = $this->request_url;
+
+
         $this->data_key = 'domain_api_data_'.md5($this->request_url);
         $this->cache_key = 'domain_api_cache_'.md5($this->request_url);
 
@@ -93,6 +95,7 @@ class Domain_API
         }
 
         $body = wp_remote_retrieve_body($response);
+
         $this->data = json_decode($body, true);
         $this->result = 'True, with fresh data from Domain API.';
 
@@ -135,4 +138,50 @@ class Domain_API
         $this->result = 'True, with updated data. Cache expired.';
 
     }
+}
+
+function rc_ida_domain_get_suburb_id($suburb, $state, $postcode) {
+    $suburb_id = null;
+    $id = new Domain_API(
+        'addressLocators',
+        [
+            'searchLevel' => 'Suburb',
+            'suburb' => $suburb,
+            'state' => $state,
+            'postcode' => $postcode,
+        ],
+        [], 
+        'v1'
+    );
+
+    foreach ($id->data[0]['ids'] as $item) {
+        if (isset($item['level']) && $item['level'] === 'Suburb') {
+            $suburb_id = $item['id'];
+            break;
+        }
+    }
+
+    if ($suburb_id !== null) {
+        return $suburb_id;
+    } else {
+        return 0;
+    }
+}
+
+function rc_ida_domain_get_location_profile($suburb_id){
+    $suburb_profile = null;
+    $profile = new Domain_API(
+        'locations',
+        ['' => ''],
+        ['profiles',$suburb_id], 
+        'v1'
+    );
+
+    if ($profile  !== null) {
+        $suburb_profile = $profile->data;
+    } else {
+        return null;
+    }
+
+    return $suburb_profile;
 }
