@@ -177,7 +177,7 @@ function rc_ida_post_type_suburb_profile()
         'label' => __('Suburb Profile', 'text_domain'),
         'description' => __('Generated suburb profiles to be used on digital appraisal.', 'text_domain'),
         'labels' => $labels,
-        'supports' => ['title', 'editor', 'thumbnail'],
+        'supports' => ['title', 'editor', 'thumbnail', 'custom-fields', 'page-attributes', 'comments', 'revisions'],
         'hierarchical' => false,
         'public' => true,
         'show_ui' => true,
@@ -344,7 +344,7 @@ function rc_ida_taxonomy_property()
 }
 add_action('init', 'rc_ida_taxonomy_property', 0);
 
-function custom_suburb_profile_template_content($content): string {
+function rc_ida_custom_suburb_profile_template_content($content): string {
     if (is_singular('suburb-profile')) {
     
         ob_start();
@@ -366,4 +366,4 @@ function custom_suburb_profile_template_content($content): string {
 
     return $content;
 }
-add_filter('the_content', 'custom_suburb_profile_template_content');
+add_filter('the_content', 'rc_ida_custom_suburb_profile_template_content');

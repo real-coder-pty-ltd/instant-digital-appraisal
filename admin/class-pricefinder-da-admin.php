@@ -119,6 +119,8 @@ function rc_ida_add_settings()
         <h1>Instant Digital Appraisal Settings</h1>
 		<p>Here you can set all your settings for the Instant Digital Appraisal Plugin</p>
         <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
+            <h3>Domain API Key</h3>
+			<input type="text" name="rc_ida_domain_api_key" size="50" value="<?php echo get_option('rc_ida_domain_api_key'); ?>">
             <h3>Client ID</h3>
 			<input type="text" name="rc_ida_client_id" size="50" value="<?php echo get_option('rc_ida_client_id'); ?>">
 			<h3>Client Secret</h3>
@@ -141,6 +143,22 @@ function rc_ida_add_settings()
 
 function rc_ida_submit_key()
 {
+    if (isset($_POST['rc_ida_domain_api_key'])) {
+
+        $api_key = sanitize_text_field($_POST['rc_ida_domain_api_key']);
+        $api_exists = get_option('rc_ida_domain_api_key');
+
+        if (! empty($api_key) && ! empty($api_exists)) {
+
+            update_option('rc_ida_domain_api_key', $api_key);
+
+        } else {
+
+            add_option('rc_ida_domain_api_key', $api_key);
+
+        }
+
+    }
     if (isset($_POST['rc_ida_client_id'])) {
 
         $api_key = sanitize_text_field($_POST['rc_ida_client_id']);
