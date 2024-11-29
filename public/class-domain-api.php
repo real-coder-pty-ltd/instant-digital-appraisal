@@ -31,26 +31,21 @@ class Domain_API
 
     public $result;
 
-    public function __construct()
+    public function __construct($endpoint, $params, $route = [], $version = 'v2')
     {
 
         $this->api_url = 'https://api.domain.com.au/v2/';
+        
+        if ($version == 'v1') {
+            str_replace('v2', 'v1', $this->api_url);
+        }
+
         $this->api_key = get_option('domain_api_key');
         $this->headers = [
             'accept' => 'application/json',
             'X-Api-Key' => $this->api_key,
         ];
-
         $this->current_timestamp = time();
-    }
-
-    public function buildQuery($params) {}
-
-    public function get($endpoint, $params, $route = [], $version = 'v2')
-    {
-
-        global $post;
-        $this->post_id = $post->ID;
         $this->endpoint = $this->api_url.$endpoint;
         $this->query_params = $params;
 
@@ -59,15 +54,25 @@ class Domain_API
             $this->endpoint = $this->endpoint.'/'.$route;
         }
 
-        if ($version == 'v1') {
-            str_replace('v2', 'v1', $this->api_url);
-        }
-
         $this->request_url = add_query_arg($this->query_params, $this->endpoint);
-
         $this->data_key = 'domain_api_data_'.md5($this->request_url);
         $this->cache_key = 'domain_api_cache_'.md5($this->request_url);
 
+        $this->get();
+    }
+
+    public function buildQuery($params) {}
+
+    public function get()
+    {
+
+        global $post;
+        $this->post_id = $post->ID;
+
+        if ( $this->post_id === null ) {
+            $this->result = 'False, no post ID. Please run the code on a single post or page.';
+        }
+        
         if ($this->isCached()) {
             if (! $this->hasCacheExpired()) {
                 return $this;
