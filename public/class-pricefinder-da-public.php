@@ -471,29 +471,63 @@ function rc_ida_suburb_form($atts)
     foreach ($suburbs as $suburb) {
         $suburb_list[] = $suburb->name;
     }
-    $json_suburb_list = json_encode($suburb_list);
-    
-    echo '
-    <script>
-        const suburbs = ' . $json_suburb_list . ';
-        console.log(suburbs); // For debugging purposes
-    </script>
-    ';
+
+    // Construct the search query string
+    $search_query = implode(' ', $suburb_list);
+
+    // Define the query arguments
+    $args = array(
+        'post_type' => 'suburb-profile',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            'relation' => 'OR',
+            array(
+                'key' => 'rc_suburb',
+                'value' => $suburb_list,
+                'compare' => 'IN'
+            )
+        ),
+        'orderby' => 'title',
+        'order' => 'ASC'
+    );
+
+    // Create a new WP_Query instance
+    $query = new WP_Query($args);
+    $suburb_results = '';
+
+    // Check if there are any posts to display
+    if ($query->have_posts()) {
+
+        // The Loop
+        while ($query->have_posts()) {
+            $query->the_post();
+            $suburb_meta = get_post_meta(get_the_ID(), 'rc_suburb', true);
+            $suburb_meta = ucwords(strtolower($suburb_meta));
+            $state_meta = get_post_meta(get_the_ID(), 'rc_state', true);
+            $postcode_meta = get_post_meta(get_the_ID(), 'rc_postcode', true);
+            $link = get_post_permalink(get_the_ID());
+
+            $suburb_results .= '<li class="px-1 py-2 border-bottom" data-url="' . $link . '">' . $suburb_meta . ', ' . $state_meta . ' ' . $postcode_meta . '</li>';
+        }
+    } else {
+        // No posts found
+        echo 'No suburb profiles found.';
+    }
+
+    // Restore original Post Data
+    wp_reset_postdata();
 
     echo '
-        <form id="rc-ida-suburb-form" method="GET" action="' . $url_slug . '">
+        <div id="rc-ida-suburb-form" method="GET" action="' . $url_slug . '">
             <div class="d-flex flex-row">
                 <div id="rc-ida-search" class="rc-ida-search position-relative w-100">
-                    <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
-                    <input id="rc-ida-suburb" class="rc-ida-suburb" type="hidden" name="suburb">
-                    <input id="rc-ida-state" class="rc-ida-state" type="hidden" name="state">
-                    <input id="rc-ida-postcode" class="rc-ida-postcode" type="hidden" name="postcode">
+                    <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded" placeholder="' . $form_placeholder . '" name="address" type="text" required style="height:45px">
                     <ul id="rc-ida-results" class="rc-ida-results card shadow gform-theme__disable-reset position-absolute start-0 top-100 w-100 list-unstyled z-2 px-2 d-none">
+                        ' . $suburb_results . '
                     </ul>
                 </div>
-                <button id="rc-ida-submit" type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2" disabled>' . $form_submit . '</button>
             </div>
-        </form>
+        </div>
         <div id="loading-container">
             <img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
         </div>
@@ -770,8 +804,6 @@ function rc_ida_suburb_profile($suburb, $state, $postcode) {
 
         if ($date_diff > 30) {
             update_field('general_modified_date', $today, $post_id);
-            rc_ida_process_demographics($post_id, $state, $suburb, $postcode);
-            rc_ida_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
         }
 
         // Redirect to single post page
@@ -800,8 +832,6 @@ function rc_ida_suburb_profile($suburb, $state, $postcode) {
         foreach ($fields as $field_key => $field_value) {
             update_field($field_key, $field_value, $post_id);
         }
-        rc_ida_process_demographics($post_id, $state, $suburb, $postcode);
-        rc_ida_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode);
 
         // Redirect to single post page
         wp_redirect(get_permalink($post_id));
@@ -809,120 +839,6 @@ function rc_ida_suburb_profile($suburb, $state, $postcode) {
     }
 }
 
-// Process suburb demographics data
-function rc_ida_process_demographics($post_id, $state, $suburb, $postcode) {
-    if (!$post_id || !$state || !$suburb || !$postcode) {
-        return null;
-    }
-
-    $fetched_demographics = rc_ida_domain_fetch_demographics($state, $suburb, $postcode);
-
-    if (!$fetched_demographics) {
-        return null;
-    }
-
-    // Extract the required data
-    $demographics_data = $fetched_demographics['demographics'];
-    $acf_demographics = [];
-
-    foreach ($demographics_data as $demographic) {
-        $type = strtolower(str_replace(' ', '_', $demographic['type']));
-        $acf_demographic = [
-            'total' => $demographic['total'],
-            'year' => $demographic['year'],
-            'items' => []
-        ];
-
-        foreach ($demographic['items'] as $item) {
-            $acf_demographic['items'][] = [
-                'label' => $item['label'],
-                'value' => $item['value'],
-                'composition' => $item['composition']
-            ];
-        }
-
-        $acf_demographics[$type] = $acf_demographic;
-    }
-
-    update_field('demographics', $acf_demographics, $post_id);
-}
-
-// Process suburb performance statistics data
-function rc_ida_process_suburb_performance_statistics($post_id, $state, $suburb, $postcode) {
-    if (!$post_id || !$state || !$suburb || !$postcode) {
-        return null;
-    }
-
-    $statistics_data = [];
-    $acf_statistics = [];
-    
-    foreach (['House', 'Unit'] as $category) {
-        for ($bedrooms = 2; $bedrooms <= 4; $bedrooms++) {
-            $fetched_suburb_performance_statistics = '';
-            $fetched_suburb_performance_statistics = rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms, 'years');
-            $fetched_suburb_performance_statistics_quarterly = rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms, 'quarters');
-    
-            if ($fetched_suburb_performance_statistics && $fetched_suburb_performance_statistics_quarterly) {
-                $series_data = $fetched_suburb_performance_statistics['series'];
-                $series_data_quarterly = $fetched_suburb_performance_statistics_quarterly['series'];
-                $series_json = json_encode($series_data);
-                $series_json_quarterly = json_encode($series_data_quarterly);
-                $label = strtolower($category) . '-' . strtolower($bedrooms);
-    
-                // If the item does not exist, create it
-                if ($itemIndex === null) {
-                    $acf_statistics['items'][] = [
-                        'label' => $label,
-                        'bedrooms' => $bedrooms,
-                        'propertycategory' => $category,
-                        'series_data' => $series_json,
-                        'series_data_quarterly' => $series_json_quarterly,
-                    ];
-                }
-            }
-        }
-    }
-
-    update_field('suburb_performance_statistics', $acf_statistics, $post_id);
-}
-
-// Calculate Difference
-function rc_ida_calculate_and_display_percentage($items, $labels) {
-    $item_1 = null;
-    $item_2 = null;
-
-    foreach ($items as $item) {
-        if ($item['label'] === $labels[0]) {
-            $item_1 = $item;
-        } elseif ($item['label'] === $labels[1]) {
-            $item_2 = $item;
-        }
-    }
-
-    if ($item_1 && $item_2) {
-        $total_value = ($item_1['value'] + $item_2['value']);
-        if ($total_value > 0) {
-            $item_1_percentage = number_format(($item_1['value'] / $total_value) * 100, 0);
-            $item_2_percentage = number_format(($item_2['value'] / $total_value) * 100, 0);
-
-            return [
-                'item_1' => $item_1,
-                'item_2' => $item_2,
-                'item_1_percentage' => $item_1_percentage,
-                'item_2_percentage' => $item_2_percentage,
-            ];
-        } else {
-            return [
-                'item_1' => $item_1,
-                'item_2' => $item_2,
-                'item_1_percentage' => 0,
-                'item_2_percentage' => 0,
-            ];
-        }
-    }
-
-    return null;
-}
 
 /**
  * Domain API Functions
@@ -1026,298 +942,6 @@ function rc_ida_domain_fetch_property_suggest($location) {
 
         // Return the response data
         return $response_data;
-    }
-
-    // Close the cURL session
-    curl_close($ch);
-}
-
-// Fetch property details from Domain API
-function rc_ida_domain_fetch_property($property_id) {
-    $access_token = rc_ida_domain_fetch_access_token();
-    if (!$access_token) {
-        return null;
-    }
-
-    // Define the base API URL
-    $base_url = 'https://api.domain.com.au/';
-    $api_version = 'v1';
-    $endpoint = 'properties/' . $property_id;
-
-    // Construct the full API URL
-    $api_url = $base_url . $api_version . '/' . $endpoint;
-
-    // Initialize cURL session
-    $ch = curl_init();
-
-    // Set cURL options
-    $options = [
-        CURLOPT_URL => $api_url,
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $access_token,
-            'Content-Type: application/json'
-        ],
-    ];
-
-    curl_setopt_array($ch, $options);
-
-    // Execute the request
-    $response = curl_exec($ch);
-
-    // Check for errors
-    if (curl_errno($ch)) {
-        echo 'Error: ' . curl_error($ch);
-        return null;
-    } else {
-        // Decode the JSON response
-        $result = json_decode($response, true);
-
-        // Check for API errors
-        if (isset($result['error'])) {
-            echo 'Error: ' . $result['error'];
-            return null;
-        } else {
-            // Return the result
-            return $result;
-        }
-    }
-
-    // Close the cURL session
-    curl_close($ch);
-}
-
-// Fetch property price estimate from Domain API
-function rc_ida_domain_fetch_property_price_estimate($property_id) {
-    $access_token = rc_ida_domain_fetch_access_token();
-    if (!$access_token) {
-        return null;
-    }
-
-    // Define the base API URL
-    $base_url = 'https://api.domain.com.au/';
-    $api_version = 'v1';
-    $endpoint = 'properties/' . $property_id . '/priceEstimate';
-
-    // Construct the full API URL
-    $api_url = $base_url . $api_version . '/' . $endpoint;
-
-    // Initialize cURL session
-    $ch = curl_init();
-
-    // Set cURL options
-    $options = [
-        CURLOPT_URL => $api_url,
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $access_token,
-            'Content-Type: application/json'
-        ],
-    ];
-
-    curl_setopt_array($ch, $options);
-
-    // Execute the request
-    $response = curl_exec($ch);
-
-    // Check for errors
-    if (curl_errno($ch)) {
-        echo 'Error: ' . curl_error($ch);
-        return null;
-    } else {
-        // Decode the JSON response
-        $result = json_decode($response, true);
-
-        // Check for API errors
-        if (isset($result['error'])) {
-            echo 'Error: ' . $result['error'];
-            return null;
-        } else {
-            // Return the result
-            return $result;
-        }
-    }
-
-    // Close the cURL session
-    curl_close($ch);
-}
-
-// Fetch schools from Domain API
-function rc_ida_domain_fetch_schools($latitude, $longitude) {
-    $access_token = rc_ida_domain_fetch_access_token();
-    if (!$access_token || !$latitude || !$longitude) {
-        return null;
-    }
-
-    // Define the base API URL
-    $base_url = 'https://api.domain.com.au/';
-    $api_version = 'v2';
-    $endpoint = 'schools/' . urlencode($latitude) . '/' . urlencode($longitude);
-
-    // Construct the full API URL
-    $api_url = $base_url . $api_version . '/' . $endpoint;
-
-    // Initialize cURL session
-    $ch = curl_init();
-
-    // Set cURL options
-    $options = [
-        CURLOPT_URL => $api_url,
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $access_token,
-            'Content-Type: application/json'
-        ],
-    ];
-
-    curl_setopt_array($ch, $options);
-
-    // Execute the request
-    $response = curl_exec($ch);
-
-    // Check for errors
-    if (curl_errno($ch)) {
-        echo 'Error: ' . curl_error($ch);
-        return null;
-    } else {
-        // Decode the JSON response
-        $result = json_decode($response, true);
-
-        // Check for API errors
-        if (isset($result['error'])) {
-            echo 'Error: ' . $result['error'];
-            return null;
-        } else {
-            // Return the result
-            return $result;
-        }
-    }
-
-    // Close the cURL session
-    curl_close($ch);
-}
-
-// Fetch demographics from Domain API
-function rc_ida_domain_fetch_demographics($state, $suburb, $postcode) {
-    $access_token = rc_ida_domain_fetch_access_token();
-
-    if (!$access_token || !$state || !$suburb || !$postcode) {
-        return null;
-    }
-
-    // Define the base API URL
-    $base_url = 'https://api.domain.com.au/';
-    $api_version = 'v2';
-    $endpoint = 'demographics/' . urlencode($state) . '/' . urlencode($suburb) . '/' . urlencode($postcode);
-
-    // Construct the full API URL
-    $api_url = $base_url . $api_version . '/' . $endpoint;
-    $year = '2016';
-
-    // Prepare the query parameters
-    $params = [
-        'types' => 'AgeGroupOfPopulation, CountryOfBirth, NatureOfOccupancy, Occupation, GeographicalPopulation, DwellingStructure, EducationAttendance, HousingLoanRepayment, MaritalStatus, Religion, TransportToWork, FamilyComposition, HouseholdIncome, Rent, LabourForceStatus',
-        'year' => $year
-    ];
-
-    // Initialize cURL session
-    $ch = curl_init();
-
-    // Set cURL options
-    $options = [
-        CURLOPT_URL => $api_url . '?' . http_build_query($params),
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $access_token,
-            'Content-Type: application/json'
-        ],
-    ];
-
-    curl_setopt_array($ch, $options);
-
-    // Execute the request
-    $response = curl_exec($ch);
-
-    // Check for errors
-    if (curl_errno($ch)) {
-        echo 'Error: ' . curl_error($ch);
-        return null;
-    } else {
-        // Decode the JSON response
-        $result = json_decode($response, true);
-
-        // Check for API errors
-        if (isset($result['error'])) {
-            echo 'Error: ' . $result['error'];
-            return null;
-        } else {
-            // Return the result
-            return $result;
-        }
-    }
-
-    // Close the cURL session
-    curl_close($ch);
-}
-
-// Fetch suburb performance statistics from Domain API
-function rc_ida_domain_fetch_suburb_performance_statistics($state, $suburb, $postcode, $category, $bedrooms, $period_size) {
-    $access_token = rc_ida_domain_fetch_access_token();
-    if (!$access_token) {
-        return null;
-    }
-
-    // Define the base API URL
-    $base_url = 'https://api.domain.com.au/';
-    $api_version = 'v2';
-    $endpoint = 'suburbPerformanceStatistics/' . urlencode($state) . '/' . urlencode($suburb) . '/' . urlencode($postcode);
-
-    // Construct the full API URL
-    $api_url = $base_url . $api_version . '/' . $endpoint;
-
-    // Prepare the query parameters
-    $params = [
-        'propertyCategory' => $category,
-        'bedrooms' => $bedrooms,
-        'periodSize' => $period_size,
-        'startingPeriodRelativeToCurrent' => '1',
-        'totalPeriods' => '40'
-    ];
-
-    // Initialize cURL session
-    $ch = curl_init();
-
-    // Set cURL options
-    $options = [
-        CURLOPT_URL => $api_url . '?' . http_build_query($params),
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $access_token,
-            'Content-Type: application/json'
-        ],
-    ];
-
-    curl_setopt_array($ch, $options);
-
-    // Execute the request
-    $response = curl_exec($ch);
-
-    // Check for errors
-    if (curl_errno($ch)) {
-        echo 'Error: ' . curl_error($ch);
-        return null;
-    } else {
-        // Decode the JSON response
-        $result = json_decode($response, true);
-
-        // Check for API errors
-        if (isset($result['error'])) {
-            echo 'Error: ' . $result['error'];
-            return null;
-        } else {
-            // Return the result
-            return $result;
-        }
     }
 
     // Close the cURL session
