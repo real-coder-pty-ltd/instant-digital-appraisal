@@ -29,6 +29,14 @@ $single_percentage = round(($location_profile['data']['singlePercentage'] ?? 0) 
 $married_percentage = round(($location_profile['data']['marriedPercentage'] ?? 0) * 100);
 $property_categories = $location_profile['data']['propertyCategories'] ?? '';
 
+$surrounding_suburbs = $location_profile['surroundingSuburbs'] ?? '';
+$surrounding_suburbs_list = [];
+foreach ($surrounding_suburbs as $s_suburb) {
+    if (isset($s_suburb['name'])) {
+        $surrounding_suburbs_list[] = $s_suburb['name'];
+    }
+}
+
 if ( ! $boundary ) {
     $state = match ($state) {
         'NSW' => 'New South Wales',
@@ -59,11 +67,12 @@ $nearby_suburbs = get_posts([
     'posts_per_page' => -1,
     'post__not_in' => [get_the_ID()],
     'meta_query' => [
-        [
-            'key' => 'rc_sa1_name',
-            'value' => $suburb_region,
-            'compare' => 'LIKE',
-        ],
+        'relation' => 'OR',
+        array(
+            'key' => 'rc_suburb',
+            'value' => $surrounding_suburbs_list,
+            'compare' => 'IN'
+        )
     ],
 ]);
 
@@ -141,15 +150,15 @@ $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
             <div class="col">
                 <h2 class="rc-ida-about__title">About <?= get_bloginfo('name'); ?></h2>
                 <div class="rc-ida-about__content">
-                    <?php if (get_the_content()) { ?>
-                    <?= get_the_content(); ?>
-                    <?php } else { ?>
-                    <p class="mb-0">Showcasing a prominent local presence in <?= $suburb ?> and a team illustrating rich
-                        and accumulative experience, <?= get_bloginfo('name'); ?> offers an unrivalled calibre of
-                        personal attention. Established with a focus on delivering a personal and customised service,
-                        our commitment to honesty, integrity and professionalism is reflected in our strong sales
-                        history and industry reputation in <?= $suburb ?> and surrounding suburbs.</p>
-                    <?php } ?>
+                    <?php if (get_the_content()) : ?>
+                        <?= get_the_content(); ?>
+                    <?php else: ?>
+                        <p class="mb-0">Showcasing a prominent local presence in <?= $suburb; ?> and a team illustrating rich
+                            and accumulative experience, <?= get_bloginfo('name'); ?> offers an unrivalled calibre of
+                            personal attention. Established with a focus on delivering a personal and customised service,
+                            our commitment to honesty, integrity and professionalism is reflected in our strong sales
+                            history and industry reputation in <?= $suburb; ?> and surrounding suburbs.</p>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -226,19 +235,23 @@ $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
     <div class="container">
         <div class="row my-5">
             <div class="col d-flex">
-                <h4 class="fw-bolder flex-column d-flex mb-0 justify-content-center" style="width: 130px;">Distance to
+                <h4 class="fw-bolder flex-column d-flex mb-0 justify-content-center" style="width: 150px;">Distance to
                 </h4>
                 <div>
-                    <select class="form-select rc-ida-nearby-suburbs" aria-label="Nearby suburbs dropdown" style="width: 180px;">
+                    <select class="form-select rc-ida-nearby-suburbs" aria-label="Nearby suburbs dropdown" style="width: 250px;">
                         <?php foreach ($nearby_suburbs as $index => $nearby_suburb) { 
                             $drive_lat = get_post_meta($nearby_suburb->ID, 'rc_lat', true);
                             $drive_long = get_post_meta($nearby_suburb->ID, 'rc_long', true);
+                            $drive_suburb = get_post_meta($nearby_suburb->ID, 'rc_suburb', true);
+                            $drive_suburb = ucwords(strtolower($drive_suburb));
+                            $drive_state = get_post_meta($nearby_suburb->ID, 'rc_state', true);
+                            $drive_postcode = get_post_meta($nearby_suburb->ID, 'rc_postcode', true);
                         ?>
                             <option value="<?= get_the_title($nearby_suburb->ID); ?>"
                                 data-lat="<?= esc_attr($drive_lat); ?>" data-long="<?= esc_attr($drive_long); ?>"
                                 data-drive-car="" data-drive-train="" data-drive-walking="" data-drive-bicycle=""
                                 <?= $index === 0 ? 'selected' : ''; ?>>
-                                <?= get_the_title($nearby_suburb->ID); ?>
+                                <?= $drive_suburb . ', ' . $drive_state . ' ' . $drive_postcode ; ?>
                             </option>
                         <?php } ?>
                     </select>
@@ -296,7 +309,7 @@ $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
             <div class="col">
                 <h2 class="rc-ida-market-trends__title">Market Trends</h2>
                 <div class="rc-ida-market-trends__content">
-                    <p>View median property prices in <?= $suburb ?> to get a better understanding of local market
+                    <p>View median property prices in <?= $suburb; ?> to get a better understanding of local market
                         trends.</p>
                 </div>
             </div>

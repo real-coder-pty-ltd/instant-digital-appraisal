@@ -469,9 +469,6 @@ function rc_ida_suburb_form($atts)
         $suburb_list[] = $suburb->name;
     }
 
-    // Construct the search query string
-    $search_query = implode(' ', $suburb_list);
-
     // Define the query arguments
     $args = array(
         'post_type' => 'suburb-profile',
