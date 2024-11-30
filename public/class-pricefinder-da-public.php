@@ -449,16 +449,13 @@ function rc_ida_suburb_form($atts)
     $atts = shortcode_atts(
         array(
             'form_placeholder' => 'Select your suburb.',
-            'form_submit' => 'Search'
         ),
         $atts,
         'rc-ida-suburb-form'
     );
 
     // Extract attributes
-    $url_slug = home_url('/app/plugins/instant-digital-appraisal/public/rc-ida-processor-domain-suburb.php');
     $form_placeholder = $atts['form_placeholder'];
-    $form_submit = $atts['form_submit'];
 
     // Get all terms from the 'suburb' taxonomy
     $suburbs = get_terms(array(
@@ -511,7 +508,7 @@ function rc_ida_suburb_form($atts)
         }
     } else {
         // No posts found
-        echo 'No suburb profiles found.';
+        echo '<li class="px-1 py-2 border-bottom">No suburb profiles found.</li>';
     }
 
     // Restore original Post Data
@@ -527,9 +524,6 @@ function rc_ida_suburb_form($atts)
                     </ul>
                 </div>
             </div>
-        </div>
-        <div id="loading-container">
-            <img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
         </div>
     ';
     
