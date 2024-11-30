@@ -490,6 +490,7 @@ $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+                <p>* Data based on sales within the last 12 months</p>
             </div>
         </div>
     </div>
