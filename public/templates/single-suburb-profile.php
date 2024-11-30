@@ -11,6 +11,7 @@ $banner_img_url = the_post_thumbnail('full', ['class' => 'w-100', 'style' => 'ma
 
 // Address Details
 $suburb = get_post_meta(get_the_ID(), 'rc_suburb', true);
+$suburb_label = ucwords(strtolower(get_post_meta(get_the_ID(), 'rc_suburb', true)));
 $state = get_post_meta(get_the_ID(), 'rc_state', true);
 $postcode = get_post_meta(get_the_ID(), 'rc_postcode', true);
 $lat = get_post_meta(get_the_ID(), 'rc_lat', true);
@@ -123,7 +124,7 @@ $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
         <?= $banner_img_url; ?>
         <div class="position-absolute d-flex top-0 right-0 bottom-0 left-0 h-100 w-100 justify-content-center flex-column text-center"
             style="background-color: rgba(0, 0, 0, 0.4)">
-            <h1 class="rc-ida-hero__title text-center mb-0"><?= get_the_title(); ?></h1>
+            <h1 class="rc-ida-hero__title text-center mb-0"><?= $suburb_label . ', ' . $state . ' ' . $postcode; ?></h1>
         </div>
     </div>
 </section>
@@ -153,11 +154,11 @@ $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
                     <?php if (get_the_content()) : ?>
                         <?= get_the_content(); ?>
                     <?php else: ?>
-                        <p class="mb-0">Showcasing a prominent local presence in <?= $suburb; ?> and a team illustrating rich
+                        <p class="mb-0">Showcasing a prominent local presence in <?= $suburb_label; ?> and a team illustrating rich
                             and accumulative experience, <?= get_bloginfo('name'); ?> offers an unrivalled calibre of
                             personal attention. Established with a focus on delivering a personal and customised service,
                             our commitment to honesty, integrity and professionalism is reflected in our strong sales
-                            history and industry reputation in <?= $suburb; ?> and surrounding suburbs.</p>
+                            history and industry reputation in <?= $suburb_label; ?> and surrounding suburbs.</p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -309,7 +310,7 @@ $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
             <div class="col">
                 <h2 class="rc-ida-market-trends__title">Market Trends</h2>
                 <div class="rc-ida-market-trends__content">
-                    <p>View median property prices in <?= $suburb; ?> to get a better understanding of local market
+                    <p>View median property prices in <?= $suburb_label; ?> to get a better understanding of local market
                         trends.</p>
                 </div>
             </div>
@@ -478,7 +479,7 @@ $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
                                             <div class="col-12">
                                                 <h4>Not enough data</h4>
                                                 <p><?= $number_sold; ?> sales this year for 2 bedroom House in
-                                                    <?= $suburb; ?>, market performance data requires a minimum of 10 sales.
+                                                    <?= $suburb_label; ?>, market performance data requires a minimum of 10 sales.
                                                 </p>
                                             </div>
                                         </div>
