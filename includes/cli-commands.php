@@ -205,6 +205,9 @@ function create_suburb_profiles_command($args, $assoc_args)
             continue;
         }
 
+        // Temp fix: All states are SA for now. Update $post_title to include state.
+        $state = 'SA';
+
         // Create post title "{Taxonomy Term} {State} {Postcode}"
         $post_title = "{$term_name} {$state} {$postcode}";
 
