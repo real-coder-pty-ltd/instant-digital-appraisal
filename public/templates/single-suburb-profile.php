@@ -27,7 +27,7 @@ $center = get_post_meta(get_the_ID(), 'rc_center', true);
 $suburb_id = rc_ida_domain_get_suburb_id($suburb, $state, $postcode);
 $location_profile = rc_ida_domain_get_location_profile($suburb_id);
 
-$population = $location_profile['data']['population'] ?? 0;
+$population = number_format($location_profile['data']['population']) ?? 0;
 $average_age = $location_profile['data']['mostCommonAgeBracket'] ?? 0;
 $renter_percentage = round(($location_profile['data']['renterPercentage'] ?? 0) * 100);
 $owner_percentage = round(($location_profile['data']['ownerOccupierPercentage'] ?? 0) * 100);
