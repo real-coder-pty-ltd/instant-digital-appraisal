@@ -39,15 +39,6 @@ foreach ($surrounding_suburbs as $s_suburb) {
     }
 }
 
-if ( ! $boundary ) {
-    $state = get_full_state_name($state);
-    
-    $fetch = new BoundaryFetcher(ucwords(strtolower($suburb)), $state);
-    $boundary = $fetch->boundary;
-
-}
-
-
 $suburb_region = get_post_meta(get_the_ID(), 'rc_sa1_name', true);
 
 $nearby_suburbs = get_posts([
@@ -63,31 +54,6 @@ $nearby_suburbs = get_posts([
         )
     ],
 ]);
-
-foreach ($nearby_suburbs as $index => $nearby_suburb) { 
-    // Check if we have the boundary data already, if not, get it.
-    $related_boundary = get_post_meta($nearby_suburb->ID, 'rc_boundary', true);
-
-    // if ( ! $related_boundary ) {
-        $state = get_post_meta($nearby_suburb->ID, 'rc_state', true);
-        $state = get_full_state_name($state);   
-        $related_suburb = get_post_meta($nearby_suburb->ID, 'rc_suburb', true);
-        
-        // After running this, the rest of the details should be accessible...
-        $fetch = new BoundaryFetcher(ucwords(strtolower($related_suburb)), $state, 'Australia', $nearby_suburb->ID);
-
-    // }
-    $drive_lat = get_post_meta($nearby_suburb->ID, 'rc_lat', true);
-    $drive_long = get_post_meta($nearby_suburb->ID, 'rc_long', true);
-    $drive_suburb = get_post_meta($nearby_suburb->ID, 'rc_suburb', true);
-    $drive_suburb = ucwords(strtolower($drive_suburb));
-    $drive_state = get_post_meta($nearby_suburb->ID, 'rc_state', true);
-    $drive_postcode = get_post_meta($nearby_suburb->ID, 'rc_postcode', true);
-    var_dump($drive_lat, $drive_long, $drive_suburb, $drive_state, $drive_postcode);
-    die;
-}
-
-die;
 
 $plugin_dir = plugin_dir_url(dirname(__FILE__));
 $image_dir =  $plugin_dir . 'images/';
@@ -250,18 +216,9 @@ $items = [
                 <h4 class="fw-bolder flex-column d-flex mb-0 justify-content-center" style="width: 150px;">Distance to
                 </h4>
                 <div>
-                    <select class="form-select rc-ida-nearby-suburbs" aria-label="Nearby suburbs dropdown"
-                        style="width: 250px;">
+                    <select id="nearby-suburbs-select" class="form-select rc-ida-nearby-suburbs"
+                        aria-label="Nearby suburbs dropdown" style="width: 250px;">
                         <?php foreach ($nearby_suburbs as $index => $nearby_suburb) { 
-                            // Check if we have the boundary data already, if not, get it.
-                            $related_boundary = get_post_meta($nearby_suburb->ID, 'rc_boundary', true);
-                            var_dump($related_boundary);
-                            // if ( ! $related_boundary ) {
-                                $state = get_post_meta($nearby_suburb->ID, 'rc_state', true);
-                                $state = get_full_state_name($state);   
-                                // After running this, the rest of the details should be accessible...
-                                $fetch = new BoundaryFetcher(ucwords(strtolower($nearby_suburb->suburb)), $state);
-                            // }
                             $drive_lat = get_post_meta($nearby_suburb->ID, 'rc_lat', true);
                             $drive_long = get_post_meta($nearby_suburb->ID, 'rc_long', true);
                             $drive_suburb = get_post_meta($nearby_suburb->ID, 'rc_suburb', true);
@@ -650,6 +607,7 @@ document.addEventListener('DOMContentLoaded', function() {
         lng: <?= $long; ?>
     };
 
+
     options.forEach(option => {
         const lat = parseFloat(option.getAttribute('data-lat'));
         const long = parseFloat(option.getAttribute('data-long'));
@@ -657,7 +615,6 @@ document.addEventListener('DOMContentLoaded', function() {
             lat: lat,
             lng: long
         };
-
         const service = new google.maps.DistanceMatrixService();
 
         // Function to handle the response and set data attributes
@@ -722,5 +679,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
 <?php

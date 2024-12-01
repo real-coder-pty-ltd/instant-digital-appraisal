@@ -105,6 +105,10 @@ class Pricefinder_Da_Public
          */
         global $post;
 
+        if ( $post === null ) {
+            return;
+        }
+
         if (has_shortcode($post->post_content, 'rc_ida_address_form') || has_shortcode($post->post_content, 'rc_ida_appraisal_form')) {
             wp_enqueue_script('rc-domain-property-suggest-address', plugin_dir_url(__FILE__).'/js/rc-ida-domain-property-suggest-address.js', ['jquery'], null, true);
 
