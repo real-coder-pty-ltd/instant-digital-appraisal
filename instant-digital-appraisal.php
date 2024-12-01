@@ -345,26 +345,19 @@ function rc_ida_taxonomy_property()
 }
 add_action('init', 'rc_ida_taxonomy_property', 0);
 
-function rc_ida_custom_suburb_profile_template_content($content): string {
-    if (is_singular('suburb-profile')) {
-    
-        ob_start();
-        
-        $template = locate_template('single-suburb-profile.php');
-        if (!$template) {
-            $template = plugin_dir_path(__FILE__) . 'public/templates/single-suburb-profile.php';
-        }
+function rc_ida_suburb_profile_extra_shortcode() 
+{
+    ob_start();
 
-        if (file_exists($template)) {
-            include $template;
-        }
+    $template = plugin_dir_path( __FILE__ ) . 'public/templates/single-suburb-profile.php';
 
-        $template_content = ob_get_clean();
-
-        $content = $content.$template_content;
-        return $template_content;
+    if ( file_exists( $template ) ) {
+        include $template;
     }
 
-    return $content;
+    $additional_content = ob_get_clean();
+
+    return $additional_content;
+
 }
-add_filter('the_content', 'rc_ida_custom_suburb_profile_template_content');
+add_shortcode( 'rc_domain_suburb_profile', 'rc_ida_suburb_profile_extra_shortcode' );

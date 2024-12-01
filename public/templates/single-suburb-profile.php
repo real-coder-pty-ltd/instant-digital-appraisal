@@ -7,7 +7,12 @@
 defined('ABSPATH') || exit;
 
 // Assets
-$banner_img_url = the_post_thumbnail('full', ['class' => 'w-100', 'style' => 'max-height: 650px; object-fit: cover;']) ?? '<img class="w-100 object-fit-cover" style="max-height: 650px;" src="' . plugins_url('../images/background.jpg', __FILE__) .'">';
+$featured_image = get_the_post_thumbnail_url(get_the_ID(), 'full', ['class' => 'w-100', 'style' => 'max-height: 650px; object-fit: cover;']);
+
+// Fallback image
+$plugin_dir = plugin_dir_url(dirname(__FILE__));
+$image_dir =  $plugin_dir . 'images/';
+$banner_img_url = $featured_image ? '<img class="w-100 object-fit-cover" style="max-height: 650px;" src="' . $featured_image . '">' : '<img class="w-100 object-fit-cover" style="max-height: 650px;" src="' . $image_dir . 'background.jpg">';
 
 // Address Details
 $suburb = get_post_meta(get_the_ID(), 'rc_suburb', true);
