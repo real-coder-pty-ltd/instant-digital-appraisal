@@ -279,7 +279,7 @@ function update_location_postcodes_and_states_ajax() {
             $log_messages .= "State Updated: " . ($updated_state ? 'Yes' : 'No') . "<br>";
             $log_messages .= "</p>";
         } else {
-            $log_messages .= "<p style='color: orange;'>No data found for term: {$term_name}</p>";
+            $log_messages .= "<p class=\"text-dark\" style=\"color: orange;\">No data found for term: {$term_name}</p>";
         }
 
         // Sleep for a second to respect API rate limits

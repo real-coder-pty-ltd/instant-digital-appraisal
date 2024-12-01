@@ -90,13 +90,9 @@ $items = [
     ],
 ];
 
-// Suburb Performance Statistics
-// $suburb_performance_statistics = get_field('suburb_performance_statistics');
-// $suburb_performance_statistics_list = $suburb_performance_statistics['items'];
-
 ?>
 
-<section class="section--rc-ida-hero mb-5">
+<section id="section--rc-ida-hero" class="mb-5">
     <div class="container">
         <div class="row">
             <div class="col-12">
@@ -112,15 +108,15 @@ $items = [
     </div>
 </section>
 
-<section class="section--rc-ida-nav bg-white mb-5">
+<section id="section--rc-ida-nav" class="bg-white mb-5 position-sticky z-3 top-0">
     <div class="container">
         <div class="row">
             <nav class="col navbar pb-0">
                 <div class="container-fluid justify-content-center">
-                    <a class="navbar-brand px-3 fw-bold" href="#suburb-profile-about">About</a>
-                    <a class="navbar-brand px-3 fw-bold" href="#suburb-profile-demographics">Demographics</a>
-                    <a class="navbar-brand px-3 fw-bold" href="#suburb-profile-location">Location</a>
-                    <a class="navbar-brand px-3 fw-bold" href="#suburb-profile-market-trends">Market</a>
+                    <a class="nav-link navbar-brand px-3" href="#section--rc-ida-about">About</a>
+                    <a class="nav-link navbar-brand px-3" href="#section--rc-ida-demographics">Demographics</a>
+                    <a class="nav-link navbar-brand px-3" href="#section--rc-ida-location">Location</a>
+                    <a class="nav-link navbar-brand px-3" href="#section--rc-ida-market-trends">Market</a>
                 </div>
                 <hr class="bg-dark border-1 border-top border-dark w-100 mt-2 mb-0">
             </nav>
@@ -128,7 +124,7 @@ $items = [
     </div>
 </section>
 
-<section class="section--rc-ida-about" id="suburb-profile-about">
+<section id="section--rc-ida-about">
     <div class="container">
         <div class="row">
             <div class="col">
@@ -148,9 +144,7 @@ $items = [
             </div>
         </div>
     </div>
-</section>
 
-<section class="section--rc-ida-hr">
     <div class="container">
         <div class="row">
             <div class="col">
@@ -160,7 +154,7 @@ $items = [
     </div>
 </section>
 
-<section class="section--rc-ida-demographics" id="suburb-profile-demographics">
+<section id="section--rc-ida-demographics">
     <div class="container">
         <div class="row mb-5">
             <div class="col">
@@ -214,7 +208,7 @@ $items = [
     </div>
 </section>
 
-<section class="section--rc-ida-distance">
+<section id="section--rc-ida-location">
     <div class="container">
         <div class="row my-5">
             <div class="col d-flex">
@@ -255,9 +249,7 @@ $items = [
             <?php } ?>
         </div>
     </div>
-</section>
 
-<section class="section--rc-ida-hr">
     <div class="container">
         <div class="row">
             <div class="col">
@@ -265,9 +257,7 @@ $items = [
             </div>
         </div>
     </div>
-</section>
 
-<section class="section--rc-ida-location" id="suburb-profile-location">
     <div class="container">
         <div class="row">
             <div class="col">
@@ -277,17 +267,15 @@ $items = [
     </div>
 </section>
 
-<section class="section--rc-ida-hr">
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <hr class="bg-dark border-1 border-top border-dark my-5">
-            </div>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <hr class="bg-dark border-1 border-top border-dark my-5">
         </div>
     </div>
-</section>
+</div>
 
-<section class="section--rc-ida-market-trends" id="suburb-profile-market-trends">
+<section id="section--rc-ida-market-trends">
     <div class="container">
         <div class="row">
             <div class="col">
@@ -301,16 +289,16 @@ $items = [
         </div>
         <div class="row">
             <div class="col">
-                <table class="table table-striped">
+                <table class="table border rounded-1">
                     <thead>
-                        <tr>
-                            <th>Bedrooms</th>
-                            <th>Type</th>
-                            <th>Median Price</th>
-                            <th>Avg Days on Market</th>
-                            <th>Clearance Rate</th>
-                            <th>Sold This Year</th>
-                            <th></th>
+                        <tr class="text-dark text-center">
+                            <th class="text-dark">Bedrooms</th>
+                            <th class="text-dark">Type</th>
+                            <th class="text-dark">Median Price</th>
+                            <th class="text-dark">Avg Days on Market</th>
+                            <th class="text-dark">Clearance Rate</th>
+                            <th class="text-dark">Sold This Year</th>
+                            <th class="text-dark"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -338,13 +326,13 @@ $items = [
                             });
                         ?>
                         <tr>
-                            <td><?= $bedrooms; ?></td>
-                            <td><?= $property_category; ?></td>
-                            <td><?= $median_sold_price; ?></td>
-                            <td><?= $days_on_market_label; ?></td>
-                            <td><?= $auction_clearance_rate; ?></td>
-                            <td><?= $number_sold; ?></td>
-                            <td>
+                            <td class="text-center"><?= $bedrooms; ?></td>
+                            <td class="text-center"><?= $property_category; ?></td>
+                            <td class="text-center"><?= $median_sold_price; ?></td>
+                            <td class="text-center"><?= $days_on_market_label; ?></td>
+                            <td class="text-center"><?= $auction_clearance_rate; ?></td>
+                            <td class="text-center"><?= $number_sold; ?></td>
+                            <td class="text-center">
                                 <button
                                     class="btn btn-sm btn-primary rounded-circle fw-bolder p-2 d-inline-flex justify-content-center"
                                     style="width: 30px; height: 30px; line-height: 0.75;" data-bs-toggle="collapse"
@@ -357,13 +345,13 @@ $items = [
                                 <div class="suburb-profile-market-performance p-4">
                                     <div class="row">
                                         <div class="col-12">
-                                            <h3>Market Performance</h3>
+                                            <p class="display-1 fs-1 text-dark">Market Performance</p>
                                         </div>
                                     </div>
                                     <?php if ($number_sold >= 10) : ?>
                                     <div class="row gy-4">
                                         <div class="col-12">
-                                            <h4>Sales Price Range</h4>
+                                            <h4 class="text-dark">Sales Price Range</h4>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="row gy-4">
@@ -417,7 +405,7 @@ $items = [
                                                     <h4>Sales and Growth</h4>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <table class="table table-striped">
+                                                    <table class="table table-striped text-center">
                                                         <tr>
                                                             <th>Year</th>
                                                             <th>Median</th>
@@ -439,7 +427,9 @@ $items = [
                                                         <tr>
                                                             <td><?= $sales_year; ?></td>
                                                             <td><?= $sales_median_sold_price_label; ?></td>
-                                                            <td><?= $sales_annual_growth; ?></td>
+                                                            <td
+                                                                class="fw-bold <?php echo ($sales_annual_growth > 0) ? 'text-success' : 'text-danger'; ?> ">
+                                                                <?= $sales_annual_growth; ?></td>
                                                             <td><?= $sales_number_sold; ?></td>
                                                         </tr>
                                                         <?php endforeach; ?>
@@ -462,7 +452,7 @@ $items = [
                                     <?php else : ?>
                                     <div class="row">
                                         <div class="col-12">
-                                            <h4>Not enough data</h4>
+                                            <h4 class="display-2 fs-1 text-dark">Not enough data</h4>
                                             <p><?= $number_sold; ?> sales this year for 2 bedroom House in
                                                 <?= $suburb_label; ?>, market performance data requires a minimum of 10
                                                 sales.
@@ -530,8 +520,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 datasets: [{
                     label: 'Median Sold Prices',
                     data: medianSoldPrices,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    borderColor: '#ff7538',
+                    borderWidth: 2
                 }]
             },
             options: {
@@ -683,5 +673,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const sections = document.querySelectorAll("section");
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    const options = {
+        root: null, // viewport
+        rootMargin: "0px",
+        threshold: .1, // Adjust this value as needed
+    };
+
+    const observer = new IntersectionObserver(callback, options);
+
+    function callback(entries, observer) {
+        entries.forEach((entry) => {
+            const sectionId = entry.target.getAttribute("id");
+            const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+
+            if (entry.isIntersecting) {
+                navLinks.forEach((link) => link.classList.remove("active"));
+                navLink.classList.add("active");
+            }
+        });
+    }
+
+    sections.forEach((section) => {
+        observer.observe(section);
+    });
+});
 </script>
+
+<style>
+nav.navbar {
+    background-color: #fff;
+}
+
+.nav-link {
+    color: #000;
+    text-decoration: none;
+    padding: 15px;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.admin-bar .position-sticky.top-0 {
+    top: 32px !important;
+}
+
+/* .table> :not(caption)>*>* {
+    background-color: #f2f2f226 !important;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    --bs-table-bg-type: #ff75380a;
+} */
+</style>
 <?php
