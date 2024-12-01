@@ -45,8 +45,8 @@ function update_locations_command($args, $assoc_args)
     }
 
     // Convert state input to full name and abbreviation
-    $priority_state_full = get_full_state_name($priority_state_input);
-    $priority_state_abbr = get_state_abbreviation($priority_state_input);
+    $priority_state_full = dsp_get_full_state_name($priority_state_input);
+    $priority_state_abbr = dsp_get_state_abbreviation($priority_state_input);
 
     if (empty($priority_state_full) || empty($priority_state_abbr)) {
         WP_CLI::error('Invalid priority state provided. Please use a valid Australian state name or abbreviation.');
@@ -165,74 +165,6 @@ function update_locations_command($args, $assoc_args)
     WP_CLI::success("All location terms updated successfully! Processed: {$processed_terms}, Skipped: {$skipped_terms}");
 }
 
-// Helper function to get full state name from input
-function get_full_state_name($input)
-{
-    $states = [
-        'NSW' => 'New South Wales',
-        'QLD' => 'Queensland',
-        'SA' => 'South Australia',
-        'TAS' => 'Tasmania',
-        'VIC' => 'Victoria',
-        'WA' => 'Western Australia',
-        'ACT' => 'Australian Capital Territory',
-        'NT' => 'Northern Territory',
-        'New South Wales' => 'New South Wales',
-        'Queensland' => 'Queensland',
-        'South Australia' => 'South Australia',
-        'Tasmania' => 'Tasmania',
-        'Victoria' => 'Victoria',
-        'Western Australia' => 'Western Australia',
-        'Australian Capital Territory' => 'Australian Capital Territory',
-        'Northern Territory' => 'Northern Territory',
-    ];
-
-    $input_upper = strtoupper($input);
-    $input_ucwords = ucwords(strtolower($input));
-
-    if (isset($states[$input_upper])) {
-        return $states[$input_upper];
-    } elseif (isset($states[$input_ucwords])) {
-        return $states[$input_ucwords];
-    }
-
-    return null;
-}
-
-// Helper function to get state abbreviation from input
-function get_state_abbreviation($input)
-{
-    $states = [
-        'NSW' => 'New South Wales',
-        'QLD' => 'Queensland',
-        'SA' => 'South Australia',
-        'TAS' => 'Tasmania',
-        'VIC' => 'Victoria',
-        'WA' => 'Western Australia',
-        'ACT' => 'Australian Capital Territory',
-        'NT' => 'Northern Territory',
-        'New South Wales' => 'NSW',
-        'Queensland' => 'QLD',
-        'South Australia' => 'SA',
-        'Tasmania' => 'TAS',
-        'Victoria' => 'VIC',
-        'Western Australia' => 'WA',
-        'Australian Capital Territory' => 'ACT',
-        'Northern Territory' => 'NT',
-    ];
-
-    $input_upper = strtoupper($input);
-    $input_ucwords = ucwords(strtolower($input));
-
-    if (isset($states[$input_upper])) {
-        return $states[$input_upper];
-    } elseif (isset($states[$input_ucwords])) {
-        return $states[$input_ucwords];
-    }
-
-    return null;
-}
-
 function create_suburb_profiles_command($args, $assoc_args)
 {
     // Fetch all terms in the 'location' taxonomy
@@ -316,7 +248,7 @@ function create_suburb_profiles_command($args, $assoc_args)
             continue;
         }
 
-        $fetch = new BoundaryFetcher(ucwords(strtolower($term_name)), get_state_abbreviation($state), 'Australia', $post_id);
+        $fetch = new BoundaryFetcher(ucwords(strtolower($term_name)), dsp_get_state_abbreviation($state), 'Australia', $post_id);
 
         update_post_meta($post_id, 'rc_lat', $fetch->getLat());
         update_post_meta($post_id, 'rc_long', $fetch->getLong());

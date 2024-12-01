@@ -20,7 +20,7 @@
  *
  * @author     Matthew Neal <matt.neal@realcoder.com.au>
  */
-class Pricefinder_Da_i18n
+class DSP_i18n
 {
     /**
      * Load the plugin text domain for translation.
@@ -31,7 +31,7 @@ class Pricefinder_Da_i18n
     {
 
         load_plugin_textdomain(
-            'pricefinder-da',
+            'dsp',
             false,
             dirname(dirname(plugin_basename(__FILE__))).'/languages/'
         );

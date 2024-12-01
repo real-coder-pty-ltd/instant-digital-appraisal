@@ -1,93 +1,13 @@
 <?php
-
 /**
- * The plugin bootstrap file
- *
- * This file is read by WordPress to generate the plugin information in the plugin
- * admin area. This file also includes all of the dependencies used by the plugin,
- * registers the activation and deactivation functions, and defines a function
- * that starts the plugin.
- *
- * @link              https://realcoder.com.au
- * @since             1.0.0
- *
- * @wordpress-plugin
- * Plugin Name:       Pricefinder Digital Appraisal
- * Plugin URI:        https://realcoder.com.au
- * Description:       Create Digital Appraisals for users, generate suburb profiles using data from Pricefinder.
- * Version:           1.0.0
- * Author:            Matthew Neal
- * Author URI:        https://realcoder.com.au
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       pricefinder-da
- * Domain Path:       /languages
+ * Custom Post Types and Taxonomies.
  */
-
-// If this file is called directly, abort.
-if (! defined('WPINC')) {
+// Exit if accessed directly.
+if (! defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
- */
-define('PRICEFINDER_DA_VERSION', '1.0.0');
-
-/**
- * The code that runs during plugin activation.
- * This action is documented in includes/class-pricefinder-da-activator.php
- */
-function activate_pricefinder_da()
-{
-    require_once plugin_dir_path(__FILE__).'includes/class-pricefinder-da-activator.php';
-    Pricefinder_Da_Activator::activate();
-}
-
-/**
- * The code that runs during plugin deactivation.
- * This action is documented in includes/class-pricefinder-da-deactivator.php
- */
-function deactivate_pricefinder_da()
-{
-    require_once plugin_dir_path(__FILE__).'includes/class-pricefinder-da-deactivator.php';
-    Pricefinder_Da_Deactivator::deactivate();
-}
-
-register_activation_hook(__FILE__, 'activate_pricefinder_da');
-register_deactivation_hook(__FILE__, 'deactivate_pricefinder_da');
-
-/**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and public-facing site hooks.
- */
-require plugin_dir_path(__FILE__).'includes/class-pricefinder-da.php';
-require plugin_dir_path(__FILE__).'includes/domain-api-cli.php';
-
-require plugin_dir_path(__FILE__).'public/class-domain-api.php';
-
-/**
- * Begins execution of the plugin.
- *
- * Since everything within the plugin is registered via hooks,
- * then kicking off the plugin from this point in the file does
- * not affect the page life cycle.
- *
- * @since    1.0.0
- */
-function run_pricefinder_da()
-{
-
-    $plugin = new Pricefinder_Da();
-    $plugin->run();
-
-}
-run_pricefinder_da();
-
-// Register Custom Post Type for Appraisal
-function rc_ida_post_type_appraisal()
+function dsp_post_type_appraisal()
 {
     $labels = [
         'name' => _x('Appraisals', 'Post Type General Name', 'text_domain'),
@@ -140,10 +60,10 @@ function rc_ida_post_type_appraisal()
     register_post_type('appraisal', $args);
 
 }
-add_action('init', 'rc_ida_post_type_appraisal', 0);
+add_action('init', 'dsp_post_type_appraisal', 0);
 
 // Register Custom Post Type for Suburb Profile
-function rc_ida_post_type_suburb_profile()
+function dsp_post_type_suburb_profile()
 {
     $labels = [
         'name' => _x('Suburb Profiles', 'Post Type General Name', 'text_domain'),
@@ -196,10 +116,10 @@ function rc_ida_post_type_suburb_profile()
     register_post_type('suburb-profile', $args);
 
 }
-add_action('init', 'rc_ida_post_type_suburb_profile', 0);
+add_action('init', 'dsp_post_type_suburb_profile', 0);
 
 // Register Custom Post Type for Property Profile
-function rc_ida_post_type_property_profile()
+function dsp_post_type_property_profile()
 {
     $labels = [
         'name' => _x('Property Profiles', 'Post Type General Name', 'text_domain'),
@@ -251,10 +171,10 @@ function rc_ida_post_type_property_profile()
     register_post_type('property-profiles', $args);
 
 }
-add_action('init', 'rc_ida_post_type_property_profile', 0);
+add_action('init', 'dsp_post_type_property_profile', 0);
 
 // Register Custom Taxonomy for Suburb
-function rc_ida_taxonomy_suburb()
+function dsp_taxonomy_suburb()
 {
 
     $labels = [
@@ -280,7 +200,7 @@ function rc_ida_taxonomy_suburb()
         'items_list_navigation' => __('Suburbs list navigation', 'text_domain'),
     ];
     $rewrite = [
-        'slug' => 'rc-ida-suburb',
+        'slug' => 'dsp-suburb',
         'with_front' => true,
         'hierarchical' => false,
     ];
@@ -294,13 +214,13 @@ function rc_ida_taxonomy_suburb()
         'show_tagcloud' => true,
         'rewrite' => $rewrite,
     ];
-    register_taxonomy('rc-ida-suburb', ['appraisal'], $args);
+    register_taxonomy('dsp-suburb', ['appraisal'], $args);
 
 }
-add_action('init', 'rc_ida_taxonomy_suburb', 0);
+add_action('init', 'dsp_taxonomy_suburb', 0);
 
 // Register Custom Taxonomy for Property
-function rc_ida_taxonomy_property()
+function dsp_taxonomy_property()
 {
 
     $labels = [
@@ -326,7 +246,7 @@ function rc_ida_taxonomy_property()
         'items_list_navigation' => __('Properties list navigation', 'text_domain'),
     ];
     $rewrite = [
-        'slug' => 'rc-ida-property',
+        'slug' => 'dsp-property',
         'with_front' => true,
         'hierarchical' => false,
     ];
@@ -340,24 +260,7 @@ function rc_ida_taxonomy_property()
         'show_tagcloud' => true,
         'rewrite' => $rewrite,
     ];
-    register_taxonomy('rc-ida-property', ['appraisal'], $args);
+    register_taxonomy('dsp-property', ['appraisal'], $args);
 
 }
-add_action('init', 'rc_ida_taxonomy_property', 0);
-
-function rc_ida_suburb_profile_extra_shortcode() 
-{
-    ob_start();
-
-    $template = plugin_dir_path( __FILE__ ) . 'public/templates/single-suburb-profile.php';
-
-    if ( file_exists( $template ) ) {
-        include $template;
-    }
-
-    $additional_content = ob_get_clean();
-
-    return $additional_content;
-
-}
-add_shortcode( 'rc_domain_suburb_profile', 'rc_ida_suburb_profile_extra_shortcode' );
+add_action('init', 'dsp_taxonomy_property', 0);

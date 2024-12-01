@@ -24,8 +24,8 @@ $long = get_post_meta(get_the_ID(), 'rc_long', true);
 $boundary = get_post_meta(get_the_ID(), 'rc_boundary', true);
 $center = get_post_meta(get_the_ID(), 'rc_center', true);
 
-$suburb_id = rc_ida_domain_get_suburb_id($suburb, $state, $postcode);
-$location_profile = rc_ida_domain_get_location_profile($suburb_id);
+$suburb_id = dsp_domain_get_suburb_id($suburb, $state, $postcode);
+$location_profile = dsp_domain_get_location_profile($suburb_id);
 
 $population = number_format($location_profile['data']['population']) ?? 0;
 $average_age = $location_profile['data']['mostCommonAgeBracket'] ?? 0;
@@ -92,7 +92,7 @@ $items = [
 
 ?>
 
-<section id="section--rc-ida-hero" class="mb-5">
+<section id="section--dsp-hero" class="mb-5">
     <div class="container">
         <div class="row">
             <div class="col-12">
@@ -103,20 +103,20 @@ $items = [
         <?= $banner_img_url; ?>
         <div class="position-absolute d-flex top-0 right-0 bottom-0 left-0 h-100 w-100 justify-content-center flex-column text-center"
             style="background-color: rgba(0, 0, 0, 0.4)">
-            <h1 class="rc-ida-hero__title text-center mb-0"><?= $suburb_label . ', ' . $state . ' ' . $postcode; ?></h1>
+            <h1 class="dsp-hero__title text-center mb-0"><?= $suburb_label . ', ' . $state . ' ' . $postcode; ?></h1>
         </div>
     </div>
 </section>
 
-<section id="section--rc-ida-nav" class="bg-white mb-5 position-sticky z-3 top-0">
+<section id="section--dsp-nav" class="bg-white mb-5 position-sticky z-3 top-0">
     <div class="container">
         <div class="row">
             <nav class="col navbar pb-0">
                 <div class="container-fluid justify-content-center">
-                    <a class="nav-link navbar-brand px-3" href="#section--rc-ida-about">About</a>
-                    <a class="nav-link navbar-brand px-3" href="#section--rc-ida-demographics">Demographics</a>
-                    <a class="nav-link navbar-brand px-3" href="#section--rc-ida-location">Location</a>
-                    <a class="nav-link navbar-brand px-3" href="#section--rc-ida-market-trends">Market</a>
+                    <a class="nav-link navbar-brand px-3" href="#section--dsp-about">About</a>
+                    <a class="nav-link navbar-brand px-3" href="#section--dsp-demographics">Demographics</a>
+                    <a class="nav-link navbar-brand px-3" href="#section--dsp-location">Location</a>
+                    <a class="nav-link navbar-brand px-3" href="#section--dsp-market-trends">Market</a>
                 </div>
                 <hr class="bg-dark border-1 border-top border-dark w-100 mt-2 mb-0">
             </nav>
@@ -124,12 +124,12 @@ $items = [
     </div>
 </section>
 
-<section id="section--rc-ida-about">
+<section id="section--dsp-about">
     <div class="container">
         <div class="row">
             <div class="col">
-                <h2 class="rc-ida-about__title">About <?= get_bloginfo('name'); ?></h2>
-                <div class="rc-ida-about__content">
+                <h2 class="dsp-about__title">About <?= get_bloginfo('name'); ?></h2>
+                <div class="dsp-about__content">
                     <?php if (get_the_content()) : ?>
                     <?= get_the_content(); ?>
                     <?php else: ?>
@@ -154,12 +154,12 @@ $items = [
     </div>
 </section>
 
-<section id="section--rc-ida-demographics">
+<section id="section--dsp-demographics">
     <div class="container">
         <div class="row mb-5">
             <div class="col">
-                <h2 class="rc-ida-demographics__title">Demographics</h2>
-                <div class="rc-ida-demographics__content">
+                <h2 class="dsp-demographics__title">Demographics</h2>
+                <div class="dsp-demographics__content">
                     <p>A little bit about who lives locally, as provided by government census data.</p>
                 </div>
             </div>
@@ -208,14 +208,14 @@ $items = [
     </div>
 </section>
 
-<section id="section--rc-ida-location">
+<section id="section--dsp-location">
     <div class="container">
         <div class="row my-5">
             <div class="col d-flex">
                 <h4 class="fw-bolder flex-column d-flex mb-0 justify-content-center" style="width: 150px;">Distance to
                 </h4>
                 <div>
-                    <select id="nearby-suburbs-select" class="form-select rc-ida-nearby-suburbs"
+                    <select id="nearby-suburbs-select" class="form-select dsp-nearby-suburbs"
                         aria-label="Nearby suburbs dropdown" style="width: 250px;">
                         <?php foreach ($nearby_suburbs as $index => $nearby_suburb) { 
                             $drive_lat = get_post_meta($nearby_suburb->ID, 'rc_lat', true);
@@ -275,12 +275,12 @@ $items = [
     </div>
 </div>
 
-<section id="section--rc-ida-market-trends">
+<section id="section--dsp-market-trends">
     <div class="container">
         <div class="row">
             <div class="col">
-                <h2 class="rc-ida-market-trends__title">Market Trends</h2>
-                <div class="rc-ida-market-trends__content">
+                <h2 class="dsp-market-trends__title">Market Trends</h2>
+                <div class="dsp-market-trends__content">
                     <p>View median property prices in <?= $suburb_label; ?> to get a better understanding of local
                         market
                         trends.</p>
@@ -311,10 +311,10 @@ $items = [
                             $days_on_market = $item['daysOnMarket'] ?: '-';
                             $days_on_market_label = '-' == $days_on_market ? '-' : $days_on_market . ' ' . ($days_on_market < 2 ? 'day' : 'days');
 
-                            $median_sold_price = 0 != $item['medianSoldPrice'] ? rc_ida_nice_number($item['medianSoldPrice']) : '-';
-                            $entry_level_price = 0 != $item['entryLevelPrice'] ? rc_ida_nice_number($item['entryLevelPrice']) : '-';
-                            $luxury_level_price = 0 != $item['luxuryLevelPrice'] ? rc_ida_nice_number($item['luxuryLevelPrice']) : '-';
-                            $median_rent_price = 0 != $item['medianRentPrice'] ? rc_ida_nice_number($item['medianRentPrice']) : '-';
+                            $median_sold_price = 0 != $item['medianSoldPrice'] ? dsp_nice_number($item['medianSoldPrice']) : '-';
+                            $entry_level_price = 0 != $item['entryLevelPrice'] ? dsp_nice_number($item['entryLevelPrice']) : '-';
+                            $luxury_level_price = 0 != $item['luxuryLevelPrice'] ? dsp_nice_number($item['luxuryLevelPrice']) : '-';
+                            $median_rent_price = 0 != $item['medianRentPrice'] ? dsp_nice_number($item['medianRentPrice']) : '-';
                             $auction_clearance_rate = 0.0 != $item['auctionClearanceRate'] ? round(($item['auctionClearanceRate']) * 100) . '%' : '-';
 
                             $chart_years = '';
@@ -418,7 +418,7 @@ $items = [
                                                                 $sales_number_sold = $sub_item['numberSold'] ?: '-';
 
                                                                 $sales_median_sold_price = $sub_item['medianSoldPrice'];
-                                                                $sales_median_sold_price_label = 0 != $sales_median_sold_price ? rc_ida_nice_number($sales_median_sold_price) : '-';
+                                                                $sales_median_sold_price_label = 0 != $sales_median_sold_price ? dsp_nice_number($sales_median_sold_price) : '-';
                                                                 $sales_annual_growth = round(($sub_item['annualGrowth']) * 100) . '%';
 
                                                                 $chart_years .= $sales_year . ',';
@@ -442,7 +442,7 @@ $items = [
                                                             $chart_years = rtrim($chart_years, ',');
                                                             $chart_median_sold_prices = rtrim($chart_median_sold_prices, ',');
                                                         ?>
-                                                        <canvas class="rc-ida-chart" data-years="<?= $chart_years; ?>"
+                                                        <canvas class="dsp-chart" data-years="<?= $chart_years; ?>"
                                                             data-median-sold-prices="<?= $chart_median_sold_prices; ?>"></canvas>
                                                     </div>
                                                 </div>
@@ -473,18 +473,18 @@ $items = [
 </section>
 
 <style>
-.section--rc-ida-nav {
+.section--dsp-nav {
     position: sticky;
     top: 0;
     z-index: 2;
 }
 
-body.admin-bar .section--rc-ida-nav {
+body.admin-bar .section--dsp-nav {
     top: 32px;
 }
 
 @media (max-width: 782px) {
-    body.admin-bar .section--rc-ida-nav {
+    body.admin-bar .section--dsp-nav {
         top: 46px;
     }
 }
@@ -506,7 +506,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
 
     // Chart JS
-    var charts = document.querySelectorAll('.rc-ida-chart');
+    var charts = document.querySelectorAll('.dsp-chart');
 
     charts.forEach(function(chart) {
         var ctx = chart.getContext('2d');
@@ -575,7 +575,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <?php } ?>
 
     // Update drive times on change or click of select element
-    const selectElement = document.querySelector('.rc-ida-nearby-suburbs');
+    const selectElement = document.querySelector('.dsp-nearby-suburbs');
     const driveCarElement = document.querySelector('.rc-drive-car');
     const driveTrainElement = document.querySelector('.rc-drive-train');
     const driveWalkElement = document.querySelector('.rc-drive-walking');
@@ -596,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function() {
     selectElement.addEventListener('change', updateDriveTimes);
     selectElement.addEventListener('click', updateDriveTimes);
 
-    const options = document.querySelectorAll('.rc-ida-nearby-suburbs option');
+    const options = document.querySelectorAll('.dsp-nearby-suburbs option');
     const origin = {
         lat: <?= $lat; ?>,
         lng: <?= $long; ?>

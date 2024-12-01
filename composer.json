@@ -1,6 +1,6 @@
 {
-    "name": "real-coder-pty-ltd/instant-digital-appraisal",
-    "description": "Create Digital Appraisals for users, generate suburb reports using data from Pricefinder.",
+    "name": "real-coder-pty-ltd/domain-suburb-profiles",
+    "description": "Create Digital Appraisals for users, generate suburb reports using data from Domain API.",
     "type": "wordpress-plugin",
     "license": "MIT",
     "authors": [
