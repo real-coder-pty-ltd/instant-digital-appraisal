@@ -185,3 +185,115 @@ function rc_ida_domain_get_location_profile($suburb_id){
 
     return $suburb_profile;
 }
+
+// Register the AJAX action
+add_action('wp_ajax_update_location_postcodes_and_states', 'update_location_postcodes_and_states_ajax');
+
+function update_location_postcodes_and_states_ajax() {
+    // Verify the required parameters
+    if (!isset($_POST['offset'], $_POST['priority_state'])) {
+        wp_send_json_error('Missing parameters.');
+    }
+
+    $offset = intval($_POST['offset']);
+    $priority_state = sanitize_text_field($_POST['priority_state']);
+    $chunk_size = 10; // Number of terms to process in each request
+
+    // Get the terms for the current chunk
+    $terms = get_terms([
+        'taxonomy' => 'location',
+        'hide_empty' => false,
+        'offset' => $offset,
+        'number' => $chunk_size,
+    ]);
+
+    if (is_wp_error($terms)) {
+        wp_send_json_error('Error fetching terms.');
+    }
+
+    $total_terms = wp_count_terms('location', ['hide_empty' => false]);
+
+    if ($total_terms == 0) {
+        wp_send_json_error('No terms found in the "location" taxonomy.');
+    }
+
+    $processed = $offset + count($terms);
+    $percentage = ($processed / $total_terms) * 100;
+
+    $log_messages = '';
+
+    foreach ($terms as $term) {
+        $term_name = $term->name;
+
+        // Build the query string using the full state name
+        $query = $term_name . ', ' . $priority_state . ', Australia';
+        $url = 'https://nominatim.openstreetmap.org/search?' . http_build_query([
+            'q' => $query,
+            'format' => 'json',
+            'limit' => 1,
+            'addressdetails' => 1,
+            'extratags' => 1,
+        ]);
+
+        // Fetch the response from the API
+        $response = wp_remote_get($url);
+
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) != 200) {
+            $log_messages .= "<p style='color: red;'>Error fetching data for term: {$term_name}</p>";
+            continue; // Skip on API error or invalid response
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (!empty($data) && isset($data[0]['address'])) {
+            $address = $data[0]['address'];
+
+            // Extract postcode and state
+            $postcode = isset($address['postcode']) ? $address['postcode'] : '';
+            $state = isset($address['state']) ? $address['state'] : '';
+
+            $updated_postcode = false;
+            $updated_state = false;
+
+            // Update the 'postcode' meta field
+            if (!empty($postcode)) {
+                update_term_meta($term->term_id, 'postcode', $postcode);
+                $updated_postcode = true;
+            }
+
+            // Compare the states directly
+            if (!empty($state) && strtolower($state) === strtolower($priority_state)) {
+                // Store the abbreviation of the state
+                $state_abbr = convert_australian_state($priority_state);
+                update_term_meta($term->term_id, 'state', $state_abbr);
+                $updated_state = true;
+            }
+
+            // Build the log message
+            $log_messages .= "<p>";
+            $log_messages .= "<strong>Term:</strong> {$term_name}<br>";
+            $log_messages .= "<strong>Postcode:</strong> " . ($postcode ?: 'N/A') . "<br>";
+            $log_messages .= "<strong>State:</strong> " . ($state ?: 'N/A') . "<br>";
+            $log_messages .= "Postcode Updated: " . ($updated_postcode ? 'Yes' : 'No') . "<br>";
+            $log_messages .= "State Updated: " . ($updated_state ? 'Yes' : 'No') . "<br>";
+            $log_messages .= "</p>";
+        } else {
+            $log_messages .= "<p style='color: orange;'>No data found for term: {$term_name}</p>";
+        }
+
+        // Sleep for a second to respect API rate limits
+        sleep(1);
+    }
+
+    // Determine if we're finished
+    $finished = ($processed >= $total_terms);
+
+    // Send response back to the frontend
+    wp_send_json_success([
+        'message'    => $log_messages,
+        'percentage' => $percentage,
+        'next_offset' => $offset + $chunk_size,
+        'finished'   => $finished,
+    ]);
+}

@@ -93,29 +93,29 @@ class Pricefinder_Da_Public
          * between the defined hooks and the functions defined in this
          * class.
          */
-        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/pricefinder-da-public.js', ['jquery'], $this->version, true);
+        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__).'js/pricefinder-da-public.js', ['jquery'], $this->version, true);
 
         /**
          * Google Maps Script.
          */
         wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key='.get_option('rc_ida_google_maps_api_key').'&amp;libraries=places', [], $this->version, false);
-        
+
         /**
          * Domain API - Property Suggest.
          */
         global $post;
 
         if (has_shortcode($post->post_content, 'rc_ida_address_form') || has_shortcode($post->post_content, 'rc_ida_appraisal_form')) {
-            wp_enqueue_script('rc-domain-property-suggest-address', plugin_dir_url(__FILE__) . '/js/rc-ida-domain-property-suggest-address.js', ['jquery'], null, true);
-        
+            wp_enqueue_script('rc-domain-property-suggest-address', plugin_dir_url(__FILE__).'/js/rc-ida-domain-property-suggest-address.js', ['jquery'], null, true);
+
             wp_localize_script('rc-domain-property-suggest-address', 'autocomplete_params', [
                 'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('autocomplete_nonce')
+                'nonce' => wp_create_nonce('autocomplete_nonce'),
             ]);
         }
 
         if (has_shortcode($post->post_content, 'rc_ida_suburb_form')) {
-            wp_enqueue_script('rc-domain-property-suggest-suburb', plugin_dir_url(__FILE__) . '/js/rc-ida-domain-property-suggest-suburb.js', ['jquery'], null, true);
+            wp_enqueue_script('rc-domain-property-suggest-suburb', plugin_dir_url(__FILE__).'/js/rc-ida-domain-property-suggest-suburb.js', ['jquery'], null, true);
         }
     }
 }
@@ -123,38 +123,77 @@ class Pricefinder_Da_Public
 class BoundaryFetcher
 {
     private $country;
+
     private $state;
+
     private $suburb;
-    private $url = "https://overpass-api.de/api/interpreter";
+
+    private $url = 'https://overpass-api.de/api/interpreter';
 
     public $data;
+
     public $boundary;
+
     public $is_error;
+
     public $center;
 
-    public function __construct($suburb, $state = 'Queensland', $country = 'Australia')
+    public $post_id;
+
+    public function __construct($suburb, $state = 'Queensland', $country = 'Australia', $post_id = null)
     {
         $this->country = $country;
         $this->state = $state;
         $this->suburb = $suburb;
+
+        $this->post_id = $post_id;
 
         $this->fetchBoundaryData();
 
         return $this;
     }
 
+    public function getLat()
+    {
+        $lat = ($this->data[0]['bounds']['minlat'] + $this->data[0]['bounds']['maxlat']) / 2;
+        if ($lat) {
+            return $lat;
+        }
+
+        return null;
+    }
+
+    public function getLong()
+    {
+        $long = ($this->data[0]['bounds']['minlon'] + $this->data[0]['bounds']['maxlon']) / 2;
+        if ($long) {
+            return $long;
+        }
+
+        return null;
+    }
+
     private function setCenter()
     {
+        global $post;
+
+        $post_id = $this->post_id ?? $post->ID;
+
         $center = [
             'lat' => ($this->data[0]['bounds']['minlat'] + $this->data[0]['bounds']['maxlat']) / 2,
             'lng' => ($this->data[0]['bounds']['minlon'] + $this->data[0]['bounds']['maxlon']) / 2,
         ];
+
+        update_post_meta($post_id, 'rc_lat', $center['lat']);
+        update_post_meta($post_id, 'rc_long', $center['lng']);
+
         $this->center = json_encode($center);
+        update_post_meta($post_id, 'rc_center', $this->center);
     }
 
     public function fetchBoundaryData()
     {
-        if (!$this->country || !$this->state || !$this->suburb) {
+        if (! $this->country || ! $this->state || ! $this->suburb) {
             return [
                 'error' => true,
                 'message' => 'Country, state, and suburb must be set before fetching data.',
@@ -178,6 +217,7 @@ EOT;
         if (is_wp_error($response)) {
 
             $this->is_error = true;
+
             return [
                 'error' => true,
                 'message' => $response->get_error_message(),
@@ -197,24 +237,28 @@ EOT;
 
         $this->stichPolygons();
         $this->setCenter();
+
         return $this;
     }
 
     public function stichPolygons()
     {
+        global $post;
+        $post_id = $this->post_id ?? $post->ID;
+
         $stitchedPolygon = [];
- 
+
         $ways = array_filter($this->data[0]['members'], function ($way) {
             return $way['type'] === 'way';
         });
- 
+
         $segments = array_map(function ($way) {
             return $way['geometry'];
         }, $ways);
 
         $stitchedPolygon = array_shift($segments);
 
-        while (!empty($segments)) {
+        while (! empty($segments)) {
             $lastPoint = end($stitchedPolygon);
 
             foreach ($segments as $key => $segment) {
@@ -245,8 +289,8 @@ EOT;
         $suburb_coords_json = str_replace('lon', 'lng', $suburb_coords_json);
 
         $this->boundary = $suburb_coords_json;
+        update_post_meta($post_id, 'rc_boundary', $this->boundary);
     }
-
 }
 
 /*
@@ -402,38 +446,38 @@ function rc_ida_address_form($atts)
 {
     // Define default attributes
     $atts = shortcode_atts(
-        array(
+        [
             'form_placeholder' => 'Enter your address',
-            'form_submit' => 'Submit'
-        ),
+            'form_submit' => 'Submit',
+        ],
         $atts,
         'rc_ida_address_form'
     );
 
     // Extract attributes
-    $url_slug = get_option('rc_ida_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
+    $url_slug = get_option('rc_ida_appraisal_page_url_slug') ?: 'instant-digital-appraisal';
     $form_placeholder = $atts['form_placeholder'];
     $form_submit = $atts['form_submit'];
 
     echo '
-        <form id="rc-ida-address-form" method="GET" action="/' . $url_slug . '/">
+        <form id="rc-ida-address-form" method="GET" action="/'.$url_slug.'/">
             <div class="d-flex flex-row">
                 <div id="rc-ida-search" class="rc-ida-search position-relative w-100">
-                    <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded h-100" placeholder="' . $form_placeholder . '" name="address" type="text" required>
+                    <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded h-100" placeholder="'.$form_placeholder.'" name="address" type="text" required>
                     <input id="rc-ida-state" class="rc-ida-state" type="hidden" name="state">
                     <input id="rc-ida-suburb" class="rc-ida-suburb" type="hidden" name="suburb">
                     <input id="rc-ida-postcode" class="rc-ida-postcode" type="hidden" name="postcode">
                     <input id="rc-ida-property-id" class="rc-ida-property-id" type="hidden" name="property_id">
                     <ul id="rc-ida-results" class="rc-ida-results card shadow gform-theme__disable-reset position-absolute start-0 top-100 w-100 list-unstyled z-2 px-2 d-none"></ul>
                 </div>
-                <button id="rc-ida-submit" type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2" disabled>' . $form_submit . '</button>
+                <button id="rc-ida-submit" type="submit" class="btn btn-primary btn-lg rounded text-nowrap ms-2" disabled>'.$form_submit.'</button>
             </div>
         </form>
         <div id="loading-container">
             <img id="loading-image" src="/app/plugins/instant-digital-appraisal/public/images/loader.jpg" alt="Loading..." />
         </div>
     ';
-    
+
 }
 add_shortcode('rc_ida_address_form', 'rc_ida_address_form');
 
@@ -447,9 +491,9 @@ function rc_ida_suburb_form($atts)
 
     // Define default attributes
     $atts = shortcode_atts(
-        array(
+        [
             'form_placeholder' => 'Select your suburb.',
-        ),
+        ],
         $atts,
         'rc-ida-suburb-form'
     );
@@ -458,10 +502,10 @@ function rc_ida_suburb_form($atts)
     $form_placeholder = $atts['form_placeholder'];
 
     // Get all terms from the 'suburb' taxonomy
-    $suburbs = get_terms(array(
+    $suburbs = get_terms([
         'taxonomy' => 'location',
         'hide_empty' => false,
-    ));
+    ]);
 
     // Initialize the suburbs list
     $suburb_list = [];
@@ -470,20 +514,20 @@ function rc_ida_suburb_form($atts)
     }
 
     // Define the query arguments
-    $args = array(
+    $args = [
         'post_type' => 'suburb-profile',
         'posts_per_page' => -1,
-        'meta_query' => array(
+        'meta_query' => [
             'relation' => 'OR',
-            array(
+            [
                 'key' => 'rc_suburb',
                 'value' => $suburb_list,
-                'compare' => 'IN'
-            )
-        ),
+                'compare' => 'IN',
+            ],
+        ],
         'orderby' => 'title',
-        'order' => 'ASC'
-    );
+        'order' => 'ASC',
+    ];
 
     // Create a new WP_Query instance
     $query = new WP_Query($args);
@@ -501,7 +545,7 @@ function rc_ida_suburb_form($atts)
             $postcode_meta = get_post_meta(get_the_ID(), 'rc_postcode', true);
             $link = get_post_permalink(get_the_ID());
 
-            $suburb_results .= '<li class="px-1 py-2 border-bottom" data-url="' . $link . '">' . $suburb_meta . ', ' . $state_meta . ' ' . $postcode_meta . '</li>';
+            $suburb_results .= '<li class="px-1 py-2 border-bottom" data-url="'.$link.'">'.$suburb_meta.', '.$state_meta.' '.$postcode_meta.'</li>';
         }
     } else {
         // No posts found
@@ -512,18 +556,18 @@ function rc_ida_suburb_form($atts)
     wp_reset_postdata();
 
     echo '
-        <div id="rc-ida-suburb-form" method="GET" action="' . $url_slug . '">
+        <div id="rc-ida-suburb-form" method="GET" action="'.$url_slug.'">
             <div class="d-flex flex-row">
                 <div id="rc-ida-search" class="rc-ida-search position-relative w-100">
-                    <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded" placeholder="' . $form_placeholder . '" name="address" type="text" required style="height:45px">
+                    <input id="rc-ida-address" class="rc-ida-address form-control input-l rounded" placeholder="'.$form_placeholder.'" name="address" type="text" required style="height:45px">
                     <ul id="rc-ida-results" class="rc-ida-results card shadow gform-theme__disable-reset position-absolute start-0 top-100 w-100 list-unstyled z-2 px-2 d-none">
-                        ' . $suburb_results . '
+                        '.$suburb_results.'
                     </ul>
                 </div>
             </div>
         </div>
     ';
-    
+
 }
 add_shortcode('rc_ida_suburb_form', 'rc_ida_suburb_form');
 
@@ -535,7 +579,7 @@ function rc_ida_appraisal_form($atts)
 {
     // Define default attributes
     $atts = shortcode_atts(
-        array(
+        [
             'class_section' => 'bg-light',
             'class_container' => 'mw-1512',
             'class_row' => 'row mx-0 align-items-center',
@@ -544,22 +588,22 @@ function rc_ida_appraisal_form($atts)
             'class_form' => 'bg-white rounded shadow p-5 mx-0 mx-lg-5 my-5',
             'class_map_wrapper' => 'container px-lg-0 d-none d-lg-block',
             'class_map' => 'vh-100',
-        ),
+        ],
         $atts
     );
 
     echo '
-        <section class="section--instant-digital-appraisal ' . $atts['class_section'] . '">
-            <div class="' . $atts['class_container'] . '">
-                <div class="' . $atts['class_row'] . '">
-                    <div class="' . $atts['class_col'] . '">
-                        <div class="' . $atts['class_form_wrapper'] . '">
-                            <div class="' . $atts['class_form'] . '">' . do_shortcode('[gravityform id="1" title="false"]') . '</div>
+        <section class="section--instant-digital-appraisal '.$atts['class_section'].'">
+            <div class="'.$atts['class_container'].'">
+                <div class="'.$atts['class_row'].'">
+                    <div class="'.$atts['class_col'].'">
+                        <div class="'.$atts['class_form_wrapper'].'">
+                            <div class="'.$atts['class_form'].'">'.do_shortcode('[gravityform id="1" title="false"]').'</div>
                         </div>
                     </div>
-                    <div class="' . $atts['class_col'] . '">
-                        <div class="' . $atts['class_map_wrapper'] . '">
-                            <div class="' . $atts['class_map'] . '" id="rc-ida-google-map"></div>
+                    <div class="'.$atts['class_col'].'">
+                        <div class="'.$atts['class_map_wrapper'].'">
+                            <div class="'.$atts['class_map'].'" id="rc-ida-google-map"></div>
                         </div>
                     </div>
                 </div>
@@ -702,12 +746,12 @@ function rc_ida_nice_number($n)
     $n = str_replace(',', '', $n);
 
     // is this a number?
-    if (!is_numeric($n)) {
+    if (! is_numeric($n)) {
         return false;
     }
 
     // convert to a number
-    $n = (float)$n;
+    $n = (float) $n;
 
     // now filter it;
     if ($n > 1000000000000) {
@@ -747,14 +791,15 @@ function GetDrivingDistance($lat1, $long1, $lat2, $long2)
 /**
  * Hooks for Instant Digital Appraisal Form and Page
  */
-function rc_ida_hooks(){
-    $url_slug = get_option('rc_ida_appraisal_page_url_slug') ? : 'instant-digital-appraisal';
+function rc_ida_hooks()
+{
+    $url_slug = get_option('rc_ida_appraisal_page_url_slug') ?: 'instant-digital-appraisal';
 
     // Remove the required legend from the form
     if (is_page($url_slug)) {
         add_filter('gform_required_legend', '__return_empty_string');
     }
-};
+}
 add_action('wp', 'rc_ida_hooks');
 
 /**
@@ -762,16 +807,17 @@ add_action('wp', 'rc_ida_hooks');
  */
 
 // Create or update suburb profile post, redirect to single page
-function rc_ida_suburb_profile($suburb, $state, $postcode) {
-    if (!$suburb || !$state || !$postcode) {
+function rc_ida_suburb_profile($suburb, $state, $postcode)
+{
+    if (! $suburb || ! $state || ! $postcode) {
         return null;
     }
 
     // Prepare the post data
     $post_id = 0;
     $post_action = 'created';
-    $address = $suburb . ', ' . $state . ' ' . $postcode;
-    $slug = sanitize_title($suburb . '-' . $state . '-' . $postcode);
+    $address = $suburb.', '.$state.' '.$postcode;
+    $slug = sanitize_title($suburb.'-'.$state.'-'.$postcode);
 
     // Check if a post with the given slug exists
     $post = get_page_by_path($slug, OBJECT, 'suburb-profile');
@@ -786,10 +832,10 @@ function rc_ida_suburb_profile($suburb, $state, $postcode) {
         $modified_date = get_field('general_modified_date', $post_id);
         $date_diff = (strtotime($today) - strtotime($modified_date)) / (60 * 60 * 24);
 
-        $post_data = array(
-            'ID'           => $post_id,
-            'post_title'   => $address,
-        );
+        $post_data = [
+            'ID' => $post_id,
+            'post_title' => $address,
+        ];
 
         wp_update_post($post_data);
 
@@ -804,22 +850,22 @@ function rc_ida_suburb_profile($suburb, $state, $postcode) {
     } else {
         // Post does not exist, create a new one
         $post_action = 'created';
-        $post_data = array(
-            'post_title'   => $address,
-            'post_name'    => $slug,
-            'post_status'  => 'publish',
-            'post_type'    => 'suburb-profile',
-        );
+        $post_data = [
+            'post_title' => $address,
+            'post_name' => $slug,
+            'post_status' => 'publish',
+            'post_type' => 'suburb-profile',
+        ];
         $post_id = wp_insert_post($post_data);
 
-        $fields = array(
+        $fields = [
             'general_created_date' => $today,
             'general_modified_date' => $today,
             'general_address' => $address,
             'general_suburb' => $suburb,
             'general_state' => $state,
             'general_postcode' => $postcode,
-        );
+        ];
         foreach ($fields as $field_key => $field_value) {
             update_field($field_key, $field_value, $post_id);
         }
@@ -830,13 +876,13 @@ function rc_ida_suburb_profile($suburb, $state, $postcode) {
     }
 }
 
-
 /**
  * Domain API Functions
  */
 
 // Fetch the access token from Domain API
-function rc_ida_domain_fetch_access_token() {
+function rc_ida_domain_fetch_access_token()
+{
     // Set your client ID and client secret
     $client_id = get_option('rc_ida_client_id');
     $client_secret = get_option('rc_ida_client_secret');
@@ -858,9 +904,9 @@ function rc_ida_domain_fetch_access_token() {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/x-www-form-urlencoded'
+        'Content-Type: application/x-www-form-urlencoded',
     ]);
-    curl_setopt($ch, CURLOPT_USERPWD, $client_id . ':' . $client_secret);
+    curl_setopt($ch, CURLOPT_USERPWD, $client_id.':'.$client_secret);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
 
     // Execute the request
@@ -868,7 +914,7 @@ function rc_ida_domain_fetch_access_token() {
 
     // Check for errors
     if (curl_errno($ch)) {
-        echo 'cURL error: ' . curl_error($ch);
+        echo 'cURL error: '.curl_error($ch);
     } else {
         // Decode the JSON response
         $response_data = json_decode($response, true);
@@ -877,7 +923,7 @@ function rc_ida_domain_fetch_access_token() {
         if (isset($response_data['access_token'])) {
             return $response_data['access_token'];
         } else {
-            echo 'Error retrieving access token: ' . $response;
+            echo 'Error retrieving access token: '.$response;
         }
     }
 
@@ -888,9 +934,10 @@ function rc_ida_domain_fetch_access_token() {
 }
 
 // Fetch property suggestions from Domain API
-function rc_ida_domain_fetch_property_suggest($location) {
+function rc_ida_domain_fetch_property_suggest($location)
+{
     $access_token = rc_ida_domain_fetch_access_token();
-    if (!$access_token) {
+    if (! $access_token) {
         return null;
     }
 
@@ -900,24 +947,24 @@ function rc_ida_domain_fetch_property_suggest($location) {
     $endpoint = 'properties/_suggest';
 
     // Construct the full API URL
-    $api_url = $base_url . $api_version . '/' . $endpoint;
+    $api_url = $base_url.$api_version.'/'.$endpoint;
 
     // Prepare the query parameters
     $params = [
         'terms' => $location,
         'pageSize' => 20,
-        'channel' => 'All'
+        'channel' => 'All',
     ];
 
     // Initialize cURL session
     $ch = curl_init();
 
     // Set cURL options
-    curl_setopt($ch, CURLOPT_URL, $api_url . '?' . http_build_query($params));
+    curl_setopt($ch, CURLOPT_URL, $api_url.'?'.http_build_query($params));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Authorization: Bearer ' . $access_token,
-        'Content-Type: application/json'
+        'Authorization: Bearer '.$access_token,
+        'Content-Type: application/json',
     ]);
 
     // Execute the request
@@ -925,7 +972,8 @@ function rc_ida_domain_fetch_property_suggest($location) {
 
     // Check for errors
     if (curl_errno($ch)) {
-        echo 'cURL error: ' . curl_error($ch);
+        echo 'cURL error: '.curl_error($ch);
+
         return null;
     } else {
         // Decode the JSON response
@@ -940,10 +988,11 @@ function rc_ida_domain_fetch_property_suggest($location) {
 }
 
 // Fetch property suggest data via AJAX
-function rc_ida_domain_fetch_property_suggest_ajax() {
+function rc_ida_domain_fetch_property_suggest_ajax()
+{
     check_ajax_referer('autocomplete_nonce', 'nonce');
 
-    if (!isset($_POST['location'])) {
+    if (! isset($_POST['location'])) {
         wp_send_json_error('Location not provided');
     }
 

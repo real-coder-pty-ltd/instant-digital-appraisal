@@ -64,6 +64,7 @@ register_deactivation_hook(__FILE__, 'deactivate_pricefinder_da');
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path(__FILE__).'includes/class-pricefinder-da.php';
+require plugin_dir_path(__FILE__).'includes/domain-api-cli.php';
 
 require plugin_dir_path(__FILE__).'public/class-domain-api.php';
 
