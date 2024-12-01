@@ -92,7 +92,7 @@ $items = [
 
 ?>
 
-<section id="section--dsp-hero" class="mb-5">
+<section id="dsp-hero" class="mb-5">
     <div class="container">
         <div class="row">
             <div class="col-12">
@@ -108,7 +108,7 @@ $items = [
     </div>
 </section>
 
-<section id="section--dsp-nav" class="bg-white mb-5 position-sticky z-3 top-0">
+<section id="dsp-nav" class="bg-white mb-5 position-sticky z-3 top-0">
     <div class="container">
         <div class="row">
             <nav class="col navbar pb-0">
@@ -677,7 +677,6 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener("DOMContentLoaded", function() {
     const sections = document.querySelectorAll("section");
     const navLinks = document.querySelectorAll(".nav-link");
-
     const options = {
         root: null, // viewport
         rootMargin: "0px",
@@ -690,7 +689,6 @@ document.addEventListener("DOMContentLoaded", function() {
         entries.forEach((entry) => {
             const sectionId = entry.target.getAttribute("id");
             const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-
             if (entry.isIntersecting) {
                 navLinks.forEach((link) => link.classList.remove("active"));
                 navLink.classList.add("active");
@@ -699,7 +697,10 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     sections.forEach((section) => {
-        observer.observe(section);
+        // if the ID contains the string 'section--', then observe it.
+        if (section.id.includes("section--")) {
+            observer.observe(section);
+        }
     });
 });
 </script>
