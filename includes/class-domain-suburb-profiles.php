@@ -17,7 +17,7 @@ class Domain_Suburb_Profiles
         if (defined('DOMAIN_SUBURB_PROFILES_VERSION')) {
             $this->version = DOMAIN_SUBURB_PROFILES_VERSION;
         } else {
-            $this->version = '0.1.0';
+            $this->version = '0.1.01';
         }
         $this->plugin_name = 'domain-suburb-profiles';
 
