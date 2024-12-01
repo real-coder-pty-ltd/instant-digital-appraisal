@@ -248,7 +248,7 @@ function create_suburb_profiles_command($args, $assoc_args)
             continue;
         }
 
-        $fetch = new BoundaryFetcher(ucwords(strtolower($term_name)), dsp_get_state_abbreviation($state), 'Australia', $post_id);
+        $fetch = new BoundaryFetcher(ucwords(strtolower($term_name)), dsp_get_full_state_name($state), 'Australia', $post_id);
 
         update_post_meta($post_id, 'rc_lat', $fetch->getLat());
         update_post_meta($post_id, 'rc_long', $fetch->getLong());

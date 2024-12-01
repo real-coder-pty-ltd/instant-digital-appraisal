@@ -91,14 +91,14 @@ function dsp_get_full_state_name($input)
 function dsp_get_state_abbreviation($input)
 {
     $states = [
-        'NSW' => 'New South Wales',
-        'QLD' => 'Queensland',
-        'SA' => 'South Australia',
-        'TAS' => 'Tasmania',
-        'VIC' => 'Victoria',
-        'WA' => 'Western Australia',
-        'ACT' => 'Australian Capital Territory',
-        'NT' => 'Northern Territory',
+        'NSW' => 'NSW',
+        'QLD' => 'QLD',
+        'SA' => 'SA',
+        'TAS' => 'TAS',
+        'VIC' => 'VIC',
+        'WA' => 'WA',
+        'ACT' => 'ACT',
+        'NT' => 'NT',
         'New South Wales' => 'NSW',
         'Queensland' => 'QLD',
         'South Australia' => 'SA',
