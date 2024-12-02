@@ -14,6 +14,11 @@ $plugin_dir = plugin_dir_url(dirname(__FILE__));
 $image_dir =  $plugin_dir . 'images/';
 $banner_img_url = $featured_image ? '<img class="w-100 object-fit-cover" style="max-height: 650px;" src="' . $featured_image . '">' : '<img class="w-100 object-fit-cover" style="max-height: 650px;" src="' . $image_dir . 'background.jpg">';
 
+$thumnail_url = get_the_post_thumbnail_url(get_the_ID(), 'full');
+if ( ! $thumnail_url ) {
+    $thumnail_url = $image_dir . 'classic.webp';
+}
+
 // Address Details
 $suburb = get_post_meta(get_the_ID(), 'rc_suburb', true);
 $suburb_label = ucwords(strtolower(get_post_meta(get_the_ID(), 'rc_suburb', true)));
@@ -92,21 +97,33 @@ $items = [
 
 ?>
 
-<section id="dsp-hero" class="mb-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
+<div id="suburb-profile-header" class="container-fluid position-relative py-5"
+    style="background-image: url(<?php echo $thumnail_url; ?>); background-size: cover; background-position: center;">
+    <div class="row position-relative z-1 py-5 my-5">
+        <div class="col-sm-10 offset-sm-1 text-light py-5">
+            <div class="text-center mb-4 py-5">
+                <h2 class="dsp-hero__title text-center mb-0 display-2 fs-1 my-5"
+                    style="letter-spacing: 0.5px; font-size: 3.5rem!important; line-height: 3rem;">
+                    Real Estate Agents
+                    <span><?= $suburb_label . '</span><br><span class="text-white" style="letter-spacing: 1px; font-size: 30px;">' . $state . ' ' . $postcode; ?></span>
+                    </sm>
+                </h2>
             </div>
         </div>
     </div>
-    <div class="bg-image text-center text-white position-relative">
-        <?= $banner_img_url; ?>
-        <div class="position-absolute d-flex top-0 right-0 bottom-0 left-0 h-100 w-100 justify-content-center flex-column text-center"
-            style="background-color: rgba(0, 0, 0, 0.4)">
-            <h1 class="dsp-hero__title text-center mb-0"><?= $suburb_label . ', ' . $state . ' ' . $postcode; ?></h1>
-        </div>
-    </div>
-</section>
+</div>
+<style>
+#suburb-profile-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65);
+    pointer-events: none;
+}
+</style>
 
 <section id="dsp-nav" class="bg-white mb-5 position-sticky z-3 top-0">
     <div class="container">
