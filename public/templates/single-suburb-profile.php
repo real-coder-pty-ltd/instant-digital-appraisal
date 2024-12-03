@@ -102,14 +102,12 @@ $items = [
 ];
 
 ?>
-
-<div id="suburb-profile-header" class="container-fluid position-relative py-5"
+<div id="suburb-profile-header" class="container-fluid position-relative py-2 py-md-5"
     style="background-image: url(<?php echo $thumnail_url; ?>); background-size: cover; background-position: center;">
-    <div class="row position-relative z-1 py-5 my-5">
-        <div class="col-sm-10 offset-sm-1 text-light py-5">
-            <div class="text-center mb-4 py-5">
-                <h2 class="dsp-hero__title text-center mb-0 display-2 fs-1 my-5"
-                    style="letter-spacing: 0.5px; font-size: 3.5rem!important; line-height: 3rem;">
+    <div class="row position-relative z-1 py-2 my-2 py-md-5 my-md-5">
+        <div class="col-sm-10 offset-sm-1 text-light pt-5 pb-0 pb-md-3">
+            <div class="text-center mb-0 mb-md-4 py-2 py-md-5">
+                <h2 class="dsp-hero__title text-center mb-0 display-2 fs-3 fs-md-1 py-1 py-md-3">
                     Real Estate Agents
                     <span><?= $suburb_label . '</span><br><span class="text-white" style="letter-spacing: 1px; font-size: 30px;">' . $state . ' ' . $postcode; ?></span>
                     </sm>
@@ -129,6 +127,76 @@ $items = [
     background-color: rgba(0, 0, 0, 0.65);
     pointer-events: none;
 }
+
+.dsp-hero__title {
+    .letter-spacing: 0.5px;
+    font-size: 3.5rem !important;
+    line-height: 3rem;
+}
+
+@media (max-width: 768px) {
+    .dsp-hero__title {
+        font-size: 2.8rem !important;
+        line-height: 3rem;
+    }
+}
+
+#dsp-nav .nav-link:before {
+    content: "";
+    height: 3px;
+    left: 0;
+    bottom: 10px;
+    width: 0;
+    position: absolute;
+    transition: all 0.2s ease 0s;
+    background: #ff7538;
+}
+
+#dsp-nav .nav-link:hover {
+    color: #ff7538;
+    transition: color 0.1s;
+}
+
+#dsp-nav .nav-link:hover:before {
+    width: 100%;
+}
+
+#dsp-nav .nav-link.active {
+    color: #ff7538 !important;
+}
+
+span.hidden-mobile {
+    display: none !important;
+}
+
+body {
+    height: 3000px;
+}
+
+
+/* Progress bar */
+.progress-bar-container {
+    /* position: fixed; */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: #f2f2f2;
+    z-index: 9999;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #ff7538;
+    transition: all 0.3s ease;
+}
+
+.progress-background {
+    fill: transparent;
+    stroke: #f2f2f2;
+    stroke-width: 5;
+    stroke-dasharray: none;
+}
 </style>
 
 <section id="dsp-nav" class="bg-white mb-5 position-sticky z-3 top-0">
@@ -136,12 +204,18 @@ $items = [
         <div class="row">
             <nav class="col navbar pb-0">
                 <div class="container-fluid justify-content-center">
-                    <a class="nav-link navbar-brand px-3" href="#section--dsp-about">About</a>
-                    <a class="nav-link navbar-brand px-3" href="#section--dsp-demographics">Demographics</a>
-                    <a class="nav-link navbar-brand px-3" href="#section--dsp-location">Location</a>
-                    <a class="nav-link navbar-brand px-3" href="#section--dsp-market-trends">Market</a>
+                    <a class="nav-link navbar-brand fs-5 px-0 px-md-3 position-relative"
+                        href="#section--dsp-about">About</a>
+                    <a class="nav-link navbar-brand fs-5 px-0 px-md-3 position-relative"
+                        href="#section--dsp-demographics">Demographics</a>
+                    <a class="nav-link navbar-brand fs-5 px-0 px-md-3 position-relative"
+                        href="#section--dsp-location">Location</a>
+                    <a class="nav-link navbar-brand fs-5 px-0 px-md-3 position-relative"
+                        href="#section--dsp-market-trends">Market</a>
                 </div>
-                <hr class="bg-dark border-1 border-top border-dark w-100 mt-2 mb-0">
+                <div class="progress-bar-container">
+                    <div class="progress-bar"></div>
+                </div>
             </nav>
         </div>
     </div>
@@ -314,16 +388,16 @@ $items = [
             </div>
         </div>
         <div class="row">
-            <div class="col">
+            <div class="col table-responsive">
                 <table class="table border rounded-1">
                     <thead>
                         <tr class="text-dark text-center">
-                            <th class="text-dark">Bedrooms</th>
+                            <th class="text-dark">Bed<span class="hidden-mobile">rooms</span></th>
                             <th class="text-dark">Type</th>
                             <th class="text-dark">Median Price</th>
-                            <th class="text-dark">Avg Days on Market</th>
-                            <th class="text-dark">Clearance Rate</th>
-                            <th class="text-dark">Sold This Year</th>
+                            <th class="text-dark d-none d-md-table-cell">Avg Days on Market</th>
+                            <th class="text-dark d-none d-md-table-cell">Clearance Rate</th>
+                            <th class="text-dark d-none d-md-table-cell">Sold This Year</th>
                             <th class="text-dark"></th>
                         </tr>
                     </thead>
@@ -355,9 +429,9 @@ $items = [
                             <td class="text-center"><?= $bedrooms; ?></td>
                             <td class="text-center"><?= $property_category; ?></td>
                             <td class="text-center"><?= $median_sold_price; ?></td>
-                            <td class="text-center"><?= $days_on_market_label; ?></td>
-                            <td class="text-center"><?= $auction_clearance_rate; ?></td>
-                            <td class="text-center"><?= $number_sold; ?></td>
+                            <td class="text-center d-none d-md-table-cell"><?= $days_on_market_label; ?></td>
+                            <td class="text-center d-none d-md-table-cell"><?= $auction_clearance_rate; ?></td>
+                            <td class="text-center d-none d-md-table-cell"><?= $number_sold; ?></td>
                             <td class="text-center">
                                 <button
                                     class="btn btn-sm btn-primary rounded-circle fw-bolder p-2 d-inline-flex justify-content-center"
@@ -629,35 +703,28 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-    const sections = document.querySelectorAll("section");
-    const navLinks = document.querySelectorAll(".nav-link");
-    const options = {
-        root: null, // viewport
-        rootMargin: "0px",
-        threshold: .1, // Adjust this value as needed
-    };
+// Progress bar
+function updateProgressBar() {
+    const progressBar = document.querySelector('.progress-bar');
+    const totalHeight = document.body.scrollHeight - window.innerHeight;
+    const progress = (window.pageYOffset / totalHeight) * 100;
+    progressBar.style.width = progress + '%';
+}
 
-    const observer = new IntersectionObserver(callback, options);
+updateProgressBar();
+window.addEventListener('scroll', updateProgressBar);
+window.addEventListener('resize', updateProgressBar);
 
-    function callback(entries, observer) {
-        entries.forEach((entry) => {
-            const sectionId = entry.target.getAttribute("id");
-            const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-            if (entry.isIntersecting) {
-                navLinks.forEach((link) => link.classList.remove("active"));
-                navLink.classList.add("active");
-            }
-        });
-    }
 
-    sections.forEach((section) => {
-        // if the ID contains the string 'section--', then observe it.
-        if (section.id.includes("section--")) {
-            observer.observe(section);
-        }
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
     });
-});
+}
+
+const scrollToTopElement = document.querySelector('.scroll-to-top');
+scrollToTopElement.addEventListener('click', scrollToTop);
 </script>
 
 <style>
@@ -669,10 +736,6 @@ nav.navbar {
     color: #000;
     text-decoration: none;
     padding: 15px;
-}
-
-.nav-link:hover {
-    text-decoration: underline;
 }
 
 .admin-bar .position-sticky.top-0 {

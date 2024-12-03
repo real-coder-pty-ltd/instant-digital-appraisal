@@ -20,7 +20,7 @@ function dsp_register_settings()
 
 // The admin page containing the form
 function dsp_add_settings()
-{ 
+{
     $settings = [
         'title' => 'Domain Suburb Profiles Settings',
         'description' => 'Here you can set all your settings for the Domain Suburb Profiles Plugin',
@@ -54,17 +54,17 @@ function dsp_add_settings()
                 'description' => 'This can be the same as the Autocomplete API key, but it will not work if you set access restrictions. It is HIGHLY recommended to create a separate key solely for use here. It only needs access to the Distance Matrix Endpoint. Do not restrict its access. Make sure to keep this safe, as it will allow for unrestricted acccess to the Distance Matrix API.',
                 'name' => 'dsp_google_maps_server_side_api_key',
                 'value' => get_option('dsp_google_maps_server_side_api_key'),
-            ]
-        ]
-    ]; 
-?>
+            ],
+        ],
+    ];
+    ?>
 
 <div class="wrap">
     <h1><?php echo $settings['title']; ?></h1>
     <p><?php echo $settings['description']; ?></p>
     <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
         <table class="form-table" role="presentation">
-            <?php foreach ( $settings['fields'] as $field ) : ?>
+            <?php foreach ($settings['fields'] as $field) { ?>
             <tr>
                 <th scope="row">
                     <label for="<?php echo $field['name']; ?>"><?php echo $field['title']; ?></label>
@@ -75,7 +75,16 @@ function dsp_add_settings()
                     <p class="description"><?php echo $field['description']; ?></p>
                 </td>
             </tr>
-            <?php endforeach; ?>
+            <?php } ?>
+            <tr>
+                <th scope="row">Enqueue Google Maps</th>
+                <td>
+                    <label for="dsp_enqueue_google_maps">
+                        <input name="dsp_enqueue_google_maps" type="checkbox" id="dsp_enqueue_google_maps"
+                            <?php echo (get_option('dsp_enqueue_google_maps')) ? 'checked="checked"' : ''; ?>>Output
+                        Google Map code on page.</label>
+                </td>
+            </tr>
         </table>
         <input type="hidden" name="action" value="process_form"> <br><br>
         <input type="submit" name="submit" id="submit" class="update-button button button-primary" value="Update">
@@ -88,18 +97,27 @@ add_action('admin_menu', 'dsp_register_settings');
 function dsp_submit_key()
 {
     $options = [
-        'domain_api_key', 
-        'dsp_google_maps_api_key', 
-        'dsp_google_maps_server_side_api_key', 
-        'dsp_client_id', 
-        'dsp_client_secret'
+        'domain_api_key',
+        'dsp_google_maps_api_key',
+        'dsp_google_maps_server_side_api_key',
+        'dsp_client_id',
+        'dsp_client_secret',
+        'dsp_enqueue_google_maps',
     ];
 
     foreach ($options as $option) {
-        if (isset($_POST[$option])) {
+        
+        if ( isset($_POST[$option])) {
             $value = sanitize_text_field($_POST[$option]);
             update_option($option, $value);
+            continue;
         }
+        
+        if ( ! $value) {
+            delete_option($option);
+            continue;
+        }
+        
     }
     wp_redirect($_SERVER['HTTP_REFERER']);
 }
