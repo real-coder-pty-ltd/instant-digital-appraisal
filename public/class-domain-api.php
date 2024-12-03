@@ -31,8 +31,11 @@ class Domain_API
 
     public $result;
 
+    public $isBot;
+
     public function __construct($endpoint, $params, $route = [], $version = 'v2')
     {
+        $this->isBot = $this->isBot();
 
         $this->api_url = 'https://api.domain.com.au/v2/';
         
@@ -64,10 +67,18 @@ class Domain_API
         $this->get();
     }
 
-    public function buildQuery($params) {}
-
-    public function get()
+    public function buildQuery($params)
     {
+
+    }
+
+    public function get(): self
+    {
+        if ( $this->isBot ) {
+            $this->data = 'WARNING: BOT DETECTED. ABORTING API REQUESTS!';
+            $this->result = false;
+            return $this;
+        }
 
         global $post;
         $this->post_id = $post->ID;
@@ -104,7 +115,7 @@ class Domain_API
         return $this;
     }
 
-    public function isCached()
+    public function isCached(): bool
     {
         $cached_data = get_post_meta($this->post_id, $this->data_key, true);
         $cached_timestamp = get_post_meta($this->post_id, $this->cache_key, true);
@@ -121,7 +132,7 @@ class Domain_API
     }
 
     // If the cache is older than 60 days, update the cache.
-    public function hasCacheExpired()
+    public function hasCacheExpired(): bool
     {
         if ($this->current_timestamp - $this->cached_timestamp > 5184000) {
             return true;
@@ -130,12 +141,41 @@ class Domain_API
         return false;
     }
 
-    public function updateData()
+    public function updateData(): void
     {
         update_post_meta($this->post_id, $this->data_key, $this->data);
         update_post_meta($this->post_id, $this->cache_key, $this->current_timestamp);
 
         $this->result = 'True, with updated data. Cache expired.';
+    }
 
+    public function isBot(): bool
+    {
+        $bots = [
+            'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider', 
+            'yandexbot', 'sogou', 'exabot', 'facebot', 'facebookexternalhit',
+            'twitterbot', 'linkedinbot', 'pinterestbot', 'whatsapp', 
+            'telegrambot', 'discordbot', 'mj12bot', 'ahrefsbot', 'semrushbot', 
+            'dotbot', 'screaming frog', 'sitebulb', 'seznambot', 'linkfluence',
+            'python-requests', 'php-curl-class', 'httpclient', 'curl', 'wget', 
+            'node-fetch', 'httpie', 'okhttp', 'uptimerobot', 'checkmk', 
+            'statuscake', 'zabbix', 'nagios', 'newrelicpinger', 'pingdom', 
+            'datadog', 'hubspot', 'wprobot', 'mail.ru', 'semrush', 'moz.com',
+            'crawler4j', 'linkchecker', 'petalbot', 'zoombot', 'guzzlehttp',
+            'java', 'postmanruntime', 'scrapy', 'axios', 'lighthouse',
+            'headlesschrome', 'phantomjs', 'puppeteer', 'selenium', 'baidu',
+            'openai', 'chatgpt', 'copilot', 'dataminr', 'scraperapi', 
+            'imrbot', 'zoominfo', 'serpstat', 'amazonaws', 'googlecloud', 
+            'azure', 'digitalocean', 'linode', 'cloudflare', 'gcp-crawlers', 
+            'ovh', 'kimsufi'
+        ];
+    
+        $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
+        foreach ($bots as $bot) {
+            if (strpos($user_agent, $bot) !== false) {
+                return true; // Bot detected
+            }
+        }
+        return false; // Not a bot
     }
 }
