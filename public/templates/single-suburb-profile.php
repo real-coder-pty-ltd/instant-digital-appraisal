@@ -65,6 +65,12 @@ $nearby_suburbs = get_posts([
     ],
 ]);
 
+// Get the travel distance and save the data as meta data on the post.
+$travel_distance = new DistanceCalculator();
+foreach ( $nearby_suburbs as $nearby_suburb ) {
+    $travel_distance->calculateAndSaveDistances(get_the_ID(), $nearby_suburb->ID);
+}
+
 $plugin_dir = plugin_dir_url(dirname(__FILE__));
 $image_dir =  $plugin_dir . 'images/';
 $template_dir = $plugin_dir . 'templates/';
@@ -244,7 +250,10 @@ $items = [
                         ?>
                         <option value="<?= get_the_title($nearby_suburb->ID); ?>"
                             data-lat="<?= esc_attr($drive_lat); ?>" data-long="<?= esc_attr($drive_long); ?>"
-                            data-drive-car="" data-drive-train="" data-drive-walking="" data-drive-bicycle=""
+                            data-drive-car="<?php echo $travel_distance->data[$nearby_suburb->ID]['driving']['duration']; ?>"
+                            data-drive-train="<?php echo $travel_distance->data[$nearby_suburb->ID]['transit']['duration']; ?>"
+                            data-drive-walking="<?php echo $travel_distance->data[$nearby_suburb->ID]['walking']['duration']; ?>"
+                            data-drive-bicycle="<?php echo $travel_distance->data[$nearby_suburb->ID]['bicycling']['duration']; ?>"
                             <?= $index === 0 ? 'selected' : ''; ?>>
                             <?= $drive_suburb . ', ' . $drive_state . ' ' . $drive_postcode ; ?>
                         </option>
@@ -253,7 +262,7 @@ $items = [
                 </div>
             </div>
         </div>
-        <div class="row my-5">
+        <div class=" row my-5">
             <?php foreach ($items as $item) { ?>
             <div class="col-6 col-md-3 mb-3 <?php echo $item['classes']; ?> px-md-2">
                 <div class="border border-1 border-dark rounded p-5 d-flex flex-column align-items-center">
@@ -618,77 +627,6 @@ document.addEventListener('DOMContentLoaded', function() {
         lat: <?= $lat; ?>,
         lng: <?= $long; ?>
     };
-
-
-    options.forEach(option => {
-        const lat = parseFloat(option.getAttribute('data-lat'));
-        const long = parseFloat(option.getAttribute('data-long'));
-        const destination = {
-            lat: lat,
-            lng: long
-        };
-        const service = new google.maps.DistanceMatrixService();
-
-        // Function to handle the response and set data attributes
-        function handleResponse(response, status, travelMode) {
-            if (status === 'OK') {
-                const element = response.rows[0].elements[0];
-                const duration = element.duration ? element.duration.text : 'N/A';
-                switch (travelMode) {
-                    case 'DRIVING':
-                        option.setAttribute('data-drive-car', duration);
-                        break;
-                    case 'TRANSIT':
-                        option.setAttribute('data-drive-train', duration);
-                        break;
-                    case 'WALKING':
-                        option.setAttribute('data-drive-walking', duration);
-                        break;
-                    case 'BICYCLING':
-                        option.setAttribute('data-drive-bicycle', duration);
-                        break;
-                }
-
-                updateDriveTimes();
-            }
-        }
-
-        // Request for driving
-        service.getDistanceMatrix({
-            origins: [origin],
-            destinations: [destination],
-            travelMode: 'DRIVING',
-        }, function(response, status) {
-            handleResponse(response, status, 'DRIVING');
-        });
-
-        // Request for transit
-        service.getDistanceMatrix({
-            origins: [origin],
-            destinations: [destination],
-            travelMode: 'TRANSIT',
-        }, function(response, status) {
-            handleResponse(response, status, 'TRANSIT');
-        });
-
-        // Request for walking
-        service.getDistanceMatrix({
-            origins: [origin],
-            destinations: [destination],
-            travelMode: 'WALKING',
-        }, function(response, status) {
-            handleResponse(response, status, 'WALKING');
-        });
-
-        // Request for bicycling
-        service.getDistanceMatrix({
-            origins: [origin],
-            destinations: [destination],
-            travelMode: 'BICYCLING',
-        }, function(response, status) {
-            handleResponse(response, status, 'BICYCLING');
-        });
-    });
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -740,13 +678,5 @@ nav.navbar {
 .admin-bar .position-sticky.top-0 {
     top: 32px !important;
 }
-
-/* .table> :not(caption)>*>* {
-    background-color: #f2f2f226 !important;
-}
-
-.table-striped>tbody>tr:nth-of-type(odd)>* {
-    --bs-table-bg-type: #ff75380a;
-} */
 </style>
 <?php

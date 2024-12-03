@@ -20,25 +20,65 @@ function dsp_register_settings()
 
 // The admin page containing the form
 function dsp_add_settings()
-{ ?>
+{ 
+    $settings = [
+        'title' => 'Domain Suburb Profiles Settings',
+        'description' => 'Here you can set all your settings for the Domain Suburb Profiles Plugin',
+        'fields' => [
+            [
+                'title' => 'Domain API Key',
+                'description' => 'Enter your Domain API key here.',
+                'name' => 'domain_api_key',
+                'value' => get_option('domain_api_key'),
+            ],
+            [
+                'title' => 'Client ID',
+                'description' => 'Enter your Domain Client ID here.',
+                'name' => 'dsp_client_id',
+                'value' => get_option('dsp_client_id'),
+            ],
+            [
+                'title' => 'Client Secret',
+                'description' => 'Enter your Domain Client Secret here.',
+                'name' => 'dsp_client_secret',
+                'value' => get_option('dsp_client_secret'),
+            ],
+            [
+                'title' => 'Google Maps Autocomplete API Key',
+                'description' => 'You\'ll need a Google Maps API key with Places enabled.',
+                'name' => 'dsp_google_maps_api_key',
+                'value' => get_option('dsp_google_maps_api_key'),
+            ],
+            [
+                'title' => 'Google Maps Server Side API key',
+                'description' => 'This can be the same as the Autocomplete API key, but it will not work if you set access restrictions. It is HIGHLY recommended to create a separate key solely for use here. It only needs access to the Distance Matrix Endpoint. Do not restrict its access. Make sure to keep this safe, as it will allow for unrestricted acccess to the Distance Matrix API.',
+                'name' => 'dsp_google_maps_server_side_api_key',
+                'value' => get_option('dsp_google_maps_server_side_api_key'),
+            ]
+        ]
+    ]; 
+?>
+
 <div class="wrap">
-    <div id="icon-tools" class="icon32"></div>
-    <h1>Domain Suburb Profiles Settings</h1>
-    <p>Here you can set all your settings for the Domain Suburb Profiles Plugin</p>
+    <h1><?php echo $settings['title']; ?></h1>
+    <p><?php echo $settings['description']; ?></p>
     <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="POST">
-        <h3>Domain API Key</h3>
-        <input type="text" name="domain_api_key" size="50" value="<?php echo get_option('domain_api_key'); ?>">
-        <h3>Client ID</h3>
-        <input type="text" name="dsp_client_id" size="50" value="<?php echo get_option('dsp_client_id'); ?>">
-        <h3>Client Secret</h3>
-        <input type="password" name="dsp_client_secret" size="50"
-            value="<?php echo get_option('dsp_client_secret'); ?>">
-        <h3>Google Maps Autocomplete API Key</h3>
-        <p>You'll need a Google Maps API key with Places enabled.</p>
-        <input type="password" name="dsp_google_maps_api_key" size="50"
-            value="<?php echo get_option('dsp_google_maps_api_key'); ?>">
+        <table class="form-table" role="presentation">
+            <?php foreach ( $settings['fields'] as $field ) : ?>
+            <tr>
+                <th scope="row">
+                    <label for="<?php echo $field['name']; ?>"><?php echo $field['title']; ?></label>
+                </th>
+                <td>
+                    <input type="text" name="<?php echo $field['name']; ?>" id="<?php echo $field['name']; ?>"
+                        value="<?php echo $field['value']; ?>" size="45">
+                    <p class="description"><?php echo $field['description']; ?></p>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
         <input type="hidden" name="action" value="process_form"> <br><br>
-        <input type="submit" name="submit" id="submit" class="update-button button button-primary" value="Update" />
+        <input type="submit" name="submit" id="submit" class="update-button button button-primary" value="Update">
     </form>
 </div>
 <?php
@@ -47,75 +87,21 @@ add_action('admin_menu', 'dsp_register_settings');
 
 function dsp_submit_key()
 {
-    if (isset($_POST['domain_api_key'])) {
+    $options = [
+        'domain_api_key', 
+        'dsp_google_maps_api_key', 
+        'dsp_google_maps_server_side_api_key', 
+        'dsp_client_id', 
+        'dsp_client_secret'
+    ];
 
-        $api_key = sanitize_text_field($_POST['domain_api_key']);
-        $api_exists = get_option('domain_api_key');
-
-        if (! empty($api_key) && ! empty($api_exists)) {
-
-            update_option('domain_api_key', $api_key);
-
-        } else {
-
-            add_option('domain_api_key', $api_key);
-
+    foreach ($options as $option) {
+        if (isset($_POST[$option])) {
+            $value = sanitize_text_field($_POST[$option]);
+            update_option($option, $value);
         }
-
     }
-    if (isset($_POST['dsp_client_id'])) {
-
-        $api_key = sanitize_text_field($_POST['dsp_client_id']);
-        $api_exists = get_option('dsp_client_id');
-
-        if (! empty($api_key) && ! empty($api_exists)) {
-
-            update_option('dsp_client_id', $api_key);
-
-        } else {
-
-            add_option('dsp_client_id', $api_key);
-
-        }
-
-    }
-
-    if (isset($_POST['dsp_client_secret'])) {
-
-        $api_key = sanitize_text_field($_POST['dsp_client_secret']);
-        $api_exists = get_option('dsp_client_secret');
-
-        if (! empty($api_key) && ! empty($api_exists)) {
-
-            update_option('dsp_client_secret', $api_key);
-
-        } else {
-
-            add_option('dsp_client_secret', $api_key);
-
-        }
-
-    }
-
-    if (isset($_POST['dsp_google_maps_api_key'])) {
-
-        $google_maps_api_key = sanitize_text_field($_POST['dsp_google_maps_api_key']);
-        $google_maps_api_exists = get_option('dsp_google_maps_api_key');
-
-        if (! empty($google_maps_api_exists) && ! empty($google_maps_api_exists)) {
-
-            update_option('dsp_google_maps_api_key', $google_maps_api_key);
-
-        } else {
-
-            add_option('dsp_google_maps_api_key', $google_maps_api_key);
-
-        }
-
-    }
-
     wp_redirect($_SERVER['HTTP_REFERER']);
-
 }
 
 add_action('admin_post_nopriv_process_form', 'dsp_submit_key');
@@ -133,7 +119,8 @@ add_action('location_add_form_fields', 'add_custom_fields_to_location_taxonomy')
 // Add fields to the "Edit" taxonomy form
 add_action('location_edit_form_fields', 'edit_custom_fields_in_location_taxonomy', 10, 2);
 
-function add_custom_fields_to_location_taxonomy($taxonomy) {
+function add_custom_fields_to_location_taxonomy($taxonomy)
+{
     ?>
 <div class="form-field">
     <label for="postcode">Postcode</label>
@@ -148,7 +135,8 @@ function add_custom_fields_to_location_taxonomy($taxonomy) {
 <?php
 }
 
-function edit_custom_fields_in_location_taxonomy($term, $taxonomy) {
+function edit_custom_fields_in_location_taxonomy($term, $taxonomy)
+{
     // Get existing values for the fields
     $postcode = get_term_meta($term->term_id, 'postcode', true);
     $state = get_term_meta($term->term_id, 'state', true);
@@ -173,7 +161,8 @@ function edit_custom_fields_in_location_taxonomy($term, $taxonomy) {
 add_action('created_location', 'save_custom_fields_for_location_taxonomy');
 add_action('edited_location', 'save_custom_fields_for_location_taxonomy');
 
-function save_custom_fields_for_location_taxonomy($term_id) {
+function save_custom_fields_for_location_taxonomy($term_id)
+{
     // Save 'postcode'
     if (isset($_POST['postcode'])) {
         update_term_meta($term_id, 'postcode', sanitize_text_field($_POST['postcode']));
@@ -188,28 +177,34 @@ function save_custom_fields_for_location_taxonomy($term_id) {
 add_filter('manage_edit-location_columns', 'add_custom_columns_to_location_taxonomy');
 add_filter('manage_location_custom_column', 'populate_custom_columns_in_location_taxonomy', 10, 3);
 
-function add_custom_columns_to_location_taxonomy($columns) {
+function add_custom_columns_to_location_taxonomy($columns)
+{
     $columns['postcode'] = 'Postcode';
     $columns['state'] = 'State';
+
     return $columns;
 }
 
-function populate_custom_columns_in_location_taxonomy($content, $column_name, $term_id) {
+function populate_custom_columns_in_location_taxonomy($content, $column_name, $term_id)
+{
     if ($column_name === 'postcode') {
         $content = get_term_meta($term_id, 'postcode', true);
     } elseif ($column_name === 'state') {
         $content = get_term_meta($term_id, 'state', true);
     }
+
     return $content;
 }
 
 // Remove the 'Description' column from the taxonomy edit screen
 add_filter('manage_edit-location_columns', 'remove_description_column_from_location');
 
-function remove_description_column_from_location($columns) {
+function remove_description_column_from_location($columns)
+{
     // Unset the 'Description' column
     if (isset($columns['description'])) {
         unset($columns['description']);
     }
+
     return $columns;
 }
