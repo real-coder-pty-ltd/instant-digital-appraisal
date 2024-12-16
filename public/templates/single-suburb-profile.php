@@ -49,8 +49,6 @@ foreach ($surrounding_suburbs as $s_suburb) {
     }
 }
 
-$suburb_region = get_post_meta(get_the_ID(), 'rc_sa1_name', true);
-
 $nearby_suburbs = get_posts([
     'post_type' => 'suburb-profile',
     'posts_per_page' => -1,

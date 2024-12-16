@@ -34,6 +34,8 @@ if (defined('WP_CLI') && WP_CLI) {
             ],
         ],
     ]);
+    // Register the command "wp boundary fetch"
+    WP_CLI::add_command('boundary fetch', 'boundary_fetch_command');
 }
 
 function update_locations_command($args, $assoc_args)
@@ -315,4 +317,54 @@ function delete_suburb_profiles_command($args, $assoc_args)
     $progress_bar->finish();
 
     WP_CLI::success("Deleted {$total_posts} suburb-profile posts.");
+}
+
+/**
+ * Fetch boundary data for a given post.
+ *
+ * ## OPTIONS
+ *
+ * <post_id>
+ * : The ID of the post to update.
+ *
+ * [--suburb=<suburb>]
+ * : The suburb name (required if not set as post meta).
+ *
+ * [--state=<state>]
+ * : The state name. Defaults to "Queensland".
+
+ * ## EXAMPLES
+ *
+ *     wp boundary fetch 123 --suburb="Adelaide"
+ */
+function boundary_fetch_command($args, $assoc_args)
+{
+    [$post_id] = $args;
+
+    if (! get_post($post_id)) {
+        WP_CLI::error("Post ID {$post_id} does not exist.");
+    }
+
+    $suburb = isset($assoc_args['suburb']) ? $assoc_args['suburb'] : get_post_meta($post_id, 'suburb', true);
+    $state = isset($assoc_args['state']) ? $assoc_args['state'] : '';
+
+    if ( $state === '' ) {
+        $state = get_post_meta($post_id, 'rc_state', true);
+    }
+
+    if ( $state === '' ) {
+        $state = 'Queensland';
+    }
+
+    if (! $suburb) {
+        WP_CLI::error("A suburb must be provided either as --suburb argument or as 'suburb' post meta.");
+    }
+
+    $bf = new Boundary_Fetcher($suburb, $state, 'Australia', $post_id);
+
+    if ($bf->is_error) {
+        WP_CLI::error('Error fetching boundary data. Check post meta or logs for more info.');
+    } else {
+        WP_CLI::success("Boundary data fetched and saved for post #$post_id.");
+    }
 }

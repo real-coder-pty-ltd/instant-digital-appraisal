@@ -599,3 +599,10 @@ h1 span.suburb-details {
 .z-2 {
    z-index: 2;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+   .dsp-results {
+      max-height: 100%;
+   }
+}
