@@ -105,11 +105,11 @@ $items = [
     <div class="row position-relative z-1 py-2 my-2 py-md-5 my-md-5">
         <div class="col-sm-10 offset-sm-1 text-light pt-5 pb-0 pb-md-3">
             <div class="text-center mb-0 mb-md-4 py-2 py-md-5">
-                <h2 class="dsp-hero__title text-center mb-0 display-2 fs-3 fs-md-1 py-1 py-md-3">
+                <h1 class="dsp-hero__title text-center mb-0 display-2 fs-3 fs-md-1 py-1 py-md-3">
                     Real Estate Agents
                     <span><?= $suburb_label . '</span><br><span class="text-white" style="letter-spacing: 1px; font-size: 30px;">' . $state . ' ' . $postcode; ?></span>
                     </sm>
-                </h2>
+                </h1>
             </div>
         </div>
     </div>
