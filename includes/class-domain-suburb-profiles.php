@@ -14,11 +14,7 @@ class Domain_Suburb_Profiles
 
     public function __construct()
     {
-        if (defined('DOMAIN_SUBURB_PROFILES_VERSION')) {
-            $this->version = DOMAIN_SUBURB_PROFILES_VERSION;
-        } else {
-            $this->version = '0.2.0';
-        }
+        $this->version = RC_IDA_VERSION;
         $this->plugin_name = 'domain-suburb-profiles';
 
         $this->load_dependencies();
