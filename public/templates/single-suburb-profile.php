@@ -25,16 +25,15 @@ $postcode = get_post_meta(get_the_ID(), 'rc_postcode', true);
 
 $lat = get_post_meta(get_the_ID(), 'rc_lat', true);
 $long = get_post_meta(get_the_ID(), 'rc_long', true);
-$boundary = get_post_meta(get_the_ID(), 'rc_boundary', true);
-$center = get_post_meta(get_the_ID(), 'rc_center', true);
 
 if ( ! $lat || ! $long ) {
     $boundary_fetcher = new Boundary_Fetcher($suburb, $state, 'Australia', get_the_ID());
-    
     $lat = $boundary_fetcher->getLat();
     $long = $boundary_fetcher->getLong();
-
 }
+
+$boundary = get_post_meta(get_the_ID(), 'rc_boundary', true);
+$center = get_post_meta(get_the_ID(), 'rc_center', true);
 
 $suburb_label = ucwords(strtolower($suburb));
 
