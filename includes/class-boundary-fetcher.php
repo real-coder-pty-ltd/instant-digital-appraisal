@@ -1,7 +1,7 @@
 <?php
+
 /**
  * Class Boundary Fetcher
- * 
  */
 // Exit if accessed directly.
 if (! defined('ABSPATH')) {
@@ -33,9 +33,7 @@ class Boundary_Fetcher
         $this->country = $country;
         $this->state = $state;
         $this->suburb = $suburb;
-
         $this->post_id = $post_id;
-
         $this->fetchBoundaryData();
 
         return $this;
@@ -43,7 +41,7 @@ class Boundary_Fetcher
 
     public function getLat()
     {
-        if ( $this->data[0]['bounds']['minlat'] === null || $this->data[0]['bounds']['maxlat'] === null ) {
+        if ($this->data[0]['bounds']['minlat'] === null || $this->data[0]['bounds']['maxlat'] === null) {
             return null;
         }
 
@@ -57,7 +55,7 @@ class Boundary_Fetcher
 
     public function getLong()
     {
-        if ( $this->data[0]['bounds']['minlon'] === null || $this->data[0]['bounds']['maxlon'] === null ) {
+        if ($this->data[0]['bounds']['minlon'] === null || $this->data[0]['bounds']['maxlon'] === null) {
             return null;
         }
 
@@ -94,6 +92,10 @@ class Boundary_Fetcher
                 'error' => true,
                 'message' => 'Country, state, and suburb must be set before fetching data.',
             ];
+        }
+
+        if (strlen($this->state) < 3) {
+            $this->state = dsp_get_full_state_name($this->state);
         }
 
         $query = <<<EOT
@@ -154,24 +156,48 @@ EOT;
 
         $stitchedPolygon = array_shift($segments);
 
+        $maxIterations = 1000;
+        $iterationCount = 0;
+
         while (! empty($segments)) {
+            if ($iterationCount++ >= $maxIterations) {
+                error_log('Class Boundary_Fetcher: stitchPolygons() | Max iterations reached, possible infinite loop.');
+                return;
+            }
+
             $lastPoint = end($stitchedPolygon);
+            $previousPolygon = $stitchedPolygon;
+            $segmentWasMatched = false; // Track if a segment was successfully stitched
 
             foreach ($segments as $key => $segment) {
                 $firstPoint = $segment[0];
                 $lastSegmentPoint = end($segment);
 
                 if ($lastPoint === $firstPoint) {
-
                     $stitchedPolygon = array_merge($stitchedPolygon, array_slice($segment, 1));
                     unset($segments[$key]);
+                    $segmentWasMatched = true;
                     break;
                 } elseif ($lastPoint === $lastSegmentPoint) {
-
                     $stitchedPolygon = array_merge($stitchedPolygon, array_slice(array_reverse($segment), 1));
                     unset($segments[$key]);
+                    $segmentWasMatched = true;
                     break;
                 }
+            }
+
+            if (! $segmentWasMatched) {
+                error_log('Class Boundary_Fetcher: stitchPolygons() | No matching segment found, possible infinite loop.');
+                update_post_meta($post_id, 'rc_boundary', json_encode($stitchedPolygon));
+
+                return;
+            }
+
+            if ($stitchedPolygon === $previousPolygon) {
+                error_log('Class Boundary_Fetcher: stitchPolygons() | Stitched polygon is not changing, possible infinite loop.');
+                update_post_meta($post_id, 'rc_boundary', json_encode($stitchedPolygon));
+
+                return;
             }
         }
 

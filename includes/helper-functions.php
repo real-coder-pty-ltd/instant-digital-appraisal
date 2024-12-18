@@ -150,3 +150,26 @@ function dsp_nice_number($n)
 
     return number_format($n);
 }
+
+function create_api_usage_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'google_distance_api_usage';
+
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        total_calls BIGINT(20) UNSIGNED DEFAULT 0,
+        successful_responses BIGINT(20) UNSIGNED DEFAULT 0,
+        last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+
+    // Insert initial row
+    $wpdb->insert($table_name, [
+        'total_calls' => 0,
+        'successful_responses' => 0,
+    ]);
+}

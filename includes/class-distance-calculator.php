@@ -24,7 +24,7 @@ class DistanceCalculator
         if ($distanceData) {
             $this->data[$destination_id] = $distanceData;
             $this->meta_key = $destination_id.'_distance_data';
-            $this->messages[$destination_id] = 'Data already exists. API request was skipped.';
+            $this->messages[$destination_id] = 'Destination Data already exists for Origin ' . $origin_id . ' to ' . $destination_id . '. API request was skipped.';
             return $this->messages;
         }
 
@@ -74,6 +74,13 @@ class DistanceCalculator
      */
     private function getDistanceData(string $origin, string $destination, string $mode): array|WP_Error
     {
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'google_distance_api_usage';
+    
+        // Log API call
+        $wpdb->query("UPDATE $table_name SET total_calls = total_calls + 1");
+
         $url = add_query_arg([
             'origins'      => $origin,
             'destinations' => $destination,
@@ -99,6 +106,9 @@ class DistanceCalculator
         if ($element['status'] !== 'OK') {
             return new WP_Error('api_error', 'Element returned an error: ' . $element['status']);
         }
+
+        // If successful, log the successful response
+        $wpdb->query("UPDATE $table_name SET successful_responses = successful_responses + 1");
 
         return [
             'distance' => $element['distance']['text'],

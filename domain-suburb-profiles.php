@@ -34,6 +34,7 @@ function deactivate_domain_suburb_profiles()
 
 register_activation_hook(__FILE__, 'activate_domain_suburb_profiles');
 register_deactivation_hook(__FILE__, 'deactivate_domain_suburb_profiles');
+register_activation_hook(__FILE__, 'create_api_usage_table');
 
 require plugin_dir_path(__FILE__).'includes/class-domain-suburb-profiles.php';
 require plugin_dir_path(__FILE__).'includes/class-boundary-fetcher.php';

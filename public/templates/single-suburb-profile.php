@@ -6,7 +6,7 @@
 // Exit if accessed directly.
 defined('ABSPATH') || exit;
 
-// Assets
+$post_id = get_the_ID();
 $featured_image = get_the_post_thumbnail_url(get_the_ID(), 'full', ['class' => 'w-100', 'style' => 'max-height: 650px; object-fit: cover;']);
 
 // Fallback image
@@ -19,15 +19,24 @@ if ( ! $thumnail_url ) {
     $thumnail_url = $image_dir . 'classic.webp';
 }
 
-// Address Details
 $suburb = get_post_meta(get_the_ID(), 'rc_suburb', true);
-$suburb_label = ucwords(strtolower(get_post_meta(get_the_ID(), 'rc_suburb', true)));
 $state = get_post_meta(get_the_ID(), 'rc_state', true);
 $postcode = get_post_meta(get_the_ID(), 'rc_postcode', true);
+
 $lat = get_post_meta(get_the_ID(), 'rc_lat', true);
 $long = get_post_meta(get_the_ID(), 'rc_long', true);
 $boundary = get_post_meta(get_the_ID(), 'rc_boundary', true);
 $center = get_post_meta(get_the_ID(), 'rc_center', true);
+
+if ( ! $lat || ! $long ) {
+    $boundary_fetcher = new Boundary_Fetcher($suburb, $state, 'Australia', get_the_ID());
+    
+    $lat = $boundary_fetcher->getLat();
+    $long = $boundary_fetcher->getLong();
+
+}
+
+$suburb_label = ucwords(strtolower($suburb));
 
 $suburb_id = dsp_domain_get_suburb_id($suburb, $state, $postcode);
 $location_profile = dsp_domain_get_location_profile($suburb_id);
@@ -714,15 +723,15 @@ window.addEventListener('scroll', updateProgressBar);
 window.addEventListener('resize', updateProgressBar);
 
 
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
+// function scrollToTop() {
+//     window.scrollTo({
+//         top: 0,
+//         behavior: 'smooth'
+//     });
+// }
 
-const scrollToTopElement = document.querySelector('.scroll-to-top');
-scrollToTopElement.addEventListener('click', scrollToTop);
+// const scrollToTopElement = document.querySelector('.scroll-to-top');
+// scrollToTopElement.addEventListener('click', scrollToTop);
 </script>
 
 <style>

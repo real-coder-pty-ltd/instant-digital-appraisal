@@ -226,3 +226,39 @@ function remove_description_column_from_location($columns)
 
     return $columns;
 }
+
+add_action('admin_menu', 'register_api_usage_menu');
+
+function register_api_usage_menu() {
+    add_menu_page(
+        'API Usage Stats', 
+        'API Usage', 
+        'manage_options', 
+        'api-usage-stats', 
+        'display_api_usage_stats', 
+        'dashicons-chart-line', 
+        26
+    );
+}
+
+function display_api_usage_stats() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'google_distance_api_usage';
+    $usage = $wpdb->get_row("SELECT total_calls, successful_responses, last_updated FROM $table_name");
+
+    if ($usage) {
+        echo '<h1>Google Distance Matrix API Usage</h1>';
+        echo '<table class="wp-list-table widefat fixed striped">';
+        echo '<thead>';
+        echo '<tr><th>Metric</th><th>Value</th></tr>';
+        echo '</thead>';
+        echo '<tbody>';
+        echo '<tr><td>Total Calls</td><td>' . esc_html($usage->total_calls) . '</td></tr>';
+        echo '<tr><td>Successful Responses</td><td>' . esc_html($usage->successful_responses) . '</td></tr>';
+        echo '<tr><td>Last Updated</td><td>' . esc_html($usage->last_updated) . '</td></tr>';
+        echo '</tbody>';
+        echo '</table>';
+    } else {
+        echo '<p>No data available yet.</p>';
+    }
+}
