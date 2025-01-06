@@ -48,6 +48,32 @@ $single_percentage = round(($location_profile['data']['singlePercentage'] ?? 0) 
 $married_percentage = round(($location_profile['data']['marriedPercentage'] ?? 0) * 100);
 $property_categories = $location_profile['data']['propertyCategories'] ?? '';
 
+function output_suburb_or_postcode($text, $suburb_label, $postcode) {
+    if (strpos($text, '{suburb}') !== false) {
+        $text = str_replace('{suburb}', $suburb_label, $text);
+    }
+    if (strpos($text, '{postcode}') !== false) {
+        $text = str_replace('{postcode}', $postcode, $text);
+    }
+    return $text;
+}
+
+$def_suburb_description =  'Showcasing a prominent local presence in ' . $suburb_label . ' 
+                            and a team illustrating rich and accumulative experience, ' . get_bloginfo('name') . ' 
+                            offers an unrivalled calibre of personal attention. Established with a focus on delivering a personal 
+                            and customised service, our commitment to honesty, integrity and professionalism is reflected in our 
+                            strong sales history and industry reputation in ' . $suburb_label . ' and surrounding suburbs.';
+$dsp_suburb_description = get_option('dsp_suburb_description') ? output_suburb_or_postcode(get_option('dsp_suburb_description'), $suburb_label, $postcode) : $def_suburb_description;
+
+$def_suburb_about_heading = 'About ' . get_bloginfo('name');
+$dsp_suburb_about_heading = get_option('dsp_suburb_about_heading') ? output_suburb_or_postcode(get_option('dsp_suburb_about_heading'), $suburb_label, $postcode) : $def_suburb_about_heading;
+
+$def_demographics_description = 'A little bit about who lives locally, as provided by government census data.';
+$dsp_demographics_description = get_option('dsp_demographics_description') ? output_suburb_or_postcode(get_option('dsp_demographics_description'), $suburb_label, $postcode) : $def_demographics_description;
+
+$def_market_trends_description = 'View median property prices in ' . $suburb_label . ' to get a better understanding of local market trends.';
+$dsp_market_trends_description = get_option('dsp_market_trends_description') ? output_suburb_or_postcode(get_option('dsp_market_trends_description'), $suburb_label, $postcode) : $def_market_trends_description;
+
 $surrounding_suburbs = $location_profile['surroundingSuburbs'] ?? '';
 
 $surrounding_suburbs_list = [];
@@ -114,7 +140,6 @@ $items = [
         <div class="col-sm-10 offset-sm-1 text-light pt-5 pb-0 pb-md-3">
             <div class="text-center mb-0 mb-md-4 py-2 py-md-5">
                 <h1 class="dsp-hero__title text-center mb-0 display-2 fs-3 fs-md-1 py-1 py-md-3">
-                    Real Estate Agents
                     <span><?= $suburb_label . '</span><br><span class="text-white" style="letter-spacing: 1px; font-size: 30px;">' . $state . ' ' . $postcode; ?></span>
                     </sm>
                 </h1>
@@ -231,17 +256,12 @@ body {
     <div class="container">
         <div class="row">
             <div class="col">
-                <h2 class="dsp-about__title">About <?= get_bloginfo('name'); ?></h2>
+                <h2 class="dsp-about__title"><?= $dsp_suburb_about_heading; ?></h2>
                 <div class="dsp-about__content">
                     <?php if (get_the_content()) : ?>
-                    <?= get_the_content(); ?>
+                        <?= get_the_content(); ?>
                     <?php else: ?>
-                    <p class="mb-0">Showcasing a prominent local presence in <?= $suburb_label; ?> and a team
-                        illustrating rich
-                        and accumulative experience, <?= get_bloginfo('name'); ?> offers an unrivalled calibre of
-                        personal attention. Established with a focus on delivering a personal and customised service,
-                        our commitment to honesty, integrity and professionalism is reflected in our strong sales
-                        history and industry reputation in <?= $suburb_label; ?> and surrounding suburbs.</p>
+                        <p class="mb-0"><?= $dsp_suburb_description; ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -263,7 +283,7 @@ body {
             <div class="col">
                 <h2 class="dsp-demographics__title">Demographics</h2>
                 <div class="dsp-demographics__content">
-                    <p>A little bit about who lives locally, as provided by government census data.</p>
+                    <p><?= $dsp_demographics_description; ?></p>
                 </div>
             </div>
         </div>
@@ -387,9 +407,7 @@ body {
             <div class="col">
                 <h2 class="dsp-market-trends__title">Market Trends</h2>
                 <div class="dsp-market-trends__content">
-                    <p>View median property prices in <?= $suburb_label; ?> to get a better understanding of local
-                        market
-                        trends.</p>
+                    <p><?= $dsp_market_trends_description; ?></p>
                 </div>
             </div>
         </div>

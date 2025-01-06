@@ -55,6 +55,30 @@ function dsp_add_settings()
                 'name' => 'dsp_google_maps_server_side_api_key',
                 'value' => get_option('dsp_google_maps_server_side_api_key'),
             ],
+            [
+                'title' => 'Suburb About Heading',
+                'description' => 'Override the default heading for the suburb profile pages. Use {suburb} and {postcode} to insert suburb name and postcode.',
+                'name' => 'dsp_suburb_about_heading',
+                'value' => get_option('dsp_suburb_about_heading'),
+            ],
+            [
+                'title' => 'Suburb Description',
+                'description' => 'Override the default suburb description for the suburb profile pages. Use {suburb} and {postcode} to insert suburb name and postcode.',
+                'name' => 'dsp_suburb_description',
+                'value' => get_option('dsp_suburb_description'),
+            ],
+            [
+                'title' => 'Demographics Description',
+                'description' => 'Override the default demographics description for the suburb profile pages. Use {suburb} and {postcode} to insert suburb name and postcode.',
+                'name' => 'dsp_demographics_description',
+                'value' => get_option('dsp_demographics_description'),
+            ],
+            [
+                'title' => 'Market Trends Description',
+                'description' => 'Override the default market trends description for the suburb profile pages. Use {suburb} and {postcode} to insert suburb name and postcode.',
+                'name' => 'dsp_market_trends_description',
+                'value' => get_option('dsp_market_trends_description'),
+            ],
         ],
     ];
     ?>
@@ -70,8 +94,19 @@ function dsp_add_settings()
                     <label for="<?php echo $field['name']; ?>"><?php echo $field['title']; ?></label>
                 </th>
                 <td>
-                    <input type="text" name="<?php echo $field['name']; ?>" id="<?php echo $field['name']; ?>"
-                        value="<?php echo $field['value']; ?>" size="45">
+                    <?php
+                        $textarea_fields = [
+                            'dsp_suburb_description',
+                            'dsp_demographics_description',
+                            'dsp_market_trends_description'
+                        ];
+                    ?>
+                    <?php if (in_array($field['name'], $textarea_fields)): ?>
+                        <textarea name="<?php echo $field['name']; ?>" id="<?php echo $field['name']; ?>" rows="4" cols="50"><?php echo $field['value']; ?></textarea>
+                    <?php else: ?>
+                        <input type="text" name="<?php echo $field['name']; ?>" id="<?php echo $field['name']; ?>"
+                            value="<?php echo $field['value']; ?>" size="45">
+                    <?php endif; ?>
                     <p class="description"><?php echo $field['description']; ?></p>
                 </td>
             </tr>
@@ -103,6 +138,10 @@ function dsp_submit_key()
         'dsp_client_id',
         'dsp_client_secret',
         'dsp_enqueue_google_maps',
+        'dsp_suburb_about_heading',
+        'dsp_suburb_description',
+        'dsp_demographics_description',
+        'dsp_market_trends_description',
     ];
 
     foreach ($options as $option) {
