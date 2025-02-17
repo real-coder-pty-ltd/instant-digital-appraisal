@@ -74,11 +74,6 @@ class Domain_API
 
     public function get(): self
     {
-        if ( $this->isBot ) {
-            $this->data = 'WARNING: BOT DETECTED. ABORTING API REQUESTS!';
-            $this->result = false;
-            return $this;
-        }
 
         global $post;
         $this->post_id = $post->ID;
@@ -87,8 +82,8 @@ class Domain_API
             $this->result = 'False, no post ID. Please run the code on a single post or page.';
         }
         
-        if ($this->isCached()) {
-            if (! $this->hasCacheExpired()) {
+        if ( $this->isCached() ) {
+            if ($this->isBot || $this->hasCacheExpired()) {
                 return $this;
             }
         }
