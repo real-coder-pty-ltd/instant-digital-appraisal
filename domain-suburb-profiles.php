@@ -4,7 +4,7 @@
  * Plugin Name:       Domain Suburb Profiles
  * Plugin URI:        https://realcoder.com.au
  * Description:       Create Suburb Profiles from Domain API.
- * Version:           0.2.21
+ * Version:           1.0.1
  * Author:            Matthew Neal
  * Author URI:        https://realcoder.com.au
  * License:           GPL-2.0+
@@ -18,7 +18,7 @@ if (! defined('WPINC')) {
     exit;
 }
 
-define('RC_IDA_VERSION', '0.2.1');
+define('RC_IDA_VERSION', '1.0.1');
 
 function activate_domain_suburb_profiles()
 {
