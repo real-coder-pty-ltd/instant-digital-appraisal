@@ -350,10 +350,10 @@ body {
                         ?>
                         <option value="<?= get_the_title($nearby_suburb->ID); ?>"
                             data-lat="<?= esc_attr($drive_lat); ?>" data-long="<?= esc_attr($drive_long); ?>"
-                            data-drive-car="<?php echo isset($travel_distance->data[$nearby_suburb->ID]['driving']['duration']) ? esc_attr($travel_distance->data[$nearby_suburb->ID]['driving']['duration']) : ''; ?>"
-                            data-drive-train="<?php echo isset($travel_distance->data[$nearby_suburb->ID]['transit']['duration']) ? esc_attr($travel_distance->data[$nearby_suburb->ID]['transit']['duration']) : ''; ?>"
-                            data-drive-walking="<?php echo isset($travel_distance->data[$nearby_suburb->ID]['walking']['duration']) ? esc_attr($travel_distance->data[$nearby_suburb->ID]['walking']['duration']) : ''; ?>"
-                            data-drive-bicycle="<?php echo isset($travel_distance->data[$nearby_suburb->ID]['bicycling']['duration']) ? esc_attr($travel_distance->data[$nearby_suburb->ID]['bicycling']['duration']) : ''; ?>"
+                            data-drive-car="<?php echo $travel_distance->data[$nearby_suburb->ID]['driving']['duration']; ?>"
+                            data-drive-train="<?php echo $travel_distance->data[$nearby_suburb->ID]['transit']['duration']; ?>"
+                            data-drive-walking="<?php echo $travel_distance->data[$nearby_suburb->ID]['walking']['duration']; ?>"
+                            data-drive-bicycle="<?php echo $travel_distance->data[$nearby_suburb->ID]['bicycling']['duration']; ?>"
                             <?= $index === 0 ? 'selected' : ''; ?>>
                             <?= $drive_suburb . ', ' . $drive_state . ' ' . $drive_postcode ; ?>
                         </option>
