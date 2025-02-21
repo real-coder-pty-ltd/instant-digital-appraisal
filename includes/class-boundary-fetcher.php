@@ -41,29 +41,29 @@ class Boundary_Fetcher
 
     public function getLat()
     {
-        if (empty($this->data) || !isset($this->data[0]['bounds']['minlat']) || !isset($this->data[0]['bounds']['maxlat'])) {
+        if ($this->data[0]['bounds']['minlat'] === null || $this->data[0]['bounds']['maxlat'] === null) {
             return null;
         }
-    
+
         $lat = ($this->data[0]['bounds']['minlat'] + $this->data[0]['bounds']['maxlat']) / 2;
         if ($lat) {
             return $lat;
         }
-    
+
         return null;
     }
-    
+
     public function getLong()
     {
-        if (empty($this->data) || !isset($this->data[0]['bounds']['minlon']) || !isset($this->data[0]['bounds']['maxlon'])) {
+        if ($this->data[0]['bounds']['minlon'] === null || $this->data[0]['bounds']['maxlon'] === null) {
             return null;
         }
-    
+
         $long = ($this->data[0]['bounds']['minlon'] + $this->data[0]['bounds']['maxlon']) / 2;
         if ($long) {
             return $long;
         }
-    
+
         return null;
     }
 
