@@ -10,6 +10,7 @@ class DistanceCalculator
 
     public function __construct()
     {
+        $this->data = [];
         $this->apiKey = get_option('dsp_google_maps_server_side_api_key');
 
         if ( ! $this->apiKey) {
