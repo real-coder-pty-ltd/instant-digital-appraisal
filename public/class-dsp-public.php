@@ -33,5 +33,10 @@ class DSP_Public
         if ($enqueue_google_maps) {
             wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key='.get_option('dsp_google_maps_api_key').'&amp;libraries=places', [], $this->version, false);
         }
+
+        wp_enqueue_script('domain-ajax', plugin_dir_url(__FILE__).'js/dpp-domain-ajax.js', ['jquery'], null, true);
+        wp_localize_script('domain-ajax', 'domain_ajax_obj', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+        ]);
     }
 }

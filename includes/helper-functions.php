@@ -7,7 +7,8 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-function dsp_domain_get_suburb_id($suburb, $state, $postcode) {
+function dsp_domain_get_suburb_id($suburb, $state, $postcode) 
+{
     $suburb_id = null;
     $id = new Domain_API(
         'addressLocators',
@@ -32,6 +33,46 @@ function dsp_domain_get_suburb_id($suburb, $state, $postcode) {
         return $suburb_id;
     } else {
         return 0;
+    }
+}
+
+function dsp_domain_get_suburb_demographics($suburb, $state, $postcode) 
+{
+    $demographics = new Domain_API(
+        'demographics',
+        [
+            'types' => 'Rent,HouseholdIncome,DwellingStructure,NatureOfOccupancy,TransportToWork,Occupation,',
+        ], 
+        [ $state, $suburb, $postcode ],
+        'v2'
+    );
+
+    if ($demographics !== null) {
+        return $demographics;
+    } else {
+        return null;
+    }
+}
+
+function dsp_domain_get_suburb_performance_statistics($suburb, $state, $postcode, $category) 
+{
+    $statistics = new Domain_API(
+        'suburbPerformanceStatistics',
+        [
+            'propertyCategory' => $category,
+            'bedrooms' => '3',
+            'periodSize' => 'years',
+            'startingPeriodRelativeToCurrent' => '1',
+            'totalPeriods' => '10',
+        ], 
+        [ $state, $suburb, $postcode ],
+        'v2'
+    );
+
+    if ($statistics !== null) {
+        return $statistics;
+    } else {
+        return null;
     }
 }
 
@@ -172,4 +213,149 @@ function create_api_usage_table() {
         'total_calls' => 0,
         'successful_responses' => 0,
     ]);
+}
+
+function dpp_domain_get_property_suggest($query)
+{
+    $api_url = 'https://api.domain.com.au/v1/properties/_suggest';
+    $api_key = get_option('domain_api_key');
+
+    $response = wp_remote_get($api_url, [
+        'headers' => [
+            'accept' => 'application/json',
+            'X-Api-Key' => $api_key,
+        ],
+        'body' => [
+            'terms' => $query,
+            'channel' => 'All',
+            'pageSize'=> 5,
+        ],
+    ]);
+
+    if (is_wp_error($response)) {
+        return false;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return false;
+    }
+
+    return $data; 
+}
+
+function dpp_domain_get_property_profile($property_id)
+{
+    // $property_profile = null;
+    // $profile = new Domain_API(
+    //     'properties',
+    //     ['' => ''],
+    //     [$property_id], 
+    //     'v1'
+    // );
+
+    // if ($profile  !== null) {
+    //     $property_profile = $profile->data;
+    // } else {
+    //     return null;
+    // }
+
+
+    $api_url = 'https://api.domain.com.au/v1/properties/' . $property_id;
+    $api_key = get_option('domain_api_key');
+
+    $response = wp_remote_get($api_url, [
+        'headers' => [
+            'accept' => 'application/json',
+            'X-Api-Key' => $api_key,
+        ],
+    ]);
+
+    if (is_wp_error($response)) {
+        return false;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return false;
+    }
+
+    return $data; 
+}
+
+function dpp_domain_get_property_price_estimate($property_id)
+{
+    // $property_profile = null;
+    // $profile = new Domain_API(
+    //     'properties',
+    //     ['' => ''],
+    //     [$property_id,'priceEstimate'], 
+    //     'v1'
+    // );
+
+    // if ($profile  !== null) {
+    //     $property_profile = $profile->data;
+    // } else {
+    //     return null;
+    // }
+
+
+    $api_url = 'https://api.domain.com.au/v1/properties/' . $property_id . '/priceEstimate';
+    $api_key = get_option('domain_api_key');
+
+    $response = wp_remote_get($api_url, [
+        'headers' => [
+            'accept' => 'application/json',
+            'X-Api-Key' => $api_key,
+        ],
+    ]);
+
+    if (is_wp_error($response)) {
+        return false;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return false;
+    }
+
+    return $data;
+}
+
+function register_domain_address_suggest_ajax()
+{
+    add_action('wp_ajax_domain_address_suggest', 'domain_address_suggest');
+    add_action('wp_ajax_nopriv_domain_address_suggest', 'domain_address_suggest');
+}
+
+function register_domain_ajax()
+{
+    register_domain_address_suggest_ajax();
+}
+
+add_action('init', 'register_domain_ajax');
+
+function domain_address_suggest()
+{
+    if (! isset($_POST['query'])) {
+        wp_send_json_error('No query provided');
+        wp_die();
+    }
+
+    $query = sanitize_text_field($_POST['query']);
+    $suggestions = dpp_domain_get_property_suggest($query);
+
+    if ($suggestions) {
+        wp_send_json_success($suggestions);
+    } else {
+        wp_send_json_error($suggestions);
+    }
+
+    wp_die();
 }
