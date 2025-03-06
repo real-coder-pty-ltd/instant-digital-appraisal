@@ -11,6 +11,7 @@ jQuery(document).ready(function ($) {
 
     $($address).on('input', function () {
         var query = $(this).val();
+        $('#appraisal-submit').prop('disabled', true);
 
         $.ajax({
             url: domain_ajax_obj.ajax_url,
