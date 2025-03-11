@@ -56,6 +56,12 @@ function dsp_add_settings()
                 'value' => get_option('dsp_google_maps_server_side_api_key'),
             ],
             [
+                'title' => 'Suburb Title Heading',
+                'description' => 'Override the default heading for the suburb profile page title. Use {suburb} and {postcode} to insert suburb name and postcode.',
+                'name' => 'dsp_suburb_title_heading',
+                'value' => get_option('dsp_suburb_title_heading'),
+            ],
+            [
                 'title' => 'Suburb About Heading',
                 'description' => 'Override the default heading for the suburb profile pages. Use {suburb} and {postcode} to insert suburb name and postcode.',
                 'name' => 'dsp_suburb_about_heading',
@@ -138,6 +144,7 @@ function dsp_submit_key()
         'dsp_client_id',
         'dsp_client_secret',
         'dsp_enqueue_google_maps',
+        'dsp_suburb_title_heading',
         'dsp_suburb_about_heading',
         'dsp_suburb_description',
         'dsp_demographics_description',
