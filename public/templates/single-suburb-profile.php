@@ -68,6 +68,9 @@ $dsp_suburb_description = get_option('dsp_suburb_description') ? output_suburb_o
 $def_suburb_about_heading = 'About ' . get_bloginfo('name');
 $dsp_suburb_about_heading = get_option('dsp_suburb_about_heading') ? output_suburb_or_postcode(get_option('dsp_suburb_about_heading'), $suburb_label, $postcode) : $def_suburb_about_heading;
 
+$dsp_suburb_title_heading = get_option('dsp_suburb_title_heading') ? output_suburb_or_postcode(get_option('dsp_suburb_title_heading'), $suburb_label, $postcode) : $suburb_label;
+
+
 $def_demographics_description = 'A little bit about who lives locally, as provided by government census data.';
 $dsp_demographics_description = get_option('dsp_demographics_description') ? output_suburb_or_postcode(get_option('dsp_demographics_description'), $suburb_label, $postcode) : $def_demographics_description;
 
@@ -140,7 +143,7 @@ $items = [
         <div class="col-sm-10 offset-sm-1 text-light pt-5 pb-0 pb-md-3">
             <div class="text-center mb-0 mb-md-4 py-2 py-md-5">
                 <h1 class="dsp-hero__title text-center mb-0 display-2 fs-3 fs-md-1 py-1 py-md-3">
-                    <span><?= $suburb_label . '</span><br><span class="text-white" style="letter-spacing: 1px; font-size: 30px;">' . $state . ' ' . $postcode; ?></span>
+                    <span><?= $dsp_suburb_title_heading . '</span><br><span class="text-white" style="letter-spacing: 1px; font-size: 30px;">' . $state . ' ' . $postcode; ?></span>
                     </sm>
                 </h1>
             </div>
