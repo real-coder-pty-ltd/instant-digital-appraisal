@@ -80,10 +80,11 @@ class Domain_API
 
         if ( $this->post_id === null ) {
             $this->result = 'False, no post ID. Please run the code on a single post or page.';
+
         }
         
         if ( $this->isCached() ) {
-            if ($this->isBot || $this->hasCacheExpired()) {
+            if ($this->isBot == true || $this->hasCacheExpired()== false) {
                 return $this;
             }
         }
