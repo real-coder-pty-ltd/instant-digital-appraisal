@@ -359,3 +359,23 @@ function domain_address_suggest()
 
     wp_die();
 }
+
+function disable_embed_for_suburb_profile() {
+    // Remove embed rewrite rules for the 'suburb-profile' post type
+    add_filter('rewrite_rules_array', function($rules) {
+        foreach ($rules as $rule => $rewrite) {
+            if (strpos($rewrite, 'embed=true') !== false && strpos($rewrite, 'suburb-profile') !== false) {
+                unset($rules[$rule]);
+            }
+        }
+        return $rules;
+    });
+
+    // Block access to /embed/ for 'suburb-profile' post type manually
+    add_action('template_redirect', function() {
+        if (is_embed() && get_post_type() === 'suburb-profile') {
+            wp_die('Embedding not allowed for this content.', 'Embed Disabled', ['response' => 403]);
+        }
+    });
+}
+add_action('init', 'disable_embed_for_suburb_profile', 100);
