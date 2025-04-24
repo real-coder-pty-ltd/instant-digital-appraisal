@@ -217,115 +217,139 @@ function create_api_usage_table() {
 
 function dpp_domain_get_property_suggest($query)
 {
-    $api_url = 'https://api.domain.com.au/v1/properties/_suggest';
-    $api_key = get_option('domain_api_key');
-
-    $response = wp_remote_get($api_url, [
-        'headers' => [
-            'accept' => 'application/json',
-            'X-Api-Key' => $api_key,
-        ],
-        'body' => [
+    $property_suggestions = null;
+    $suggestions = new Domain_API(
+        'properties',
+        [
             'terms' => $query,
             'channel' => 'All',
-            'pageSize'=> 5,
+            'pageSize' => 5,
         ],
-    ]);
+        ['_suggest'],
+        'v1'
+    );
 
-    if (is_wp_error($response)) {
-        return false;
+    if ($suggestions !== null) {
+        $property_suggestions = $suggestions->data;
+    } else {
+        return null;
     }
 
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
+    return $property_suggestions;
+    
+    // $api_url = 'https://api.domain.com.au/v1/properties/_suggest';
+    // $api_key = get_option('domain_api_key');
 
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return false;
-    }
+    // $response = wp_remote_get($api_url, [
+    //     'headers' => [
+    //         'accept' => 'application/json',
+    //         'X-Api-Key' => $api_key,
+    //     ],
+    //     'body' => [
+    //         'terms' => $query,
+    //         'channel' => 'All',
+    //         'pageSize'=> 5,
+    //     ],
+    // ]);
 
-    return $data; 
+    // if (is_wp_error($response)) {
+    //     return false;
+    // }
+
+    // $body = wp_remote_retrieve_body($response);
+    // $data = json_decode($body, true);
+
+    // if (json_last_error() !== JSON_ERROR_NONE) {
+    //     return false;
+    // }
+
+    // return $data; 
 }
 
 function dpp_domain_get_property_profile($property_id)
 {
-    // $property_profile = null;
-    // $profile = new Domain_API(
-    //     'properties',
-    //     ['' => ''],
-    //     [$property_id], 
-    //     'v1'
-    // );
+    $property_profile = null;
+    $profile = new Domain_API(
+        'properties',
+        ['' => ''],
+        [$property_id], 
+        'v1'
+    );
 
-    // if ($profile  !== null) {
-    //     $property_profile = $profile->data;
-    // } else {
-    //     return null;
+    if ($profile  !== null) {
+        $property_profile = $profile->data;
+    } else {
+        return null;
+    }
+
+    return $property_profile;
+
+
+    // $api_url = 'https://api.domain.com.au/v1/properties/' . $property_id;
+    // $api_key = get_option('domain_api_key');
+
+    // $response = wp_remote_get($api_url, [
+    //     'headers' => [
+    //         'accept' => 'application/json',
+    //         'X-Api-Key' => $api_key,
+    //     ],
+    // ]);
+
+    // if (is_wp_error($response)) {
+    //     return false;
     // }
 
+    // $body = wp_remote_retrieve_body($response);
+    // $data = json_decode($body, true);
 
-    $api_url = 'https://api.domain.com.au/v1/properties/' . $property_id;
-    $api_key = get_option('domain_api_key');
+    // if (json_last_error() !== JSON_ERROR_NONE) {
+    //     return false;
+    // }
 
-    $response = wp_remote_get($api_url, [
-        'headers' => [
-            'accept' => 'application/json',
-            'X-Api-Key' => $api_key,
-        ],
-    ]);
-
-    if (is_wp_error($response)) {
-        return false;
-    }
-
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return false;
-    }
-
-    return $data; 
+    // return $data; 
 }
 
 function dpp_domain_get_property_price_estimate($property_id)
 {
-    // $property_profile = null;
-    // $profile = new Domain_API(
-    //     'properties',
-    //     ['' => ''],
-    //     [$property_id,'priceEstimate'], 
-    //     'v1'
-    // );
+    $property_profile = null;
+    $profile = new Domain_API(
+        'properties',
+        ['' => ''],
+        [$property_id,'priceEstimate'], 
+        'v1'
+    );
 
-    // if ($profile  !== null) {
-    //     $property_profile = $profile->data;
-    // } else {
-    //     return null;
+    if ($profile  !== null) {
+        $property_profile = $profile->data;
+    } else {
+        return null;
+    }
+
+    return $property_profile;
+
+
+    // $api_url = 'https://api.domain.com.au/v1/properties/' . $property_id . '/priceEstimate';
+    // $api_key = get_option('domain_api_key');
+
+    // $response = wp_remote_get($api_url, [
+    //     'headers' => [
+    //         'accept' => 'application/json',
+    //         'X-Api-Key' => $api_key,
+    //     ],
+    // ]);
+
+    // if (is_wp_error($response)) {
+    //     return false;
     // }
 
+    // $body = wp_remote_retrieve_body($response);
+    // $data = json_decode($body, true);
 
-    $api_url = 'https://api.domain.com.au/v1/properties/' . $property_id . '/priceEstimate';
-    $api_key = get_option('domain_api_key');
+    // if (json_last_error() !== JSON_ERROR_NONE) {
+    //     return false;
+    // }
 
-    $response = wp_remote_get($api_url, [
-        'headers' => [
-            'accept' => 'application/json',
-            'X-Api-Key' => $api_key,
-        ],
-    ]);
-
-    if (is_wp_error($response)) {
-        return false;
-    }
-
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
-
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return false;
-    }
-
-    return $data;
+    // return $data;
 }
 
 function register_domain_address_suggest_ajax()
