@@ -85,6 +85,24 @@ function dsp_add_settings()
                 'name' => 'dsp_market_trends_description',
                 'value' => get_option('dsp_market_trends_description'),
             ],
+            [
+                'title' => 'Location Scope',
+                'description' => 'Restrict the address suggestions to the specific states listed',
+                'name' => 'dsp_location_scope',
+                'value' => get_option('dsp_location_scope'),
+                'type' => 'multiselect',
+                'options' => [
+                    '' => 'Select a state',
+                    'NSW' => 'New South Wales',
+                    'VIC' => 'Victoria',
+                    'QLD' => 'Queensland',
+                    'SA' => 'South Australia',
+                    'WA' => 'Western Australia',
+                    'TAS' => 'Tasmania',
+                    'ACT' => 'Australian Capital Territory',
+                    'NT' => 'Northern Territory',
+                ],
+            ],
         ],
     ];
     ?>
@@ -107,13 +125,35 @@ function dsp_add_settings()
                             'dsp_market_trends_description'
                         ];
                     ?>
-                    <?php if (in_array($field['name'], $textarea_fields)): ?>
-                        <textarea name="<?php echo $field['name']; ?>" id="<?php echo $field['name']; ?>" rows="4" cols="50"><?php echo $field['value']; ?></textarea>
-                    <?php else: ?>
+                    <?php 
+                    $field_value = $field['value'];
+                    $field_type = isset($field['type']) ? $field['type'] : 'text';
+
+                    if ($field_type === 'multiselect') {
+                        if (!is_array($field_value)) {
+                            $field_value = explode(',', $field_value); // fallback if stored as CSV
+                        }
+                        ?>
+                        <select name="<?php echo $field['name']; ?>[]" id="<?php echo $field['name']; ?>" multiple size="6">
+                            <?php foreach ($field['options'] as $key => $label): ?>
+                                <option value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $field_value) ? 'selected' : ''; ?>>
+                                    <?php echo esc_html($label); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php
+                    } elseif (in_array($field['name'], $textarea_fields)) {
+                        ?>
+                        <textarea name="<?php echo $field['name']; ?>" id="<?php echo $field['name']; ?>" rows="4" cols="50"><?php echo esc_textarea($field_value); ?></textarea>
+                    <?php
+                    } else {
+                        ?>
                         <input type="text" name="<?php echo $field['name']; ?>" id="<?php echo $field['name']; ?>"
-                            value="<?php echo $field['value']; ?>" size="45">
-                    <?php endif; ?>
-                    <p class="description"><?php echo $field['description']; ?></p>
+                            value="<?php echo esc_attr($field_value); ?>" size="45">
+                    <?php
+                    }
+                    ?>
+                    <p class="description"><?php echo esc_html($field['description']); ?></p>
                 </td>
             </tr>
             <?php } ?>
@@ -149,21 +189,25 @@ function dsp_submit_key()
         'dsp_suburb_description',
         'dsp_demographics_description',
         'dsp_market_trends_description',
+        'dsp_location_scope'
     ];
 
     foreach ($options as $option) {
-        
-        if ( isset($_POST[$option])) {
-            $value = sanitize_text_field($_POST[$option]);
-            update_option($option, $value);
-            continue;
-        }
-        
-        if ( ! $value) {
+        if (isset($_POST[$option])) {
+            $value = $_POST[$option];
+    
+            if (is_array($value)) {
+                // Handle multiselect: sanitize each and save as array
+                $value = array_map('sanitize_text_field', $value);
+                update_option($option, $value);
+            } else {
+                $value = sanitize_text_field($value);
+                update_option($option, $value);
+            }
+        } else {
+            // If not set (e.g., all options removed), delete the option
             delete_option($option);
-            continue;
         }
-        
     }
     wp_redirect($_SERVER['HTTP_REFERER']);
 }

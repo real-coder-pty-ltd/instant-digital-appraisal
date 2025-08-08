@@ -218,18 +218,21 @@ function create_api_usage_table() {
 function dpp_domain_get_property_suggest($query)
 {
     $property_suggestions = null;
+    $allowed_states = get_option('dsp_location_scope', true)[0];
+    $query = $query .", {$allowed_states}";
+
     $suggestions = new Domain_API(
         'properties',
         [
             'terms' => $query,
             'channel' => 'All',
-            'pageSize' => 5,
+            'pageSize' => 20,
         ],
         ['_suggest'],
         'v1'
     );
 
-    if ($suggestions !== null) {
+    if ($suggestions !== null) {        
         $property_suggestions = $suggestions->data;
     } else {
         return null;

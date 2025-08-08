@@ -606,3 +606,14 @@ h1 span.suburb-details {
       max-height: 100%;
    }
 }
+
+.suggest-container>ul {
+   max-height: 400px;
+   overflow-y: auto;
+}
+
+@media (max-width: 576px) {
+   .suggest-container>ul {
+      max-height: 250px;
+   }
+}
