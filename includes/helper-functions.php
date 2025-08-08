@@ -220,7 +220,7 @@ function dpp_domain_get_property_suggest($query)
     $property_suggestions = null;
     $allowed_states = get_option('dsp_location_scope');
 
-    // 
+    // Check if a state is given
     if( $allowed_states ) {
         $query = $query .", {$allowed_states[0]}";
     }
